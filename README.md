@@ -18,7 +18,7 @@ Install Xianxia from the [tModLoader Steam Workshop](https://steamcommunity.com/
 
 ## Releases
 
-Changes for each published version are documented in [GitHub Releases](../../releases).
+Changes for each published version are documented in [GitHub Releases](../../releases) and the [changelog](CHANGELOG.md).
 
 ## Development status
 
