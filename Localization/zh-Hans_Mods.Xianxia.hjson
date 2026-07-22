@@ -1,0 +1,1234 @@
+Keybinds: {
+	# The filename already scopes every entry under Mods.Xianxia.
+	
+	Meditate.DisplayName: 冥想
+	QiResistance.DisplayName: 真气护体
+	QiFlight.DisplayName: 御气飞行
+	Fireball.DisplayName: 火球术
+	QiPalm.DisplayName: 真气掌
+	FlameStep.DisplayName: 炎步
+	NascentTeleport.DisplayName: 虚空步
+	SpiritualPressure.DisplayName: 灵压
+	NightVision.DisplayName: 夜视
+	AbilityWheel.DisplayName: 功法轮盘
+	AbilityTree.DisplayName: 功法树
+}
+
+Buffs: {
+	QiResistanceBuff: {
+		DisplayName: 真气护体
+		Description: +10 防御
+	}
+
+	SpiritGatheringBuff: {
+		DisplayName: 灵气周天
+		Description: 被动真气恢复 +2/秒，冥想真气恢复 +2/秒
+	}
+
+	BodyTemperingBuff: {
+		DisplayName: 淬体
+		Description: +8 防御，+10% 近战伤害
+	}
+
+	SpiritualPressureDebuff: {
+		DisplayName: 灵压压制
+		Description: 受到高阶修士的灵压，移动速度降低
+	}
+
+	BeastBloodTemperingBuff: {
+		DisplayName: 兽血淬体
+		Description: +12 防御，+10% 伤害，+5% 伤害减免
+	}
+
+	FlameMeridianBuff: {
+		DisplayName: 炎脉
+		Description: +18% 魔法伤害并免疫火焰
+	}
+
+	ThunderResistanceBuff: {
+		DisplayName: 雷霆抗性
+		Description: +20 防御，+12% 伤害减免并免疫带电
+	}
+
+	CoreRefinementBuff: {
+		DisplayName: 丹核淬炼
+		Description: 被动真气恢复 +12/秒，冥想真气恢复 +12/秒
+	}
+
+	FoundationStabilizationBuff: {
+		DisplayName: 稳固道基
+		Description: +15 防御，+4 生命再生，天劫伤害降低 10%
+	}
+
+	GoldenCoreTemperingBuff: {
+		DisplayName: 金丹淬炼
+		Description: +15% 伤害，真气消耗降低 10%
+	}
+
+	NascentSoulAwakeningBuff: {
+		DisplayName: 元婴觉醒
+		Description: +8 生命再生，+10% 魔法伤害并强化元婴功法
+	}
+
+	SoulNourishingBuff: {
+		DisplayName: 养魂
+		Description: 大幅恢复生命，每秒恢复 0.5% 最大真气
+	}
+
+	VoidInsightBuff: {
+		DisplayName: 虚空感悟
+		Description: 真气消耗降低 18%，炎步与虚空步冷却缩短 25%
+	}
+
+	HeavenlyRebirthBuff: {
+		DisplayName: 天命重生
+		Description: 抵消一次死亡并恢复 25% 生命
+	}
+
+	TribulationWardBuff: {
+		DisplayName: 渡劫护符
+		Description: +10 防御，天劫伤害降低 25%，天劫护盾消耗降低 20%
+	}
+
+	SpiritBeastLureBuff: {
+		DisplayName: 灵兽诱引
+		Description: 大幅提高灵兽出现率
+	}
+
+	ConcealmentBuff: {
+		DisplayName: 隐匿气息
+		Description: 大幅降低敌人注意力和自然生成率
+	}
+}
+
+Abilities: {
+	RequiresRealm: 所需境界：{0}
+	NotEnoughQi: 真气不足。需要：{0}
+	AlreadyActive: 真气护体已生效
+	QiResistanceActivated: 真气护体已激活，持续 1 分钟
+	QiFlightEnabled: 御气飞行已开启
+	QiFlightDisabled: 御气飞行已关闭
+	QiFlightExhausted: 真气耗尽，御气飞行已关闭
+	QiGatheringAbilitiesUnlocked: 已解锁功法：神识与真气掌
+	FlameStepUnlocked: 已解锁功法：炎步
+	NascentTeleportUnlocked: 已解锁功法：虚空步
+	NascentTeleportBlocked: 目标附近未找到安全空间
+	NascentTeleportUsed: 虚空步：-{0} 真气（{1} 格）
+	SpiritualPressureUnlocked: 已解锁功法：灵压
+	SpiritualPressureEnabled: 灵压已开启
+	SpiritualPressureDisabled: 灵压已关闭
+	SpiritualPressureExhausted: 真气不足，灵压已关闭
+	NightVisionUnlocked: 已解锁功法：夜视
+	NightVisionEnabled: 夜视已开启
+	NightVisionDisabled: 夜视已关闭
+	NightVisionExhausted: 真气不足，夜视已关闭
+	QiSenseRequiresGathering: 神识需要炼气境
+	QiSenseEnabled: 神识已开启
+	QiSenseDisabled: 神识已关闭
+	QiSenseExhausted: 真气耗尽，神识已关闭
+	QiSenseUsage: 用法：/qisense [on|off]
+	QiSenseStatus: 神识：{0} - 每秒消耗 1 真气
+	QiProtectionUnlocked: 已解锁被动：真气护盾！每吸收 1 点伤害消耗 5 真气
+	QiProtectionRequiresFoundation: 真气护盾需要筑基境
+	QiProtectionEnabled: 真气护盾已开启
+	QiProtectionDisabled: 真气护盾已关闭
+	QiProtectionUsage: 用法：/qiprotection [on|off]
+	QiProtectionStatus: 真气护盾：{0} - 每点伤害基础消耗 5 真气
+	QiProtectionAbsorbed: 真气护盾：-{0} 真气
+	StateEnabled: 开启
+	StateDisabled: 关闭
+}
+
+AbilityWheel: {
+	Title: 真气功法轮盘
+	HoverHint: 将光标移至功法上
+	Locked: 未解锁
+	Unbound: 未绑定
+	ActiveKey: 按键：[{0}]
+	PassiveToggle: "{0} - 每点伤害基础消耗 5 真气 - 左键切换"
+	QiSenseToggle: "{0} - 探测生灵、宝藏与危险 - 1 真气/秒 - 左键切换"
+	RequiresFoundation: 需要筑基境
+	RequiresQiGathering: 需要炼气境
+	RequiresNascentSoul: 需要元婴境
+	QiProtection: 真气护盾
+	QiSense: 神识
+	NightVision: 夜视
+	QiResistance: 真气护体
+	QiFlight: 御气飞行
+	QiFlightDescription: 可控飞行，每秒消耗 1 真气
+	NascentTeleport: 虚空步
+	NascentTeleportDescription: 传送至光标或地图位置；消耗 20 真气，每 2 格另加 2 真气
+	FlameStep: 炎步
+	FlameStepDescription: 向指定方向火焰冲刺，造成伤害并破坏地形
+	Fireball: 火球术
+	FireballDescription: 爆炸投射物；消耗和大小随伤害提升
+	QiPalm: 真气掌
+	QiPalmDescription: 高击退真气波，可破坏地形
+	QiResistanceDescription: +10 防御，持续 1 分钟；消耗 60 真气
+	SpiritualPressure: 灵压
+	SpiritualPressureDescription: 可切换的伤害与减速光环；每秒消耗 25 真气
+	NightVisionDescription: 生成局部灵光；范围与效率随熟练度提高
+}
+
+AbilityTree: {
+	Title: 修炼菜单
+	Hint: 悬停在功法上查看进度与加成
+	Locked: 未解锁
+	Passive: 被动
+	Active: 主动
+	MaxLevel: 最高等级
+	RequiresRealm: 所需境界：{0}
+	LevelUp: "{0} 已升至 {1} 级！"
+	MeditationEffect: 等级 {0} | 每级冥想真气 +5% | {1}
+	CombatEffect: 等级 {0} | 每级伤害 +4%、冷却 -2.5% | {1}
+	ResistanceEffect: 等级 {0} | 每级 +2 防御、+5 秒持续时间 | {1}
+	ProtectionEffect: 等级 {0} | 每 5 级降低一次伤害吸收消耗 | {1}
+	FlightEffect: 等级 {0} | 每级飞行速度 +3% | {1}
+	TeleportEffect: 等级 {0} | 消耗与冷却随等级降低 | {1}
+	SenseEffect: 等级 {0} | 真气消耗间隔延长 | {1}
+	SpiritBreathingEffect: 等级 {0} | 被动真气恢复先 +10%，之后每级 +3% | {1}
+	GoldenCoreEffect: 等级 {0} | 功法消耗先 -5%，之后每级 -1% | {1}
+	NascentSoulEffect: 等级 {0} | 生命再生先 +4，之后每级 +2 | {1}
+	NightVisionEffect: 等级 {0} | 光照范围扩大；1级消耗3真气/秒，8级降至2，15级降至1 | {1}
+
+	Tabs: {
+		Abilities: 功法
+		Paths: 道途
+	}
+
+	Paths: {
+		Title: 修行职业
+		Available: 可用
+		FutureHint: 新道途将在此显示
+
+		Alchemy: {
+			Name: 炼丹
+			Description: 将药草与灵物炼制成修士丹药
+			Station: 主要设施：炼丹炉
+			KnownRecipes: 可炼丹药
+			Tier: 品阶 {0} - {1}（{2}）
+			Progress: "{0} 阶段 | {1}"
+			Bonuses: 额外产出：{0}% | 杂质概率：{1}%
+			Saturation: 丹药饱和度：{0}/100 | 药效：{1}%
+			Cauldrons: 炼丹炉
+			TierComplete: 已完成
+			TierCurrent: 当前：{0}
+			Unlocked: 已解锁
+			PillRequirement: "{0} 阶段 | {1}"
+			NoPills: 此品阶尚未发现丹药
+		}
+	}
+
+	Abilities: {
+		Meditation.Name: 冥想
+		QiSense.Name: 神识
+		QiResistance.Name: 真气护体
+		Fireball.Name: 火球术
+		QiPalm.Name: 真气掌
+		QiProtection.Name: 真气护盾
+		FlameStep.Name: 炎步
+		QiFlight.Name: 御气飞行
+		NascentTeleport.Name: 虚空步
+		SpiritualPressure.Name: 灵压
+		SpiritBreathing.Name: 吐纳术
+		GoldenCoreCirculation.Name: 金丹周天
+		NascentSoulRegeneration.Name: 元婴复元
+		NightVision.Name: 夜视
+	}
+}
+
+TribulationConfirmation: {
+	Title: 天劫
+	Message: 你即将尝试突破至 {0}
+	Strikes: 你必须承受 {0} 道天雷
+	Warning: 请确认生命、装备与真气均已准备妥当
+	Confirm: 确认
+	Cancel: 取消
+}
+
+Configs: {
+	CultivationServerConfig: {
+		DisplayName: Xianxia - 服务器设置
+
+		EnableTimeAcceleration: {
+			Label: 冥想时加速时间
+			Tooltip: 开启后，至少一名玩家冥想时世界时间会加速
+		}
+
+		TimeMultiplier: {
+			Label: 时间倍率
+			Tooltip: 控制冥想时昼夜流逝速度
+		}
+
+		Headers: {
+			SpiritualQiZones: 高灵气区域
+			SpiritBeasts: 灵兽
+			Debug: 调试工具
+			AbilityTerrainDestruction: 功法地形破坏
+		}
+
+		EnableSpiritualQiZones: {
+			Label: 启用高灵气区域
+			Tooltip: 灵晶矿脉可提高附近的冥想与被动恢复
+		}
+
+		SpiritualQiZoneRadiusBlocks: {
+			Label: 区域半径（格）
+			Tooltip: 灵晶提高真气获取的最大距离
+		}
+
+		SpiritMineDetectorRadiusBlocks: {
+			Label: 寻灵罗盘半径
+			Tooltip: 罗盘可探测灵石矿脉的最大距离（格）
+		}
+
+		EnableSpiritBeasts: {
+			Label: 启用灵兽
+			Tooltip: 允许修炼灵兽在合适的生物群系自然生成
+		}
+
+		EnableSpiritBeastDistanceScaling: {
+			Label: 灵兽随距离增强
+			Tooltip: 距离世界公共出生点越远，出现的境界与阶段越高
+		}
+
+		SpiritBeastSpawnRatePercent: {
+			Label: 灵兽生成率
+			Tooltip: 应用于灵兽自然生成概率的百分比倍率
+		}
+
+		EnableDebugCommandsInMultiplayer: {
+			Label: 多人模式启用调试命令
+			Tooltip: 允许测试服务器上的所有玩家使用 /xiadebug。公共服务器请保持关闭
+		}
+
+		EnableAbilityTerrainDestruction: {
+			Label: 启用世界破坏
+			Tooltip: 允许攻击性功法破坏图格的总开关
+		}
+
+		EnableFireballTerrainDestruction: {
+			Label: 火球术
+			Tooltip: 允许火球术命中时破坏地形
+		}
+
+		EnableQiPalmTerrainDestruction: {
+			Label: 真气掌
+			Tooltip: 允许真气掌命中时破坏地形
+		}
+
+		EnableFlameStepTerrainDestruction: {
+			Label: 炎步
+			Tooltip: 允许炎步命中时破坏地形
+		}
+	}
+
+	CultivationClientConfig: {
+		DisplayName: Xianxia - 界面与特效
+
+		Headers: {
+			MeditationControls: 冥想控制
+			QiHud: 真气界面
+			VisualEffects: 视觉特效
+		}
+
+		ToggleMeditation: {
+			Label: 切换式冥想
+			Tooltip: 按一次冥想键开始，再按一次停止。关闭后需持续按住按键
+		}
+
+		QiBarHorizontalPositionPercent: {
+			Label: 真气条水平位置
+			Tooltip: 0 位于左侧，50 位于中央，100 位于右侧
+		}
+
+		QiBarVerticalPosition: {
+			Label: 真气条垂直位置
+			Tooltip: 距屏幕顶端的像素距离
+		}
+
+		QiBarScalePercent: {
+			Label: 真气条缩放
+			Tooltip: 调整真气条及其文字大小
+		}
+
+		ShowQiConcentration: {
+			Label: 显示灵气浓度
+			Tooltip: 在真气条下显示附近灵石浓度
+		}
+
+		VisualEffectIntensityPercent: {
+			Label: 视觉特效强度
+			Tooltip: 调整 Xianxia 的粒子、灵光、光环与弹道，不影响玩法
+		}
+	}
+}
+
+Items: {
+	SpiritVeinCompass: {
+		DisplayName: 寻灵罗盘
+		Tooltip:
+			'''
+			搜寻最近的灵晶矿脉
+			默认范围：250 格，可由服务器配置
+			显示其方向与距离 10 秒
+			'''
+		Found: 探测到 {0} 格外的灵石矿脉
+		NotFound: "{0} 格内未探测到灵石矿脉"
+		Distance: "{0} 格"
+	}
+
+	ResonantSpiritVeinCompass: {
+		DisplayName: 共鸣寻灵罗盘
+		Tooltip: 升级版：在配置范围上增加 200 格
+	}
+
+	HeavenlySpiritVeinCompass: {
+		DisplayName: 天阶寻灵罗盘
+		Tooltip: 至尊版：在配置范围上增加 500 格
+	}
+
+	CultivatorManual: {
+		DisplayName: 修士手册
+		Tooltip:
+			'''
+			完整的仙侠修炼指南
+			使用以打开手册
+			'''
+	}
+
+	AlchemyCauldron: {
+		DisplayName: 炼丹炉
+		Tooltip: 将药草与灵物炼制成丹药的制作设施
+	}
+
+	SpiritJadeCauldron: {
+		DisplayName: 灵玉丹炉
+		Tooltip: 二品丹炉，可提高丹药产量并去除更多杂质
+	}
+
+	ProfoundAlchemyCauldron: {
+		DisplayName: 玄阶丹炉
+		Tooltip: 三品丹炉，拥有最高的炼制加成
+	}
+
+	PillDregs: {
+		DisplayName: 丹渣
+		Tooltip: 炼制时分离出的杂质，可用于回收低品丹药
+	}
+
+	MeridianCleansingPill: {
+		DisplayName: 洗脉丹
+		Tooltip: 降低 40 点丹药饱和度
+	}
+
+	GreaterQiRecoveryPill: {
+		DisplayName: 大回气丹
+		Tooltip: 恢复 10% 最大真气，基础恢复量至少为 500
+	}
+
+	SpiritGrass: {
+		DisplayName: 灵草
+		Tooltip: 温和聚集环境灵气的常见药草
+	}
+
+	FireLotus: {
+		DisplayName: 火莲
+		Tooltip: 生于沙漠植被中的炽热灵花
+	}
+
+	MoonDewFlower: {
+		DisplayName: 月露花
+		Tooltip: 生于丛林植被中的月华灵草
+	}
+
+	Ironroot: {
+		DisplayName: 铁根
+		Tooltip: 生于雪地植被中的坚韧灵根
+	}
+
+	SpiritGrassSeed: {
+		DisplayName: 灵草种子
+		Tooltip: 种在合适的实心地面上，等待三个生长阶段
+	}
+
+	FireLotusSeed: {
+		DisplayName: 火莲种子
+		Tooltip: 种在合适的实心地面上，等待三个生长阶段
+	}
+
+	MoonDewFlowerSeed: {
+		DisplayName: 月露花种子
+		Tooltip: 种在合适的实心地面上，等待三个生长阶段
+	}
+
+	IronrootSeed: {
+		DisplayName: 铁根种子
+		Tooltip: 种在合适的实心地面上，等待三个生长阶段
+	}
+
+	QiRecoveryPill: {
+		DisplayName: 回气丹
+		Tooltip:
+			'''
+			恢复 100 真气，但不增加真气经验
+			真气已满时无法使用
+			'''
+	}
+
+	SpiritGatheringPill: {
+		DisplayName: 聚灵丹
+		Tooltip: 被动与冥想恢复提高 2 真气/秒，持续 5 分钟
+	}
+
+	BodyTemperingPill: {
+		DisplayName: 淬体丹
+		Tooltip: +8 防御、+10% 近战伤害，持续 5 分钟
+	}
+
+	SpiritStone: {
+		DisplayName: 灵石
+		Tooltip:
+			'''
+			充满灵力的晶石
+			永久增加 25 真气经验并恢复 25 真气
+			可在地下灵晶矿脉中找到
+			'''
+	}
+
+	SpiritJadeOre: {
+		DisplayName: 灵玉矿
+		Tooltip: 蕴含真气的天然玉石
+	}
+
+	SpiritJadeBar: {
+		DisplayName: 灵玉锭
+		Tooltip: 用于制作修士装备的精炼材料
+	}
+
+	ProfoundIronOre: {
+		DisplayName: 玄铁矿
+		Tooltip: 深层洞穴中开采的致密灵铁
+	}
+
+	ProfoundIronBar: {
+		DisplayName: 玄铁锭
+		Tooltip: 能传导真气的重金属
+	}
+
+	FlyingSword: {
+		DisplayName: 飞剑
+		Tooltip:
+			'''
+			发射一柄追踪最近敌人后返回的灵剑
+			需要炼气境，每次至少消耗 6 真气
+			消耗随最终伤害增加
+			'''
+	}
+
+	SpiritJadeSword: {
+		DisplayName: 灵玉剑
+		Tooltip: 由天然灵气滋养的轻盈剑刃
+	}
+
+	ProfoundIronSpear: {
+		DisplayName: 玄铁枪
+		Tooltip: 穿透力极强的沉重灵枪
+	}
+
+	SpiritJadeHeadpiece: {
+		DisplayName: 灵玉冠
+		Tooltip: +4% 魔法暴击率
+		SetBonus: +10% 魔法伤害、+2 真气/秒被动恢复、+1 真气/秒冥想恢复
+	}
+
+	SpiritJadeRobe: {
+		DisplayName: 灵玉法袍
+		Tooltip: +7% 魔法伤害
+	}
+
+	SpiritJadeLeggings: {
+		DisplayName: 灵玉护腿
+		Tooltip: +8% 移动速度
+	}
+
+	SpiritJadePendant: {
+		DisplayName: 灵玉坠
+		Tooltip: +2 防御、+1 真气/秒被动恢复
+	}
+
+	SpiritGatheringTalisman: {
+		DisplayName: 聚灵符
+		Tooltip: 冥想速度 +2 真气/秒
+	}
+
+	ProfoundIronRing: {
+		DisplayName: 玄铁戒
+		Tooltip: +8% 伤害、+4 护甲穿透
+	}
+
+	FireballTechnique: {
+		DisplayName: 火球术秘籍
+		Tooltip:
+			'''
+			朝光标方向释放真气火球
+			需要炼气境
+			真气消耗、伤害与大小随最终伤害提升
+			'''
+	}
+
+	QiPalmTechnique: {
+		DisplayName: 真气掌秘籍
+		Tooltip:
+			'''
+			可将真气掌作为物品使用
+			需要炼气境，并根据伤害消耗真气
+			大小与伤害随修为提高
+			'''
+	}
+
+	SpiritFur: {
+		DisplayName: 灵兽皮毛
+		Tooltip: 带有一丝天然灵气的皮毛
+	}
+
+	SpiritBeastBlood: {
+		DisplayName: 灵兽精血
+		Tooltip: 用于淬炼修士肉身的精血
+	}
+
+	JadeAntler: {
+		DisplayName: 玉角
+		Tooltip: 凝聚森林木属性真气的结晶鹿角
+	}
+
+	FlameEssence: {
+		DisplayName: 火焰精华
+		Tooltip: 从强大灵兽体内取得的凝聚灵火
+	}
+
+	ThunderEssence: {
+		DisplayName: 雷霆精华
+		Tooltip: 蕴含天雷之力的不稳定碎片
+	}
+
+	MortalBeastCore: {
+		DisplayName: 凡境兽核
+		Tooltip: 低阶灵兽初成的内核
+	}
+
+	QiGatheringBeastCore: {
+		DisplayName: 炼气兽核
+		Tooltip: 经炼气淬炼的兽核
+	}
+
+	FoundationBeastCore: {
+		DisplayName: 筑基兽核
+		Tooltip: 筑基灵兽形成的稳定内核
+	}
+
+	CoreFormationBeastCore: {
+		DisplayName: 结丹兽核
+		Tooltip: 可怕灵兽凝成的珍贵内核
+	}
+
+	BeastBloodTemperingPill: {
+		DisplayName: 兽血淬体丹
+		Tooltip: +12 防御、+10% 伤害、+5% 伤害减免，持续 3 分钟
+	}
+
+	FlameMeridianPill: {
+		DisplayName: 炎脉丹
+		Tooltip: +18% 魔法伤害并免疫火焰，持续 3 分钟
+	}
+
+	ThunderResistancePill: {
+		DisplayName: 抗雷丹
+		Tooltip: +20 防御、+12% 伤害减免并免疫带电，持续 5 分钟
+	}
+
+	CoreRefinementPill: {
+		DisplayName: 丹核淬炼丹
+		Tooltip: 被动与冥想真气恢复 +12/秒，持续 3 分钟
+	}
+
+	FoundationStabilizationPill: {
+		DisplayName: 固基丹
+		Tooltip: +15 防御、+4 生命再生、天劫伤害 -10%，持续 5 分钟
+	}
+
+	GoldenCoreTemperingPill: {
+		DisplayName: 金丹淬炼丹
+		Tooltip: +15% 伤害、真气消耗 -10%，持续 4 分钟
+	}
+
+	NascentSoulAwakeningPill: {
+		DisplayName: 元婴觉醒丹
+		Tooltip: 强化魔法、再生、虚空步与灵压，持续 4 分钟
+	}
+
+	SoulNourishingPill: {
+		DisplayName: 养魂丹
+		Tooltip: 大幅恢复生命，每秒恢复 0.5% 最大真气，持续 1 分钟
+	}
+
+	VoidInsightPill: {
+		DisplayName: 悟虚丹
+		Tooltip: 真气消耗 -18%、移动功法冷却 -25%，持续 5 分钟
+	}
+
+	HeavenlyRebirthPill: {
+		DisplayName: 天命重生丹
+		Tooltip: 抵消一次死亡并恢复 25% 生命，最多持续 10 分钟
+	}
+
+	TribulationWardPill: {
+		DisplayName: 渡劫护心丹
+		Tooltip: 降低天劫伤害与真气护盾消耗，持续 10 分钟
+	}
+
+	SpiritBeastLurePill: {
+		DisplayName: 引兽丹
+		Tooltip: 灵兽生成权重变为 2.5 倍，持续 5 分钟
+	}
+
+	ConcealmentPill: {
+		DisplayName: 敛息丹
+		Tooltip: 大幅降低敌人注意力与自然生成，持续 5 分钟
+	}
+}
+
+AlchemyPills.RebirthTriggered: 天命重生丹逆转了死亡！
+
+Alchemy: {
+	TierUp: 炼丹已提升至品阶 {0} - {1}，{2}阶段！
+	StageUp: 炼丹已提升至品阶 {0} - {1}，{2}阶段！
+	BonusYield: 炼制成功，额外产出一枚丹药。
+	TooSaturated: 你的经脉已饱和，请等待后再服用丹药。
+	RequiresRank: 需要炼丹品阶 {0}（{1}），{2}阶段
+	PillMasteryTooltip: 炼丹品阶 {0}（{1}）- {2}阶段 | 获得 {3} 炼丹经验
+
+	Stages: {
+		Low: 初期
+		Middle: 中期
+		High: 后期
+	}
+
+	PillSaturationTooltip: 服用后增加 {0} 点丹药饱和度
+}
+
+NPCs: {
+	SpiritHare.DisplayName: 灵兔
+	JadeHornDeer.DisplayName: 玉角鹿
+	FlameTailedFox.DisplayName: 炎尾狐
+	ThunderclawTiger.DisplayName: 雷爪虎
+}
+
+Bestiary: {
+	SpiritHare: 性情胆怯，会本能地聚集最稀薄的灵气。
+	JadeHornDeer: 它的鹿角将古老森林的生命力凝结为珍贵玉石。
+	FlameTailedFox: 狡猾的筑基灵兽，双尾燃烧着灵火。
+	ThunderclawTiger: 在风暴中淬体、夜间于丛林狩猎的精英猛兽。
+}
+
+SpiritBeasts: {
+	NameWithCultivation: "{0} - {1}，{2} 阶"
+	WorldLabel: "{0}，{1} 阶 - {2}"
+
+	Danger: {
+		Trivial: 微不足道
+		Weaker: 较弱
+		Equal: 势均力敌
+		Dangerous: 危险
+		Overwhelming: 无法匹敌
+	}
+}
+
+Cultivation: {
+	QiBar: 真气 - {0}，{1} 阶
+	MaxRealm: "{0} 真气 - 已圆满"
+	QiStatus: 真气 {0}/{1} | 真气经验 {2}/{3}
+	QiStatusMax: 真气 {0}/{1} | 真气经验 已满
+	QiGain: +{0} 真气
+	Breakthrough: 突破！你已达到 {0}
+	StageAdvanced: 进阶！{0} - {1} 阶
+	TribulationBegins: 天劫降临！承受 {1} 道天雷以踏入 {0}
+	TribulationReady: 突破至 {0} 的天劫正在等待
+	TribulationCancelled: 天劫已取消。重新修炼突破所需的真气经验后可再次尝试
+	TribulationSurvived: 渡劫成功！天道认可了你的 {0} 修为
+	TribulationFailed: 渡劫失败！境界突破已失去
+	TribulationDeath: "{0} 被天劫轰成了灰烬。"
+	Status: 境界：{0} - {1} 阶 | 真气：{2}/{3} | 真气经验：{4}/{5}
+	NeedStillness: 必须保持静止才能冥想
+	MeditationEnabled: 冥想已开始
+	MeditationDisabled: 冥想已停止
+	MeditationRate: 冥想：{0}/秒 真气经验 - 缺失真气以此速度的 10 倍恢复
+	PassiveQiRecovery: 被动恢复：真气低于真气经验时每秒 {0}（随境界提升）
+	RealmBonuses: +{0} 最大生命 | +{1} 防御 | +{2}% 伤害 | +{3}% 移速 | +{4}% 暴击 | +{5}% 伤害减免 | +{6} 生命再生
+	SpiritualQiZoneStatus: 灵气浓度 Lv.{0}：+{1}%（{2} 块晶体）
+
+	BreakthroughTooltip: {
+		Title: 突破准备
+		Next: 下一进阶：{0}，{1} 阶
+		Progress: 真气经验 {0}/{1} - 还需 {2}
+		Bonuses: 下一阶段加成：+{0} 生命 | +{1} 防御 | +{2}% 伤害 | +{3}% 速度 | +{4}% 暴击 | +{5}% 伤害减免 | +{6} 再生
+		NextAbilities: 达到 {0} 时解锁：{1}
+		Tribulation: 天劫：{0} 道 | 每次护盾约耗 {1} 真气 | 总计约 {2}
+		ShieldReady: 真气护盾已开启，当前真气足以支付预计护盾消耗
+		ShieldWarning: 警告：开启真气护盾并确保真气完全充满
+		PenetrationWarning: 每道天雷至少有 30% 穿透护盾；生命与装备仍然重要
+		NoTribulation: 此次进阶无需渡天劫
+		MaximumReached: 修炼已达圆满
+	}
+
+	Realms: {
+		Mortal: 凡人境
+		QiCondensation: 炼气境
+		FoundationEstablishment: 筑基境
+		CoreFormation: 结丹境
+		NascentSoul: 元婴境
+	}
+}
+
+Projectiles: {
+	QiFireballProjectile.DisplayName: 真气火球
+	QiProtectionShieldProjectile.DisplayName: 真气护盾
+	QiPalmProjectile.DisplayName: 真气掌
+	FlameStepProjectile.DisplayName: 炎步
+	FlyingSwordProjectile.DisplayName: 飞剑
+	SpiritualPressureAuraProjectile.DisplayName: 灵压光环
+	SpiritVeinLocatorProjectile.DisplayName: 寻灵指引
+	SpiritFlameProjectile.DisplayName: 灵火
+	SpiritLightningProjectile.DisplayName: 灵雷
+}
+
+Tiles: {
+	AlchemyCauldronTile.MapEntry: 炼丹炉
+	SpiritJadeCauldronTile.MapEntry: 灵玉丹炉
+	ProfoundAlchemyCauldronTile.MapEntry: 玄阶丹炉
+	SpiritGrassTile.MapEntry: 灵草
+	FireLotusTile.MapEntry: 火莲
+	MoonDewFlowerTile.MapEntry: 月露花
+	IronrootTile.MapEntry: 铁根
+	SpiritCrystalOreTile.MapEntry: 灵晶
+	SpiritCrystalClusterTile.MapEntry: 灵晶簇
+	SpiritJadeOreTile.MapEntry: 灵玉矿
+	ProfoundIronOreTile.MapEntry: 玄铁矿
+}
+
+WorldGeneration.SpiritualOres: 正在生成仙侠灵脉
+
+DebugCommands: {
+	MultiplayerDisabled: 多人模式已禁用调试命令。请仅在私人测试时于服务器配置中明确启用
+	HelpTitle: Xianxia 调试命令（境界编号：1-5）
+	Help1: /xiadebug status - 显示当前测试状态
+	Help2: /xiadebug set <realm> <stage> - 跳至指定境界与阶段
+	Help3: /xiadebug qi <amount|fill|empty> - 修改可用真气
+	Help4: /xiadebug advance - 触发下一次普通突破
+	Help5: /xiadebug tribulation <core|nascent> - 准备天劫确认
+	Help6: /xiadebug tribulation <win|fail> - 立即结算当前天劫
+	Help7: /xiadebug ability <name|all> <1-20> - 设置功法等级
+	Help8: /xiadebug effect <stage|realm> | /xiadebug reset
+	Help9: /xiadebug beast <hare|deer|fox|tiger> - 生成灵兽
+	Help10: /xiadebug spawncheck - 说明此处可生成哪些灵兽
+	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
+	Unknown: 未知调试操作：{0}
+	SetUsage: 用法：/xiadebug set <realm 1-5|name> <stage 1-9>
+	QiUsage: 用法：/xiadebug qi <amount|fill|empty>
+	TribulationUsage: 用法：/xiadebug tribulation <core|nascent|win|fail>
+	AbilityUsage: 用法：/xiadebug ability <ability name|all> <level 1-20>
+	EffectUsage: 用法：/xiadebug effect <stage|realm>
+	BeastUsage: 用法：/xiadebug beast <hare|deer|fox|tiger>
+	BeastSinglePlayer: 仅单人模式可生成灵兽
+	BeastSpawned: 已生成：{0}
+	AlchemyUsage: 用法：/xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	AlchemyRankSet: 炼丹调试等级设为品阶 {0} - {1}，{2}阶段
+	AlchemySaturationSet: 丹药饱和度设为 {0}/100
+	SpawnCheckTitle: === 灵兽生成检查 ===
+	SpawnCheckEnvironment: 生物群系：{0} | {1} | 距世界出生点 {2} 格 | {3}，{4} 阶
+	SpawnCheckSettings: 启用：{0} | 距离缩放：{1} | 生成率：{2}% | 安全区：{3} | 入侵：{4}
+	SpawnCheckEligible: "[可生成] {0}"
+	SpawnCheckBlocked: "[已阻止] {0}：{1}"
+	SpawnCheckReasonDisabled: 服务器配置中已禁用灵兽
+	SpawnCheckReasonSafe: 城镇 NPC 或和平蜡烛使此处成为安全区
+	SpawnCheckReasonInvasion: 入侵正在进行
+	SpawnCheckReasonRealm: 需要玩家境界：{0}
+	SpawnCheckReasonDistance: 至少再远离世界出生点 {0} 格（最低 {1}）
+	SpawnCheckReasonHabitat: 不满足生物群系、深度或时间要求
+	SpawnCheckCandidateNote: 自然生成还需泰拉瑞亚选中安全区外的干燥陆地图格，并且 NPC 上限留有空间。
+	SpawnCheckDay: 白天
+	SpawnCheckNight: 夜晚
+	SpawnCheckBiomeForest: 地表森林
+	SpawnCheckBiomeSnow: 地表雪原
+	SpawnCheckBiomeJungle: 地表丛林
+	SpawnCheckBiomeBeach: 海滩地表
+	SpawnCheckBiomeDesert: 沙漠
+	SpawnCheckBiomeDungeon: 地牢
+	SpawnCheckBiomeUnderground: 地下
+	ProgressionSet: 调试进度设为 {0}，{1} 阶
+	QiSet: 调试真气设为 {0}/{1}
+	CannotAdvance: 无法进阶：修炼已圆满或已有天劫等待中
+	NoTribulation: 未找到等待中或正在进行的天劫
+	AbilityUnknown: 未知功法：{0}
+	AbilitySet: "{0} 调试等级设为 {1}"
+	AllAbilitiesSet: 所有功法调试等级设为 {0}
+	EffectPlayed: 正在播放 {0} 突破特效
+	Reset: 已重置调试修为与功法等级
+}
+
+Manual: {
+	Title: 修士手册
+	Received: 你获得了《修士手册》。使用它了解仙侠世界
+	Previous: 上一页
+	Next: 下一页
+	Close: 关闭
+	IndexButton: 目录
+	PageNumber: 第 {0}/{1} 页
+	ScrollForMore: 滚动查看更多
+
+	Index: {
+		Title: 目录
+		Hint: 选择章节以直接打开
+
+		Entries: {
+			Fundamentals: 修炼基础
+			QiMeditation: 真气、真气经验与冥想
+			PassiveAbilities: 被动功法
+			CombatTechniques: 战斗功法
+			Movement: 移动与功法轮盘
+			BreakthroughResources: 突破与资源
+			WorldConfiguration: 世界配置
+			CraftingRecipes: 制作配方
+			CultivationGrowth: 属性成长
+			QiRequirements: 真气与真气经验需求
+			SpiritualQiZones: 高灵气区域
+			SpiritMines: 灵石矿脉
+			AbilityProgression: 功法树与等级
+			SpiritBeasts: 灵兽
+			AlchemyPath: 炼丹之道
+			AdvancedPills: 高级丹药配方
+		}
+	}
+
+	Pages: {
+		Page0: {
+			Title: 修炼基础
+			Body:
+				'''
+				修炼分为五大境界：凡人境、炼气境、筑基境、结丹境与元婴境。
+
+				每个境界包含 9 阶。每次进阶都会提高生命、防御、伤害、速度等属性，后续阶段需要越来越多的真气经验。
+
+				上方的条显示当前真气与真气经验。真气用于功法和防御；真气经验代表永久进度，使用功法不会使其减少。将鼠标悬停在条上可查看下一次进阶、属性加成、未来功法与渡劫准备估算。
+
+				/cultivation 命令会显示当前境界、阶段、加成与恢复速度。
+				'''
+		}
+
+		Page1: {
+			Title: 真气、真气经验与冥想
+			Body:
+				'''
+				真气是可用储备，真气经验是进阶所需的永久经验。消耗真气绝不会失去阶段或境界。
+
+				真气低于真气经验时，被动恢复随境界提升：每秒 1 / 2 / 4 / 8 / 16 真气。
+
+				保持静止并按一次 [{0}] 开始冥想，再按一次停止。默认使用切换模式，可在客户端配置中改为按住模式。移动、攻击、乘骑、打开聊天或修炼菜单都会停止冥想。真气不足时，冥想以 10 倍速度恢复真气。若真气在冥想的一秒内回满，剩余时间会立即用于增长真气经验，因此切换类功法的维持消耗不会阻止进阶。各境界基础增长为每秒 1 / 4 / 16 / 64 / 256 真气经验。
+
+				只要保持静止，飞行中也能冥想。吊坠、符箓、护甲和丹药可提高这些速度。
+				'''
+		}
+
+		Page2: {
+			Title: 被动功法
+			Body:
+				'''
+				吐纳术 - 凡人境
+				始终生效。被动真气恢复提高 10%，恢复缺失真气时获得熟练度。
+
+				神识 - 炼气境
+				探测生灵、宝藏与危险。消耗 1 真气/秒。可从功法轮盘或用 /qisense on|off 切换。
+
+				真气护盾 - 筑基境
+				每吸收 1 点伤害消耗 5 真气，包括火焰、中毒等减益的持续伤害。水下氧气耗尽时也会消耗真气防止溺水，并将氧气条维持在最后一格。修炼带来的生命再生先于护盾结算，可减轻或抵消负再生。开启时会出现灵力护盾。可从轮盘或用 /qiprotection on|off 切换。
+
+				金丹周天 - 结丹境
+				始终生效。功法真气消耗降低 5%，消耗真气时获得熟练度。
+
+				元婴复元 - 元婴境
+				始终生效。+4 生命再生，治疗伤势时获得熟练度。
+				'''
+		}
+
+		Page3: {
+			Title: 战斗功法
+			Body:
+				'''
+				真气护体 [{0}] - 炼气境
+				消耗 60 真气，+10 防御，持续 1 分钟。
+
+				火球术 [{1}] - 炼气境
+				发射火焰球体，伤害、消耗与大小一同提升。爆炸可破坏地形。
+
+				真气掌 [{2}] - 炼气境
+				打出击退力极强的巨大灵掌。伤害、大小与消耗随修为提高，并可破坏地形。也可通过真气掌秘籍使用。
+
+				灵压 [{3}] - 元婴境
+				切换一个消耗 25 真气/秒的光环，周期性伤害并减速敌人。半径与伤害随阶段提高，Boss 更能抵抗减速。紧凑的视觉光环并不代表完整伤害范围。
+
+				夜视 [{4}] - 筑基境
+				开启强化视野与角色周围的灵光，可在全黑环境中探索而不照亮整个屏幕。光环范围随熟练度扩大。1级消耗3真气/秒，8级起降至2，15级起降至1。
+				'''
+		}
+
+		Page4: {
+			Title: 移动与功法轮盘
+			Body:
+				'''
+				炎步 [{0}] - 筑基境
+				朝移动键或光标方向冲刺，伤害敌人并点燃路径。
+
+				御气飞行 [{1}] - 结丹境
+				切换飞行。消耗 1 真气/秒，速度随境界提高。静止悬浮时可以冥想。打开功法菜单或聊天会使你停在空中并继续正常消耗真气，因此输入命令不会关闭飞行。
+
+				虚空步 [{2}] - 元婴境
+				传送到光标位置，也可在全屏地图中使用。基础消耗 20 真气，每移动 2 格另加 2 真气，并会在目标附近寻找安全空间。
+
+				功法轮盘 [{3}]
+				按住按键查看功法、需求、控制与被动状态。点击被动功法可切换。
+				'''
+		}
+
+		Page5: {
+			Title: 突破、资源与炼丹
+			Body:
+				'''
+				真气经验达到门槛便会突破。从结丹境开始，必须确认并挺过天劫。第一次天劫有 9 道雷击，失败将无法进阶。
+
+				天雷会穿透普通防御。基础熟练度下，结丹境每道雷击会让真气护盾消耗约 12% 最大真气并抵挡 70% 生命伤害，其余伤害穿透护盾。元婴境雷击消耗约 15%，伤害也高得多。提升真气护盾熟练度可降低储备消耗。请带满真气、治疗品与合适装备。
+
+				灵石无法制作，只能从灵晶矿脉开采。灵玉与玄铁可炼成锭，用于护甲、饰品、武器与飞剑。
+
+				炼丹炉可炼制丹药。回气丹恢复 100 真气但不增加真气经验；其他丹药可暂时提升冥想、防御与伤害。
+
+				飞剑需要炼气境，每次发射都会消耗真气。它会自动追踪 60 格内最近的可见敌人；未找到目标时会正常前进，随后返回主人身边。
+				'''
+		}
+
+		Page6: {
+			Title: 世界配置
+			Body:
+				'''
+				模组配置菜单中的“功法地形破坏”区域控制哪些功法可以破坏地形。
+
+				总开关可一次关闭所有功法破坏，下方还可分别配置火球术、真气掌与炎步。
+
+				所有选项默认开启。它们属于服务器设置，多人模式采用主机或服务器的选择。
+
+				客户端界面与特效
+				每名玩家都可移动和缩放真气条、隐藏灵气浓度行，以及减少 Xianxia 粒子、灵光、光环与弹道。这些客户端设置不会改变伤害或服务器玩法。
+
+				调试命令
+				使用 /xiadebug help 列出进度、真气、功法、特效与天劫测试工具。单人模式可直接使用；多人模式默认禁用，必须由服务器启用。启用后所有玩家都可使用，因此公共服务器请保持关闭。
+				'''
+		}
+
+		Recipes1: {
+			Title: 配方 - 材料与装备
+			Body:
+				'''
+				材料与设施
+				灵玉锭：4 灵玉矿 - 熔炉
+				玄铁锭：4 玄铁矿 - 地狱熔炉
+				炼丹炉：10 玄铁锭 + 5 灵玉锭 + 3 灵石 - 铁砧
+
+				灵玉护甲 - 铁砧
+				头冠：10 灵玉锭 + 1 灵石
+				法袍：18 灵玉锭 + 2 灵石
+				护腿：14 灵玉锭 + 1 灵石
+
+				武器 - 铁砧
+				灵玉剑：8 灵玉锭
+				玄铁枪：10 玄铁锭 + 2 灵石
+				飞剑：12 灵玉锭 + 3 灵石
+				'''
+		}
+
+		Recipes2: {
+			Title: 配方 - 饰品、功法与丹药
+			Body:
+				'''
+				饰品
+				玄铁戒：6 玄铁锭 + 2 灵石 - 铁砧
+				灵玉坠：6 灵玉锭 + 2 灵石 - 铁砧
+				聚灵符：5 丝绸 + 3 灵玉锭 + 3 灵石 - 工作台
+
+				功法与指南
+				火球术秘籍：书 + 灵石 + 5 坠落之星 - 书架
+				真气掌秘籍：书 + 2 灵石 + 5 坠落之星 - 书架
+				寻灵罗盘：罗盘 + 8 金锭或铂金锭 + 5 坠落之星 + 3 紫晶 - 铁砧
+				修士手册：书 + 灵石 - 工作台
+
+				丹药 x2 - 炼丹炉
+				回气丹：瓶装水 + 2 太阳花 + 月光草 + 灵石
+				聚灵丹：瓶装水 + 2 月光草 + 幌菊 + 3 灵玉矿 + 灵石
+				淬体丹：瓶装水 + 2 闪耀根 + 死亡草 + 3 玄铁矿 + 灵石
+				'''
+		}
+
+		CultivationGrowth: {
+			Title: 阶段与境界成长
+			Body:
+				'''
+				加成会累积，并在高境界迅速提升。进入新境界第 1 阶时，获得该境界普通阶段增幅的 3 倍。
+
+				每阶增幅
+				凡人境：+3 生命、+0.5 防御、+0.5% 伤害
+				炼气境：+8 生命、+1 防御、+1.5% 伤害
+				筑基境：+20 生命、+2 防御、+4% 伤害
+				结丹境：+50 生命、+5 防御、+9% 伤害
+				元婴境：+120 生命、+12 防御、+20% 伤害
+
+				每次提升还会增加移动速度、暴击率、伤害减免与生命再生，这些次要加成同样随境界成长。
+				'''
+		}
+
+		QiRequirements: {
+			Title: 真气与真气经验需求
+			Body:
+				'''
+				要进阶，须将储备提升至新的真气经验门槛。每一阶段的成本都会增加，进入更高境界时会大幅跃升。
+
+				各阶段成本
+				凡人境：25 至 130 真气经验
+				炼气境：300 至 1,100 真气经验
+				筑基境：1,500 至 5,500 真气经验
+				结丹境：7,500 至 27,500 真气经验
+				元婴境：37,500 至 137,500 真气经验
+
+				所列成本会加到已达到的总门槛上。可用真气与真气经验彼此独立：功法消耗真气绝不会降低永久进度。
+				'''
+		}
+
+		SpiritualQiZones: {
+			Title: 高灵气区域
+			Body:
+				'''
+				灵石矿会向周围散发灵气。在矿脉附近冥想或被动恢复会获得倍率，并显示在真气条下方。
+
+				60 格内的浓度
+				等级 0 - 无晶体：+0%
+				等级 1 - 1 至 50 块：+100%（总计 2 倍）
+				等级 2 - 51 至 100 块：+200%（总计 3 倍）
+				等级 3-9 - 每增加 50 块晶体再加 +100%
+				等级 10 - 至少 451 块：+1000%（总计 11 倍）
+
+				倍率同时影响冥想与被动真气恢复。当前等级（包括 0 级）始终显示在真气条下。半径和整个机制可在服务器配置中修改。开采晶体会降低浓度，甚至使区域完全消失。
+				'''
+		}
+
+		SpiritMines: {
+			Title: 灵石矿脉
+			Body:
+				'''
+				矿脉是洞穴层中的天然空腔。连续的灵晶外壳环绕空腔，更多晶体从底部生长。
+
+				规模
+				小型：约宽 16-24 格
+				中型：约宽 28-40 格
+				大型：约宽 44-60 格
+
+				每个世界至少包含每种规模的矿脉各一个。小型常见，中型较少，大型稀有。
+
+				寻灵罗盘会定位最近矿脉，并显示其方向与距离 10 秒。默认搜索半径为 250 格，可由服务器配置。
+
+				矿脉仅在世界生成时创建。灵石数量有限，不会自动再生。
+				'''
+		}
+
+		Recipes3: {
+			Title: 罗盘升级与灵兽炼丹
+			Body: 更高级的罗盘会扩大探测范围。灵兽材料可在炼丹炉中炼成强力丹药。
+		}
+
+		Recipes4: {
+			Title: 境界进阶丹药
+			Body: 高级丹药覆盖各品阶后期与元婴境的进阶。
+		}
+
+		Recipes5: {
+			Title: 功能丹药配方
+			Body: 特殊丹药可协助渡劫、吸引灵兽或隐藏修士。
+		}
+
+		AbilityProgression: {
+			Title: 功法树与熟练度
+			Body:
+				'''
+				按 [{0}] 打开功法列表。功法按境界分行，每张卡片显示图标、名称、主动或被动类型、等级与经验条。每行先显示被动功法。可用功法会亮起，未来境界的功法仍可见但处于锁定状态。
+
+				每项功法成功使用时都会获得经验。冥想、飞行、神识与灵压在持续使用时成长。攻击功法成功施放时获得经验，真气护盾则在吸收伤害时成长。
+
+				最高等级为 20。升级会依功法提高威力、持续时间、效率、速度或缩短冷却，所需经验按平方增长。
+
+				道途选项卡位于同一菜单顶部，包含修行职业并可扩展。当前可用炼丹之道，其中显示炼丹炉与已知丹药。
+				'''
+		}
+
+		SpiritBeasts: {
+			Title: 灵兽
+			Body:
+				'''
+				灵兽与玩家修炼相同境界。名称牌会显示境界、阶段与相对危险度。高你一个境界的灵兽可能致命，攻击前请查看标签。
+
+				已知灵兽
+				灵兔 - 凡人境 - 白天地表的森林、雪原、丛林与海滩。胆怯，通常会逃跑。
+				玉角鹿 - 炼气境 - 白天地表的森林、雪原、丛林与海滩。受威胁时冲锋。
+				炎尾狐 - 筑基境 - 夜晚地表的森林、雪原、丛林与海滩。会冲刺并发射灵火。
+				雷爪虎 - 结丹境 - 夜晚的地表丛林。会跳跃并释放雷电的精英灵兽。
+				地牢与沙漠目前没有灵兽。
+
+				距世界出生点
+				0+ 格：灵兔
+				200+ 格：玉角鹿
+				450+ 格：炎尾狐
+				700+ 格：雷爪虎
+				平均阶段持续提高，约 1,200 格处达到最高强度。此距离使用公共世界出生点而非个人床位，因此多人模式保持一致。
+
+				当你的修为接近其境界时，灵兽也会开始出现。生命、伤害、防御与奖励随阶段提升；相对危险度同时比较境界与阶段。它们掉落皮毛、精血、元素精华和用于新丹药的各境界兽核。
+
+				自然生成及其频率可在服务器配置中修改。使用 /xiadebug spawncheck 诊断当前区域，或在单人模式用 /xiadebug beast <hare|deer|fox|tiger> 召唤灵兽。
+				'''
+		}
+
+		AlchemyPath: {
+			Title: 炼丹师之道
+			Body:
+				'''
+				炼丹分为五个修炼品阶，每阶包含初期、中期与后期。在炼丹炉制作任意 Xianxia 丹药都会获得道途经验。达到所需品阶与阶段后可解锁更强配方。每次进阶都会提高额外产出一枚丹药的概率，并降低分离出丹渣的概率。
+
+				炼丹品阶
+				品阶 0 - 凡人境 - 初期、中期、后期
+				品阶 1 - 炼气境 - 初期、中期、后期
+				品阶 2 - 筑基境 - 初期、中期、后期
+				品阶 3 - 结丹境 - 初期、中期、后期
+				品阶 4 - 元婴境 - 初期、中期、后期
+				完成后期后，道途进入下一品阶初期。品阶 4 后期是当前最高等级。
+
+				灵药
+				普通植被可能掉落灵草种子。火莲种子来自沙漠，月露花种子来自丛林，铁根种子来自雪原。这些掉落在已有世界也有效。将种子种在合适的实心地面，等待其经过三个生长阶段，再收获并重新栽种。
+
+				丹炉品级
+				炼丹炉 - 基础炼制。
+				灵玉丹炉 - +5% 额外产出，-7% 杂质概率。
+				玄阶丹炉 - +10% 额外产出，-14% 杂质概率。
+				升级丹炉也满足需要基础炼丹炉的配方。
+
+				丹药饱和度
+				每服用一枚丹药都会增加饱和度。饱和度升高时，药效会逐渐降至 50%。若服用后超过 100 饱和度，则无法服用。饱和度会随时间自然下降，既防止无限叠加丹药，也保留其策略用途。
+
+				打开修炼菜单并选择“道途 > 炼丹”，可查看品阶、阶段、经验、当前饱和度、药效与炼制加成。炼丹页分为五个品阶行，每枚丹药会显示在对应境界品阶旁，并标出解锁所需的初期、中期或后期。测试时可用 /xiadebug alchemy <tier 0-4> <low|middle|high> 或 /xiadebug alchemy saturation <0-100>。
+				'''
+		}
+	}
+}

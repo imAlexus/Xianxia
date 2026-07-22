@@ -1,0 +1,1234 @@
+Keybinds: {
+	# The filename already scopes every entry under Mods.Xianxia.
+	
+	Meditate.DisplayName: Medita
+	QiResistance.DisplayName: Resistenza Qi
+	QiFlight.DisplayName: Volo Qi
+	Fireball.DisplayName: Palla di Fuoco
+	QiPalm.DisplayName: Palmo del Qi
+	FlameStep.DisplayName: Passo di Fiamma
+	NascentTeleport.DisplayName: Passo del Vuoto
+	SpiritualPressure.DisplayName: Pressione Spirituale
+	NightVision.DisplayName: Visione Notturna
+	AbilityWheel.DisplayName: Ruota delle Abilita
+	AbilityTree.DisplayName: Albero delle Abilita
+}
+
+Buffs: {
+	QiResistanceBuff: {
+		DisplayName: Resistenza Qi
+		Description: +10 difesa
+	}
+
+	SpiritGatheringBuff: {
+		DisplayName: Circolazione Spirituale
+		Description: +2 Qi/s passivi e +2 Qi/s durante la meditazione
+	}
+
+	BodyTemperingBuff: {
+		DisplayName: Temperamento Corporeo
+		Description: +8 difesa e +10% danno melee
+	}
+
+	SpiritualPressureDebuff: {
+		DisplayName: Oppressione Spirituale
+		Description: Movimento rallentato dalla pressione di un coltivatore superiore
+	}
+
+	BeastBloodTemperingBuff: {
+		DisplayName: Temperamento del Sangue Bestiale
+		Description: +12 difesa, +10% danni e +5% riduzione del danno
+	}
+
+	FlameMeridianBuff: {
+		DisplayName: Meridiano della Fiamma
+		Description: +18% danni magici e immunita al fuoco
+	}
+
+	ThunderResistanceBuff: {
+		DisplayName: Resistenza al Tuono
+		Description: +20 difesa, +12% riduzione del danno e immunita a Elettrificato
+	}
+
+	CoreRefinementBuff: {
+		DisplayName: Raffinazione del Nucleo
+		Description: +12 Qi/s passivo e +12 Qi/s in meditazione
+	}
+
+	FoundationStabilizationBuff: {
+		DisplayName: Stabilizzazione della Fondazione
+		Description: +15 difesa, +4 rigenerazione vita e 10% danni in meno dalle Tribulation
+	}
+
+	GoldenCoreTemperingBuff: {
+		DisplayName: Temperamento del Nucleo Dorato
+		Description: +15% danni e costi Qi ridotti del 10%
+	}
+
+	NascentSoulAwakeningBuff: {
+		DisplayName: Risveglio dell'Anima Nascente
+		Description: +8 rigenerazione vita, +10% danni magici e tecniche Nascent Soul potenziate
+	}
+
+	SoulNourishingBuff: {
+		DisplayName: Nutrimento dell'Anima
+		Description: Rigenera fortemente la vita e recupera lo 0.5% del Qi massimo al secondo
+	}
+
+	VoidInsightBuff: {
+		DisplayName: Comprensione del Vuoto
+		Description: Costi Qi ridotti del 18% e cooldown di Flame Step e Void Step ridotti del 25%
+	}
+
+	HeavenlyRebirthBuff: {
+		DisplayName: Rinascita Celeste
+		Description: Previene una morte e ripristina il 25% della vita
+	}
+
+	TribulationWardBuff: {
+		DisplayName: Protezione dalla Tribulation
+		Description: +10 difesa, 25% danni Tribulation in meno e costo scudo ridotto del 20%
+	}
+
+	SpiritBeastLureBuff: {
+		DisplayName: Richiamo delle Bestie Spirituali
+		Description: Aumenta notevolmente la comparsa delle Bestie Spirituali
+	}
+
+	ConcealmentBuff: {
+		DisplayName: Occultamento Spirituale
+		Description: Riduce notevolmente l'attenzione e la generazione dei nemici
+	}
+}
+
+Abilities: {
+	RequiresRealm: Realm richiesto: {0}
+	NotEnoughQi: Qi insufficiente. Richiesto: {0}
+	AlreadyActive: Resistenza Qi e gia attiva
+	QiResistanceActivated: Resistenza Qi attivata per 1 minuto
+	QiFlightEnabled: Volo Qi attivato
+	QiFlightDisabled: Volo Qi disattivato
+	QiFlightExhausted: Volo Qi disattivato - Qi esaurito
+	QiGatheringAbilitiesUnlocked: Abilita sbloccate: Percezione del Qi e Palmo del Qi
+	FlameStepUnlocked: Abilita sbloccata: Passo di Fiamma
+	NascentTeleportUnlocked: Abilita sbloccata: Passo del Vuoto
+	NascentTeleportBlocked: Nessuno spazio libero vicino alla destinazione
+	NascentTeleportUsed: Passo del Vuoto: -{0} Qi ({1} blocchi)
+	SpiritualPressureUnlocked: Abilita sbloccata: Pressione Spirituale
+	SpiritualPressureEnabled: Pressione Spirituale attivata
+	SpiritualPressureDisabled: Pressione Spirituale disattivata
+	SpiritualPressureExhausted: Pressione Spirituale disattivata - Qi insufficiente
+	NightVisionUnlocked: Abilita sbloccata: Visione Notturna
+	NightVisionEnabled: Visione Notturna attivata
+	NightVisionDisabled: Visione Notturna disattivata
+	NightVisionExhausted: Visione Notturna disattivata - Qi insufficiente
+	QiSenseRequiresGathering: Percezione del Qi richiede Raccolta del Qi
+	QiSenseEnabled: Percezione del Qi attivata
+	QiSenseDisabled: Percezione del Qi disattivata
+	QiSenseExhausted: Percezione del Qi disattivata - Qi esaurito
+	QiSenseUsage: Utilizzo: /qisense [on|off]
+	QiSenseStatus: Percezione del Qi: {0} - 1 Qi al secondo
+	QiProtectionUnlocked: Passiva sbloccata: Protezione Qi! Ogni danno assorbito costa 5 Qi
+	QiProtectionRequiresFoundation: Protezione Qi richiede Fondazione Spirituale
+	QiProtectionEnabled: Protezione Qi attivata
+	QiProtectionDisabled: Protezione Qi disattivata
+	QiProtectionUsage: Utilizzo: /qiprotection [on|off]
+	QiProtectionStatus: Protezione Qi: {0} - costo base 5 Qi per danno
+	QiProtectionAbsorbed: Scudo Qi: -{0} Qi
+	StateEnabled: Attiva
+	StateDisabled: Disattiva
+}
+
+AbilityWheel: {
+	Title: Ruota delle Abilita Qi
+	HoverHint: Sposta il cursore su una abilita
+	Locked: BLOCCATA
+	Unbound: Non assegnato
+	ActiveKey: Tasto: [{0}]
+	PassiveToggle: "{0} - costo base 5 Qi per danno - clic sinistro per cambiare"
+	QiSenseToggle: "{0} - rivela creature, tesori e pericoli - 1 Qi/s - clic sinistro per cambiare"
+	RequiresFoundation: Richiede Fondazione Spirituale
+	RequiresQiGathering: Richiede Raccolta del Qi
+	RequiresNascentSoul: Richiede Anima Nascente
+	QiProtection: Protezione Qi
+	QiSense: Percezione del Qi
+	NightVision: Visione Notturna
+	QiResistance: Resistenza Qi
+	QiFlight: Volo Qi
+	QiFlightDescription: Volo controllabile che consuma 1 Qi/s
+	NascentTeleport: Passo del Vuoto
+	NascentTeleportDescription: Teletrasporto al cursore o sulla mappa; 20 Qi + 2 ogni 2 blocchi
+	FlameStep: Passo di Fiamma
+	FlameStepDescription: Scatto infuocato direzionale che danneggia e rompe il terreno
+	Fireball: Palla di Fuoco
+	FireballDescription: Proiettile esplosivo; costo e dimensione scalano col danno
+	QiPalm: Palmo del Qi
+	QiPalmDescription: Onda di Qi ad alto contraccolpo che rompe il terreno
+	QiResistanceDescription: +10 difesa per 1 minuto; costa 60 Qi
+	SpiritualPressure: Pressione Spirituale
+	SpiritualPressureDescription: Aura toggle che danneggia e rallenta; costa 25 Qi/s
+	NightVisionDescription: Crea un'aura locale di luce spirituale; raggio ed efficienza migliorano con la maestria
+}
+
+AbilityTree: {
+	Title: Menu della Coltivazione
+	Hint: Passa il cursore su una tecnica per vedere progresso e bonus
+	Locked: BLOCCATA
+	Passive: PASSIVA
+	Active: ATTIVA
+	MaxLevel: LIVELLO MASSIMO
+	RequiresRealm: Richiede il Realm: {0}
+	LevelUp: "{0} ha raggiunto il livello {1}!"
+	MeditationEffect: Livello {0} | +5% Qi da meditazione per livello | {1}
+	CombatEffect: Livello {0} | +4% danno e -2.5% cooldown per livello | {1}
+	ResistanceEffect: Livello {0} | +2 difesa e +5 secondi per livello | {1}
+	ProtectionEffect: Livello {0} | il costo per danno diminuisce ogni 5 livelli | {1}
+	FlightEffect: Livello {0} | +3% velocita di volo per livello | {1}
+	TeleportEffect: Livello {0} | costo e cooldown diminuiscono col livello | {1}
+	SenseEffect: Livello {0} | il consumo di Qi diventa meno frequente | {1}
+	SpiritBreathingEffect: Livello {0} | +10% recupero Qi passivo, poi +3% per livello | {1}
+	GoldenCoreEffect: Livello {0} | -5% costo delle abilita, poi -1% per livello | {1}
+	NascentSoulEffect: Livello {0} | +4 rigenerazione vita, poi +2 per livello | {1}
+	NightVisionEffect: Livello {0} | raggio luminoso maggiore; costa 3 Qi/s, 2 dal livello 8 e 1 dal livello 15 | {1}
+
+	Tabs: {
+		Abilities: Abilita
+		Paths: Path
+	}
+
+	Paths: {
+		Title: Professioni
+		Available: DISPONIBILE
+		FutureHint: Qui appariranno i nuovi Path
+
+		Alchemy: {
+			Name: Alchimia
+			Description: Raffina erbe e risorse spirituali per creare pillole da coltivatore
+			Station: Stazione principale: Calderone Alchemico
+			KnownRecipes: Pillole disponibili
+			Tier: Tier {0} - {1} ({2})
+			Progress: Stadio {0} | {1}
+			Bonuses: Resa extra: {0}% | Probabilita impurita: {1}%
+			Saturation: Saturazione pillole: {0}/100 | Efficacia: {1}%
+			Cauldrons: Calderoni di raffinazione
+			TierComplete: COMPLETATO
+			TierCurrent: ATTUALE: {0}
+			Unlocked: SBLOCCATA
+			PillRequirement: Stadio {0} | {1}
+			NoPills: Nessuna pillola scoperta per questo Tier
+		}
+	}
+
+	Abilities: {
+		Meditation.Name: Meditazione
+		QiSense.Name: Percezione Qi
+		QiResistance.Name: Resistenza Qi
+		Fireball.Name: Palla di Fuoco
+		QiPalm.Name: Palmo del Qi
+		QiProtection.Name: Protezione Qi
+		FlameStep.Name: Passo di Fiamma
+		QiFlight.Name: Volo Qi
+		NascentTeleport.Name: Passo del Vuoto
+		SpiritualPressure.Name: Pressione Spirituale
+		SpiritBreathing.Name: Respiro Spirituale
+		GoldenCoreCirculation.Name: Circolazione del Nucleo
+		NascentSoulRegeneration.Name: Rigenerazione dell'Anima
+		NightVision.Name: Visione Notturna
+	}
+}
+
+TribulationConfirmation: {
+	Title: Tribolazione Celeste
+	Message: Stai per tentare il breakthrough verso {0}
+	Strikes: Devi sopravvivere a {0} fulmini celesti
+	Warning: Conferma solo quando vita, equipaggiamento e Qi sono pronti
+	Confirm: Conferma
+	Cancel: Annulla
+}
+
+Configs: {
+	CultivationServerConfig: {
+		DisplayName: Xianxia - Impostazioni Server
+
+		EnableTimeAcceleration: {
+			Label: Accelera il tempo durante la meditazione
+			Tooltip: Se attivo, il tempo del mondo avanza piu velocemente quando almeno un giocatore medita
+		}
+
+		TimeMultiplier: {
+			Label: Moltiplicatore del tempo
+			Tooltip: Determina quanto velocemente trascorrono giorno e notte durante la meditazione
+		}
+
+		Headers: {
+			SpiritualQiZones: Zone ad alta concentrazione di Qi
+			SpiritBeasts: Bestie Spirituali
+			Debug: Strumenti di debug
+			AbilityTerrainDestruction: Distruzione del mondo tramite abilita
+		}
+
+		EnableSpiritualQiZones: {
+			Label: Abilita zone di Qi spirituale
+			Tooltip: Le vene di Cristallo Spirituale aumentano meditazione e recupero passivo nelle vicinanze
+		}
+
+		SpiritualQiZoneRadiusBlocks: {
+			Label: Raggio delle zone in blocchi
+			Tooltip: Distanza massima alla quale i Cristalli Spirituali aumentano il guadagno di Qi
+		}
+
+		SpiritMineDetectorRadiusBlocks: {
+			Label: Raggio della Bussola Cercavene
+			Tooltip: Distanza massima in blocchi entro cui la bussola puo rilevare una vena di Spirit Stone
+		}
+
+		EnableSpiritBeasts: {
+			Label: Abilita Bestie Spirituali
+			Tooltip: Permette la comparsa naturale delle bestie di coltivazione nei biomi adatti
+		}
+
+		EnableSpiritBeastDistanceScaling: {
+			Label: Scala le Bestie Spirituali con la distanza
+			Tooltip: Realm piu forti e Stadi superiori compaiono progressivamente piu lontano dallo spawn condiviso del mondo
+		}
+
+		SpiritBeastSpawnRatePercent: {
+			Label: Frequenza delle Bestie Spirituali
+			Tooltip: Moltiplicatore percentuale applicato alla probabilita di comparsa naturale
+		}
+
+		EnableDebugCommandsInMultiplayer: {
+			Label: Abilita comandi debug in multiplayer
+			Tooltip: Permette a ogni giocatore del server di test di usare /xiadebug. Tienilo disabilitato sui server pubblici
+		}
+
+		EnableAbilityTerrainDestruction: {
+			Label: Abilita distruzione del mondo
+			Tooltip: Interruttore globale per consentire alle abilita offensive di rompere i blocchi
+		}
+
+		EnableFireballTerrainDestruction: {
+			Label: Palla di Fuoco
+			Tooltip: Permette alla Palla di Fuoco di rompere il terreno all'impatto
+		}
+
+		EnableQiPalmTerrainDestruction: {
+			Label: Palmo del Qi
+			Tooltip: Permette al Palmo del Qi di rompere il terreno all'impatto
+		}
+
+		EnableFlameStepTerrainDestruction: {
+			Label: Passo di Fiamma
+			Tooltip: Permette al Passo di Fiamma di rompere il terreno all'impatto
+		}
+	}
+
+	CultivationClientConfig: {
+		DisplayName: Xianxia - Interfaccia ed Effetti
+
+		Headers: {
+			MeditationControls: Controlli della meditazione
+			QiHud: Interfaccia del Qi
+			VisualEffects: Effetti visivi
+		}
+
+		ToggleMeditation: {
+			Label: Meditazione a interruttore
+			Tooltip: Premi una volta il tasto di meditazione per iniziare e di nuovo per fermarti. Disattiva questa opzione per dover tenere premuto il tasto
+		}
+
+		QiBarHorizontalPositionPercent: {
+			Label: Posizione orizzontale della barra Qi
+			Tooltip: 0 posiziona la barra a sinistra, 50 al centro e 100 a destra
+		}
+
+		QiBarVerticalPosition: {
+			Label: Posizione verticale della barra Qi
+			Tooltip: Distanza in pixel dal bordo superiore dello schermo
+		}
+
+		QiBarScalePercent: {
+			Label: Scala della barra Qi
+			Tooltip: Modifica la dimensione della barra Qi e del suo testo
+		}
+
+		ShowQiConcentration: {
+			Label: Mostra Concentrazione Qi
+			Tooltip: Mostra la concentrazione di Spirit Stone nelle vicinanze sotto la barra Qi
+		}
+
+		VisualEffectIntensityPercent: {
+			Label: Intensita degli effetti visivi
+			Tooltip: Regola particelle, luci spirituali, aure e scie di Xianxia senza modificare il gameplay
+		}
+	}
+}
+
+Items: {
+	SpiritVeinCompass: {
+		DisplayName: Bussola Cercavene Spirituali
+		Tooltip:
+			'''
+			Cerca la vena di Cristallo Spirituale piu vicina
+			Raggio predefinito: 250 blocchi, configurabile dal server
+			Mostra direzione e distanza per 10 secondi
+			'''
+		Found: Vena di Spirit Stone rilevata a {0} blocchi
+		NotFound: Nessuna vena di Spirit Stone rilevata entro {0} blocchi
+		Distance: "{0} blocchi"
+	}
+
+	ResonantSpiritVeinCompass: {
+		DisplayName: Bussola Cercavene Risonante
+		Tooltip: Versione potenziata: +200 blocchi al raggio configurato
+	}
+
+	HeavenlySpiritVeinCompass: {
+		DisplayName: Bussola Cercavene Celeste
+		Tooltip: Versione suprema: +500 blocchi al raggio configurato
+	}
+
+	CultivatorManual: {
+		DisplayName: Manuale del Coltivatore
+		Tooltip:
+			'''
+			Una guida completa alla coltivazione Xianxia
+			Usalo per aprire il manuale
+			'''
+	}
+
+	AlchemyCauldron: {
+		DisplayName: Calderone Alchemico
+		Tooltip: Stazione utilizzata per raffinare erbe e risorse spirituali in pillole
+	}
+
+	SpiritJadeCauldron: {
+		DisplayName: Calderone di Giada Spirituale
+		Tooltip: Calderone di grado II che migliora la resa e rimuove piu impurita
+	}
+
+	ProfoundAlchemyCauldron: {
+		DisplayName: Calderone Alchemico Profondo
+		Tooltip: Calderone di grado III con i migliori bonus di raffinazione
+	}
+
+	PillDregs: {
+		DisplayName: Scarti di Pillola
+		Tooltip: Impurita separate durante la raffinazione, utili per riciclare pillole di basso grado
+	}
+
+	MeridianCleansingPill: {
+		DisplayName: Pillola di Purificazione dei Meridiani
+		Tooltip: Rimuove 40 Saturazione da Pillole
+	}
+
+	GreaterQiRecoveryPill: {
+		DisplayName: Pillola Superiore di Recupero del Qi
+		Tooltip: Ripristina il 10% del Qi massimo, con un recupero base minimo di 500 Qi
+	}
+
+	SpiritGrass: {
+		DisplayName: Erba Spirituale
+		Tooltip: Erba comune che raccoglie delicatamente il Qi ambientale
+	}
+
+	FireLotus: {
+		DisplayName: Loto di Fuoco
+		Tooltip: Fiore spirituale ardente trovato tra la vegetazione del deserto
+	}
+
+	MoonDewFlower: {
+		DisplayName: Fiore della Rugiada Lunare
+		Tooltip: Erba lunare trovata tra la vegetazione della giungla
+	}
+
+	Ironroot: {
+		DisplayName: Radice di Ferro
+		Tooltip: Radice spirituale resistente trovata tra la vegetazione della neve
+	}
+
+	SpiritGrassSeed: {
+		DisplayName: Seme di Erba Spirituale
+		Tooltip: Piantalo su terreno solido adatto e attendi tre stadi di crescita
+	}
+
+	FireLotusSeed: {
+		DisplayName: Seme di Loto di Fuoco
+		Tooltip: Piantalo su terreno solido adatto e attendi tre stadi di crescita
+	}
+
+	MoonDewFlowerSeed: {
+		DisplayName: Seme di Rugiada Lunare
+		Tooltip: Piantalo su terreno solido adatto e attendi tre stadi di crescita
+	}
+
+	IronrootSeed: {
+		DisplayName: Seme di Radice di Ferro
+		Tooltip: Piantalo su terreno solido adatto e attendi tre stadi di crescita
+	}
+
+	QiRecoveryPill: {
+		DisplayName: Pillola di Recupero del Qi
+		Tooltip:
+			'''
+			Ripristina 100 Qi senza aumentare QiEXP
+			Non puo essere utilizzata quando il Qi e gia pieno
+			'''
+	}
+
+	SpiritGatheringPill: {
+		DisplayName: Pillola di Raccolta Spirituale
+		Tooltip: Aumenta rigenerazione passiva e meditazione di 2 Qi/s per 5 minuti
+	}
+
+	BodyTemperingPill: {
+		DisplayName: Pillola di Temperamento Corporeo
+		Tooltip: Conferisce +8 difesa e +10% danno melee per 5 minuti
+	}
+
+	SpiritStone: {
+		DisplayName: Pietra Spirituale
+		Tooltip:
+			'''
+			Un cristallo colmo di energia spirituale
+			Conferisce 25 QiEXP permanenti e ripristina 25 Qi
+			Si trova nelle vene di Cristallo Spirituale sottoterra
+			'''
+	}
+
+	SpiritJadeOre: {
+		DisplayName: Minerale di Giada Spirituale
+		Tooltip: Giada naturale attraversata dal Qi
+	}
+
+	SpiritJadeBar: {
+		DisplayName: Lingotto di Giada Spirituale
+		Tooltip: Materiale raffinato per equipaggiamento da coltivatore
+	}
+
+	ProfoundIronOre: {
+		DisplayName: Minerale di Ferro Profondo
+		Tooltip: Ferro spirituale denso estratto nelle caverne profonde
+	}
+
+	ProfoundIronBar: {
+		DisplayName: Lingotto di Ferro Profondo
+		Tooltip: Metallo pesante capace di condurre il Qi
+	}
+
+	FlyingSword: {
+		DisplayName: Spada Volante
+		Tooltip:
+			'''
+			Scaglia una spada spirituale che insegue il nemico piu vicino e poi ritorna
+			Richiede Raccolta del Qi e consuma almeno 6 Qi per utilizzo
+			Il costo aumenta con il danno finale
+			'''
+	}
+
+	SpiritJadeSword: {
+		DisplayName: Spada di Giada Spirituale
+		Tooltip: Una lama leggera nutrita dal Qi naturale
+	}
+
+	ProfoundIronSpear: {
+		DisplayName: Lancia di Ferro Profondo
+		Tooltip: Una pesante lancia spirituale dall'elevata penetrazione
+	}
+
+	SpiritJadeHeadpiece: {
+		DisplayName: Corona di Giada Spirituale
+		Tooltip: +4% probabilita critica magica
+		SetBonus: +10% danno magico, +2 Qi/s passivi e +1 Qi/s durante la meditazione
+	}
+
+	SpiritJadeRobe: {
+		DisplayName: Veste di Giada Spirituale
+		Tooltip: +7% danno magico
+	}
+
+	SpiritJadeLeggings: {
+		DisplayName: Calzari di Giada Spirituale
+		Tooltip: +8% velocita di movimento
+	}
+
+	SpiritJadePendant: {
+		DisplayName: Pendente di Giada Spirituale
+		Tooltip: +2 difesa e +1 Qi/s alla rigenerazione passiva
+	}
+
+	SpiritGatheringTalisman: {
+		DisplayName: Talismano di Raccolta Spirituale
+		Tooltip: +2 Qi/s alla velocita di meditazione
+	}
+
+	ProfoundIronRing: {
+		DisplayName: Anello di Ferro Profondo
+		Tooltip: +8% danni e +4 penetrazione armatura
+	}
+
+	FireballTechnique: {
+		DisplayName: Tecnica della Palla di Fuoco
+		Tooltip:
+			'''
+			Lancia una Palla di Fuoco Qi verso il cursore
+			Richiede Raccolta del Qi
+			Costo in Qi, danno e dimensione scalano con il danno finale
+			'''
+	}
+
+	QiPalmTechnique: {
+		DisplayName: Tecnica del Palmo del Qi
+		Tooltip:
+			'''
+			Permette di utilizzare il Palmo del Qi come oggetto
+			Richiede Raccolta del Qi e consuma Qi in base al danno
+			Dimensione e danno aumentano con la coltivazione
+			'''
+	}
+
+	SpiritFur: {
+		DisplayName: Pelliccia Spirituale
+		Tooltip: Pelliccia che conserva una debole traccia di Qi naturale
+	}
+
+	SpiritBeastBlood: {
+		DisplayName: Sangue di Bestia Spirituale
+		Tooltip: Sangue vitale usato per temprare il corpo di un coltivatore
+	}
+
+	JadeAntler: {
+		DisplayName: Corno di Giada
+		Tooltip: Un corno cristallizzato colmo di Qi dell'elemento legno
+	}
+
+	FlameEssence: {
+		DisplayName: Essenza della Fiamma
+		Tooltip: Fuoco spirituale condensato estratto da una bestia potente
+	}
+
+	ThunderEssence: {
+		DisplayName: Essenza del Tuono
+		Tooltip: Un frammento instabile di fulmine celeste
+	}
+
+	MortalBeastCore: {
+		DisplayName: Nucleo Bestiale Mortale
+		Tooltip: Il nucleo nascente di una Bestia Spirituale inferiore
+	}
+
+	QiGatheringBeastCore: {
+		DisplayName: Nucleo Bestiale della Raccolta Qi
+		Tooltip: Un nucleo bestiale raffinato attraverso la Raccolta del Qi
+	}
+
+	FoundationBeastCore: {
+		DisplayName: Nucleo Bestiale della Fondazione
+		Tooltip: Un nucleo stabile formato da una Bestia Spirituale della Fondazione
+	}
+
+	CoreFormationBeastCore: {
+		DisplayName: Nucleo Bestiale della Formazione del Nucleo
+		Tooltip: Un nucleo prezioso forgiato da una terrificante Bestia Spirituale
+	}
+
+	BeastBloodTemperingPill: {
+		DisplayName: Pillola del Temperamento Bestiale
+		Tooltip: Conferisce +12 difesa, +10% danni e +5% riduzione del danno per 3 minuti
+	}
+
+	FlameMeridianPill: {
+		DisplayName: Pillola del Meridiano della Fiamma
+		Tooltip: Conferisce +18% danni magici e immunita al fuoco per 3 minuti
+	}
+
+	ThunderResistancePill: {
+		DisplayName: Pillola della Resistenza al Tuono
+		Tooltip: Conferisce +20 difesa, +12% riduzione del danno e immunita a Elettrificato per 5 minuti
+	}
+
+	CoreRefinementPill: {
+		DisplayName: Pillola di Raffinazione del Nucleo
+		Tooltip: Conferisce +12 Qi al secondo passivo e in meditazione per 3 minuti
+	}
+
+	FoundationStabilizationPill: {
+		DisplayName: Pillola di Stabilizzazione della Fondazione
+		Tooltip: +15 difesa, +4 rigenerazione vita e 10% danni Tribulation in meno per 5 minuti
+	}
+
+	GoldenCoreTemperingPill: {
+		DisplayName: Pillola del Nucleo Dorato
+		Tooltip: +15% danni e costi Qi ridotti del 10% per 4 minuti
+	}
+
+	NascentSoulAwakeningPill: {
+		DisplayName: Pillola del Risveglio dell'Anima Nascente
+		Tooltip: Potenzia magia, rigenerazione, Void Step e Spiritual Pressure per 4 minuti
+	}
+
+	SoulNourishingPill: {
+		DisplayName: Pillola del Nutrimento dell'Anima
+		Tooltip: Rigenera fortemente la vita e recupera lo 0.5% del Qi massimo al secondo per 1 minuto
+	}
+
+	VoidInsightPill: {
+		DisplayName: Pillola della Comprensione del Vuoto
+		Tooltip: Riduce i costi Qi del 18% e i cooldown di movimento del 25% per 5 minuti
+	}
+
+	HeavenlyRebirthPill: {
+		DisplayName: Pillola della Rinascita Celeste
+		Tooltip: Previene una morte e ripristina il 25% della vita; dura fino a 10 minuti
+	}
+
+	TribulationWardPill: {
+		DisplayName: Pillola di Protezione dalla Tribulation
+		Tooltip: Riduce danni e consumo dello scudo Qi durante le Tribulation per 10 minuti
+	}
+
+	SpiritBeastLurePill: {
+		DisplayName: Pillola del Richiamo delle Bestie
+		Tooltip: Moltiplica per 2.5 la probabilita di comparsa delle Bestie Spirituali per 5 minuti
+	}
+
+	ConcealmentPill: {
+		DisplayName: Pillola dell'Occultamento
+		Tooltip: Riduce notevolmente l'attenzione e la generazione dei nemici per 5 minuti
+	}
+}
+
+AlchemyPills.RebirthTriggered: La Pillola della Rinascita Celeste ha sfidato la morte!
+
+Alchemy: {
+	TierUp: Alchimia avanzata al Tier {0} - {1}, Stadio {2}!
+	StageUp: Alchimia avanzata al Tier {0} - {1}, Stadio {2}!
+	BonusYield: La raffinazione riuscita ha prodotto una pillola aggiuntiva.
+	TooSaturated: I tuoi meridiani sono saturi. Attendi prima di consumare un'altra pillola.
+	RequiresRank: Richiede Alchimia Tier {0} ({1}), Stadio {2}
+	PillMasteryTooltip: Alchimia Tier {0} ({1}) - Stadio {2} | Conferisce {3} EXP
+
+	Stages: {
+		Low: Basso
+		Middle: Medio
+		High: Alto
+	}
+
+	PillSaturationTooltip: Aggiunge {0} Saturazione da Pillole quando consumata
+}
+
+NPCs: {
+	SpiritHare.DisplayName: Lepre Spirituale
+	JadeHornDeer.DisplayName: Cervo dalle Corna di Giada
+	FlameTailedFox.DisplayName: Volpe dalla Coda Fiammeggiante
+	ThunderclawTiger.DisplayName: Tigre dagli Artigli Tonanti
+}
+
+Bestiary: {
+	SpiritHare: Una creatura timida che raccoglie istintivamente le tracce piu sottili di Qi spirituale.
+	JadeHornDeer: Le sue corna cristallizzano la forza vitale delle foreste antiche in giada preziosa.
+	FlameTailedFox: Un'astuta bestia della Fondazione le cui due code ardono di fuoco spirituale.
+	ThunderclawTiger: Un predatore d'elite che tempra il corpo sotto i temporali e caccia nella giungla di notte.
+}
+
+SpiritBeasts: {
+	NameWithCultivation: "{0} - {1}, Stadio {2}"
+	WorldLabel: "{0}, Stadio {1} - {2}"
+
+	Danger: {
+		Trivial: Irrilevante
+		Weaker: Inferiore
+		Equal: Pari
+		Dangerous: Pericolosa
+		Overwhelming: Schiacciante
+	}
+}
+
+Cultivation: {
+	QiBar: Qi - {0}, Stadio {1}
+	MaxRealm: "{0} Qi - MAX"
+	QiStatus: Qi {0}/{1} | QiEXP {2}/{3}
+	QiStatusMax: Qi {0}/{1} | QiEXP MAX
+	QiGain: +{0} Qi
+	Breakthrough: Sfondamento! Hai raggiunto: {0}
+	StageAdvanced: Avanzamento! {0} - Stadio {1}
+	TribulationBegins: Tribolazione Celeste! Per entrare in {0}, sopravvivi a {1} fulmini
+	TribulationReady: Una Tribolazione Celeste attende il tuo breakthrough verso {0}
+	TribulationCancelled: Tribolazione annullata. Ricoltiva il QiEXP del breakthrough per riprovare
+	TribulationSurvived: Tribolazione superata! I cieli riconoscono la tua coltivazione: {0}
+	TribulationFailed: Tribolazione fallita! Il breakthrough di Realm e stato perso
+	TribulationDeath: "{0} e stato ridotto in cenere dalla Tribolazione Celeste."
+	Status: Regno: {0} - Stadio {1} | Qi: {2}/{3} | QiEXP: {4}/{5}
+	NeedStillness: Devi rimanere immobile per meditare
+	MeditationEnabled: Meditazione attivata
+	MeditationDisabled: Meditazione disattivata
+	MeditationRate: Meditazione: {0}/s QiEXP - il Qi mancante viene recuperato a velocita 10x
+	PassiveQiRecovery: Recupero passivo: {0} Qi/s quando Qi e inferiore a QiEXP (aumenta con il Realm)
+	RealmBonuses: +{0} vita massima | +{1} difesa | +{2}% danno | +{3}% velocita | +{4}% probabilita critica | +{5}% riduzione danni | +{6} rigenerazione vita
+	SpiritualQiZoneStatus: Concentrazione Qi Lv.{0}: +{1}% ({2} cristalli)
+
+	BreakthroughTooltip: {
+		Title: Preparazione al Breakthrough
+		Next: Prossimo avanzamento: {0}, Stadio {1}
+		Progress: QiEXP {0}/{1} - ne mancano {2}
+		Bonuses: Prossimi bonus: +{0} vita | +{1} difesa | +{2}% danni | +{3}% velocita | +{4}% critico | +{5}% riduzione danni | +{6} rigenerazione
+		NextAbilities: Prossime abilita a {0}: {1}
+		Tribulation: Tribolazione Celeste: {0} fulmini | scudo ~{1} Qi ciascuno | ~{2} totali
+		ShieldReady: Qi Protection e attivo e la riserva corrente copre il costo stimato dello scudo
+		ShieldWarning: Attenzione: attiva Qi Protection e presentati con la riserva Qi completamente piena
+		PenetrationWarning: Almeno il 30% di ogni fulmine attraversa lo scudo; vita ed equipaggiamento restano importanti
+		NoTribulation: Questo avanzamento non richiede una Tribolazione Celeste
+		MaximumReached: Hai raggiunto la coltivazione massima
+	}
+
+	Realms: {
+		Mortal: Mortale
+		QiCondensation: Raccolta del Qi
+		FoundationEstablishment: Fondazione Spirituale
+		CoreFormation: Formazione del Nucleo
+		NascentSoul: Anima Nascente
+	}
+}
+
+Projectiles: {
+	// QiFireballProjectile.DisplayName: Qi Fireball Projectile
+	QiProtectionShieldProjectile.DisplayName: Scudo della Protezione Qi
+	QiPalmProjectile.DisplayName: Palmo del Qi
+	FlameStepProjectile.DisplayName: Passo di Fiamma
+	FlyingSwordProjectile.DisplayName: Spada Volante
+	// SpiritualPressureAuraProjectile.DisplayName: Spiritual Pressure Aura Projectile
+	// SpiritVeinLocatorProjectile.DisplayName: Spirit Vein Locator Projectile
+	SpiritFlameProjectile.DisplayName: Fiamma Spirituale
+	SpiritLightningProjectile.DisplayName: Fulmine Spirituale
+}
+
+Tiles: {
+	AlchemyCauldronTile.MapEntry: Calderone Alchemico
+	SpiritJadeCauldronTile.MapEntry: Calderone di Giada Spirituale
+	ProfoundAlchemyCauldronTile.MapEntry: Calderone Alchemico Profondo
+	SpiritGrassTile.MapEntry: Erba Spirituale
+	FireLotusTile.MapEntry: Loto di Fuoco
+	MoonDewFlowerTile.MapEntry: Fiore della Rugiada Lunare
+	IronrootTile.MapEntry: Radice di Ferro
+	SpiritCrystalOreTile.MapEntry: Cristallo Spirituale
+	SpiritCrystalClusterTile.MapEntry: Gruppo di Cristalli Spirituali
+	SpiritJadeOreTile.MapEntry: Minerale di Giada Spirituale
+	ProfoundIronOreTile.MapEntry: Minerale di Ferro Profondo
+}
+
+WorldGeneration.SpiritualOres: Generazione delle vene spirituali Xianxia
+
+DebugCommands: {
+	MultiplayerDisabled: I comandi debug sono disabilitati in multiplayer. Abilitali esplicitamente nella configurazione server per una sessione di test privata
+	HelpTitle: Comandi debug Xianxia (numeri dei Realm da 1 a 5)
+	Help1: /xiadebug status - mostra lo stato di test corrente
+	Help2: /xiadebug set <realm> <stadio> - passa a un Realm e Stadio
+	Help3: /xiadebug qi <quantita|fill|empty> - modifica il Qi utilizzabile
+	Help4: /xiadebug advance - attiva il prossimo breakthrough normale
+	Help5: /xiadebug tribulation <core|nascent> - prepara la conferma di una Tribolazione
+	Help6: /xiadebug tribulation <win|fail> - risolve subito la Tribolazione corrente
+	Help7: /xiadebug ability <nome|all> <1-20> - imposta il livello della tecnica
+	Help8: /xiadebug effect <stage|realm> | /xiadebug reset
+	Help9: /xiadebug beast <hare|deer|fox|tiger> - genera una Bestia Spirituale
+	Help10: /xiadebug spawncheck - spiega quali Bestie Spirituali possono comparire qui
+	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
+	Unknown: Azione debug sconosciuta: {0}
+	SetUsage: Uso: /xiadebug set <realm 1-5|nome> <stadio 1-9>
+	QiUsage: Uso: /xiadebug qi <quantita|fill|empty>
+	TribulationUsage: Uso: /xiadebug tribulation <core|nascent|win|fail>
+	AbilityUsage: Uso: /xiadebug ability <nome abilita|all> <livello 1-20>
+	EffectUsage: Uso: /xiadebug effect <stage|realm>
+	BeastUsage: Uso: /xiadebug beast <hare|deer|fox|tiger>
+	BeastSinglePlayer: La generazione debug delle Bestie Spirituali e disponibile solo in single-player
+	BeastSpawned: Generata: {0}
+	AlchemyUsage: Uso: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	AlchemyRankSet: Rango debug Alchimia impostato a Tier {0} - {1}, Stadio {2}
+	AlchemySaturationSet: Saturazione da Pillole impostata a {0}/100
+	SpawnCheckTitle: === Controllo spawn Bestie Spirituali ===
+	SpawnCheckEnvironment: Bioma: {0} | {1} | {2} blocchi dallo spawn del mondo | {3}, Stadio {4}
+	SpawnCheckSettings: Abilitate: {0} | Scala distanza: {1} | Frequenza: {2}% | Zona sicura: {3} | Invasione: {4}
+	SpawnCheckEligible: "[PUO COMPARIRE] {0}"
+	SpawnCheckBlocked: "[BLOCCATA] {0}: {1}"
+	SpawnCheckReasonDisabled: le Bestie Spirituali sono disabilitate nella configurazione server
+	SpawnCheckReasonSafe: gli NPC cittadini o una Candela della Pace rendono sicura questa zona
+	SpawnCheckReasonInvasion: e in corso un'invasione
+	SpawnCheckReasonRealm: richiede il Realm del giocatore: {0}
+	SpawnCheckReasonDistance: allontanati di almeno altri {0} blocchi dallo spawn del mondo (minimo {1})
+	SpawnCheckReasonHabitat: il requisito di bioma, profondita o orario non e soddisfatto
+	SpawnCheckCandidateNote: Lo spawn naturale richiede inoltre che Terraria scelga un blocco asciutto fuori da una zona sicura e che ci sia spazio nel limite degli NPC.
+	SpawnCheckDay: Giorno
+	SpawnCheckNight: Notte
+	SpawnCheckBiomeForest: Superficie della foresta
+	SpawnCheckBiomeSnow: Superficie innevata
+	SpawnCheckBiomeJungle: Superficie della giungla
+	SpawnCheckBiomeBeach: Superficie della spiaggia
+	SpawnCheckBiomeDesert: Deserto
+	SpawnCheckBiomeDungeon: Dungeon
+	SpawnCheckBiomeUnderground: Sottosuolo
+	ProgressionSet: Progressione debug impostata su {0}, Stadio {1}
+	QiSet: Qi debug impostato a {0}/{1}
+	CannotAdvance: Impossibile avanzare: la coltivazione e al massimo o una Tribolazione e gia in attesa
+	NoTribulation: Non e stata trovata alcuna Tribolazione in attesa o attiva
+	AbilityUnknown: Abilita sconosciuta: {0}
+	AbilitySet: Livello debug di {0} impostato a {1}
+	AllAbilitiesSet: Livello debug di tutte le abilita impostato a {0}
+	EffectPlayed: Riproduzione dell'effetto breakthrough {0}
+	Reset: Coltivazione e livelli delle abilita ripristinati per il debug
+}
+
+Manual: {
+	Title: Manuale del Coltivatore
+	Received: Hai ricevuto il Manuale del Coltivatore. Usalo per conoscere il mondo Xianxia
+	Previous: Precedente
+	Next: Successiva
+	Close: Chiudi
+	IndexButton: Indice
+	PageNumber: Pagina {0}/{1}
+	ScrollForMore: Scorri per continuare
+
+	Index: {
+		Title: Indice
+		Hint: Seleziona una sezione per aprirla direttamente
+
+		Entries: {
+			Fundamentals: Fondamenti della Coltivazione
+			QiMeditation: Qi, QiEXP e Meditazione
+			PassiveAbilities: Abilita Passive
+			CombatTechniques: Tecniche di Combattimento
+			Movement: Movimento e Ruota
+			BreakthroughResources: Breakthrough e Risorse
+			WorldConfiguration: Configurazione del Mondo
+			CraftingRecipes: Ricette di Crafting
+			CultivationGrowth: Crescita delle Statistiche
+			QiRequirements: Requisiti Qi e QiEXP
+			SpiritualQiZones: Zone di Qi Spirituale
+			SpiritMines: Miniere di Spirit Stone
+			AbilityProgression: Albero e Livelli delle Abilita
+			SpiritBeasts: Bestie Spirituali
+			AlchemyPath: Path dell'Alchimia
+			AdvancedPills: Ricette delle Pillole Avanzate
+		}
+	}
+
+	Pages: {
+		Page0: {
+			Title: Fondamenti della Coltivazione
+			Body:
+				'''
+				La coltivazione e divisa in cinque Realm: Mortale, Raccolta del Qi, Fondazione Spirituale, Formazione del Nucleo e Anima Nascente.
+
+				Ogni Realm contiene 9 Stadi. Ogni avanzamento aumenta vita, difesa, danni, velocita e altre statistiche. Gli Stadi successivi richiedono progressivamente piu QiEXP.
+
+				La barra superiore mostra Qi attuale e QiEXP. Il Qi alimenta tecniche e difese; QiEXP rappresenta il progresso permanente e non diminuisce quando utilizzi un'abilita. Passa il cursore sulla barra per vedere il prossimo avanzamento, i bonus alle statistiche, le future abilita e una stima della preparazione alla Tribolazione.
+
+				Il comando /cultivation mostra Realm, Stadio, bonus e velocita di recupero correnti.
+				'''
+		}
+
+		Page1: {
+			Title: Qi, QiEXP e Meditazione
+			Body:
+				'''
+				Qi e la riserva utilizzabile. QiEXP e l'esperienza permanente necessaria per avanzare. Consumare Qi non causa mai una perdita di Stadio o Realm.
+
+				Quando Qi e inferiore a QiEXP, il recupero passivo scala per Realm: 1 / 2 / 4 / 8 / 16 Qi al secondo.
+
+				Premi una volta [{0}] restando immobile per iniziare a meditare, poi premilo di nuovo per fermarti. La meditazione a interruttore e attiva di default e puo essere cambiata nella configurazione client nella modalita che richiede di tenere premuto il tasto. Muoversi, attaccare, usare una cavalcatura, aprire la chat o il Menu di Coltivazione interrompe la meditazione. Se manca Qi, la meditazione lo recupera a velocita 10x. Se la riserva si riempie durante un secondo di meditazione, il tempo rimanente coltiva immediatamente nuovo QiEXP; il mantenimento delle abilita toggle non blocca quindi la progressione. La crescita base e 1 / 4 / 16 / 64 / 256 QiEXP al secondo secondo il Realm.
+
+				Durante il volo puoi meditare se rimani fermo. Pendente, talismano, armatura e pillole possono migliorare queste velocita.
+				'''
+		}
+
+		Page2: {
+			Title: Abilita Passive
+			Body:
+				'''
+				RESPIRO SPIRITUALE - Mortale
+				Sempre attiva. Aumenta del 10% il recupero passivo del Qi e migliora allenandosi mentre recuperi Qi mancante.
+
+				PERCEZIONE DEL QI - Raccolta del Qi
+				Rivela creature, tesori e pericoli. Consuma 1 Qi/s. Attivala dalla Ruota delle Abilita o con /qisense on|off.
+
+				PROTEZIONE QI - Fondazione Spirituale
+				Assorbe i danni ricevuti consumando 5 Qi per ogni punto di danno, inclusi i danni nel tempo causati da fuoco, veleno e debuff simili. Quando il respiro si esaurisce sott'acqua, consuma Qi anche per impedire l'annegamento mantenendo l'indicatore dell'aria all'ultimo livello. La rigenerazione della coltivazione viene applicata prima dello scudo e puo ridurre o superare la rigenerazione negativa. Quando si attiva appare uno scudo spirituale. Attivala dalla ruota o con /qiprotection on|off.
+
+				CIRCOLAZIONE DEL NUCLEO DORATO - Formazione del Nucleo
+				Sempre attiva. Riduce del 5% il Qi consumato dalle abilita e si allena ogni volta che spendi Qi.
+
+				RIGENERAZIONE DELL'ANIMA NASCENTE - Anima Nascente
+				Sempre attiva. Conferisce +4 rigenerazione vita e si allena mentre cura le ferite.
+				'''
+		}
+
+		Page3: {
+			Title: Tecniche di Combattimento
+			Body:
+				'''
+				RESISTENZA QI [{0}] - Raccolta del Qi
+				Consuma 60 Qi e conferisce +10 difesa per 1 minuto.
+
+				PALLA DI FUOCO [{1}] - Raccolta del Qi
+				Lancia una sfera infuocata. Danno, costo e dimensione scalano insieme. L'esplosione puo rompere il terreno.
+
+				PALMO DEL QI [{2}] - Raccolta del Qi
+				Proietta un grande palmo spirituale con forte contraccolpo. Danno, dimensione e costo aumentano con la coltivazione e puo distruggere il terreno. Puo essere usato anche tramite l'oggetto Tecnica del Palmo del Qi.
+
+				PRESSIONE SPIRITUALE [{3}] - Anima Nascente
+				Attiva un'aura che consuma 25 Qi/s, danneggia periodicamente e rallenta i nemici. Il raggio e il danno aumentano con lo Stadio; i boss resistono maggiormente al rallentamento. Gli anelli visivi compatti non rappresentano l'intero raggio di danno.
+
+				VISIONE NOTTURNA [{4}] - Fondazione Spirituale
+				Attiva o disattiva la visione potenziata e un'aura di luce spirituale attorno al personaggio, permettendo di esplorare nell'oscurita completa senza illuminare tutto lo schermo. Il raggio aumenta con la maestria. Costa 3 Qi al secondo al livello 1, 2 Qi al secondo dal livello 8 e 1 Qi al secondo dal livello 15.
+				'''
+		}
+
+		Page4: {
+			Title: Movimento e Ruota delle Abilita
+			Body:
+				'''
+				PASSO DI FIAMMA [{0}] - Fondazione Spirituale
+				Scatta nella direzione dei tasti di movimento o del cursore, danneggiando i nemici e incendiando il percorso.
+
+				VOLO QI [{1}] - Formazione del Nucleo
+				Attiva o disattiva il volo. Consuma 1 Qi/s e diventa piu veloce a ogni Realm. Se rimani fermo in aria puoi meditare. Aprendo il Menu Abilita o la chat rimani immobile in aria e continui a pagare il normale costo in Qi, quindi scrivere comandi non disattiva il volo.
+
+				PASSO DEL VUOTO [{2}] - Anima Nascente
+				Teletrasportati sul cursore. Funziona anche sulla mappa a schermo intero. Costa 20 Qi + 2 Qi ogni 2 blocchi di distanza e cerca uno spazio libero vicino al punto scelto.
+
+				RUOTA DELLE ABILITA [{3}]
+				Mantieni premuto il tasto per visualizzare abilita, requisiti, comandi e stato delle passive. Clicca una passiva per attivarla o disattivarla.
+				'''
+		}
+
+		Page5: {
+			Title: Breakthrough, Risorse e Alchimia
+			Body:
+				'''
+				Raggiunta la soglia di QiEXP avviene un breakthrough. Da Formazione del Nucleo in poi devi confermare e sopravvivere a una Tribolazione Celeste. La prima contiene 9 fulmini; fallire impedisce l'avanzamento.
+
+				I fulmini celesti penetrano le difese comuni. Con maestria base, Protezione Qi consuma circa il 12% del Qi massimo per ogni fulmine di Formazione del Nucleo e blocca il 70% del danno alla salute; il resto attraversa lo scudo. I fulmini di Anima Nascente consumano circa il 15% e infliggono molto piu danno. La maestria di Protezione Qi riduce il costo sulla riserva. Presentati con Qi pieno, cure ed equipaggiamento adeguato.
+
+				Le Spirit Stone non sono craftabili: si trovano scavando vene di Cristallo Spirituale. Giada Spirituale e Ferro Profondo producono lingotti per armature, accessori, armi e Spade Volanti.
+
+				Il Calderone Alchemico permette di creare pillole. La Pillola di Recupero ripristina 100 Qi senza aumentare QiEXP; altre pillole migliorano temporaneamente meditazione, difesa e danni.
+
+				La Spada Volante richiede Raccolta del Qi e consuma Qi a ogni lancio. Insegue automaticamente il nemico visibile piu vicino entro 60 blocchi; se non trova bersagli prosegue normalmente, poi ritorna al proprietario.
+				'''
+		}
+
+		Page6: {
+			Title: Configurazione del Mondo
+			Body:
+				'''
+				Nel menu Config della mod, la sezione DISTRUZIONE DEL MONDO TRAMITE ABILITA controlla quali tecniche possono rompere il terreno.
+
+				L'interruttore globale disabilita contemporaneamente ogni distruzione. Sotto di esso puoi configurare separatamente Palla di Fuoco, Palmo del Qi e Passo di Fiamma.
+
+				Tutte le opzioni sono abilitate di default. Essendo impostazioni server, in multiplayer valgono le scelte dell'host o del server.
+
+				INTERFACCIA ED EFFETTI CLIENT
+				Ogni giocatore puo spostare e ridimensionare la barra Qi, nascondere la riga della Concentrazione Qi e ridurre particelle, luci spirituali, aure e scie di Xianxia. Queste impostazioni client non modificano mai danni o gameplay del server.
+
+				COMANDI DEBUG
+				Usa /xiadebug help per vedere gli strumenti di test per progressione, Qi, abilita, effetti e Tribolazioni. Funzionano subito in single-player. In multiplayer sono disabilitati di default e devono essere attivati dal server; quando attivi, ogni giocatore puo usarli, quindi tienili spenti sui server pubblici.
+				'''
+		}
+
+		Recipes1: {
+			Title: Ricette - Materiali ed Equipaggiamento
+			Body:
+				'''
+				MATERIALI E STAZIONI
+				Lingotto di Giada Spirituale: 4 Minerali di Giada - Fornace
+				Lingotto di Ferro Profondo: 4 Minerali di Ferro Profondo - Forgiainfernale
+				Calderone Alchemico: 10 Lingotti di Ferro Profondo + 5 Lingotti di Giada + 3 Spirit Stone - Incudine
+
+				ARMATURA DI GIADA SPIRITUALE - INCUDINE
+				Copricapo: 10 Lingotti di Giada + 1 Spirit Stone
+				Veste: 18 Lingotti di Giada + 2 Spirit Stone
+				Gambali: 14 Lingotti di Giada + 1 Spirit Stone
+
+				ARMI - INCUDINE
+				Spada di Giada: 8 Lingotti di Giada
+				Lancia di Ferro Profondo: 10 Lingotti di Ferro Profondo + 2 Spirit Stone
+				Spada Volante: 12 Lingotti di Giada + 3 Spirit Stone
+				'''
+		}
+
+		Recipes2: {
+			Title: Ricette - Accessori, Tecniche e Pillole
+			Body:
+				'''
+				ACCESSORI
+				Anello di Ferro Profondo: 6 Lingotti di Ferro Profondo + 2 Spirit Stone - Incudine
+				Pendente di Giada: 6 Lingotti di Giada + 2 Spirit Stone - Incudine
+				Talismano Spirituale: 5 Seta + 3 Lingotti di Giada + 3 Spirit Stone - Banco da Lavoro
+
+				TECNICHE E GUIDE
+				Tecnica Palla di Fuoco: Libro + Spirit Stone + 5 Stelle Cadenti - Libreria
+				Tecnica Palmo del Qi: Libro + 2 Spirit Stone + 5 Stelle Cadenti - Libreria
+				Bussola Cercavene: Bussola + 8 Lingotti d'Oro o Platino + 5 Stelle Cadenti + 3 Ametiste - Incudine
+				Manuale del Coltivatore: Libro + Spirit Stone - Banco da Lavoro
+
+				PILLOLE x2 - CALDERONE ALCHEMICO
+				Recupero Qi: Acqua in Bottiglia + 2 Daybloom + Moonglow + Spirit Stone
+				Raccolta Spirituale: Acqua in Bottiglia + 2 Moonglow + Waterleaf + 3 Minerali di Giada + Spirit Stone
+				Temperamento Corporeo: Acqua in Bottiglia + 2 Blinkroot + Deathweed + 3 Minerali di Ferro Profondo + Spirit Stone
+				'''
+		}
+
+		CultivationGrowth: {
+			Title: Crescita degli Stadi e dei Realm
+			Body:
+				'''
+				I bonus sono cumulativi e aumentano rapidamente nei Realm superiori. Entrare nello Stadio 1 di un nuovo Realm conferisce 3 volte il normale aumento di quello stesso Realm.
+
+				AUMENTO PER OGNI STADIO
+				Mortale: +3 vita, +0.5 difesa, +0.5% danni
+				Raccolta del Qi: +8 vita, +1 difesa, +1.5% danni
+				Fondazione Spirituale: +20 vita, +2 difesa, +4% danni
+				Formazione del Nucleo: +50 vita, +5 difesa, +9% danni
+				Anima Nascente: +120 vita, +12 difesa, +20% danni
+
+				Ogni aumento conferisce anche velocita, probabilita critica, riduzione dei danni e rigenerazione vita. Questi bonus secondari seguono la stessa crescita per Realm.
+				'''
+		}
+
+		QiRequirements: {
+			Title: Requisiti Qi e QiEXP
+			Body:
+				'''
+				Per avanzare devi riempire la riserva fino alla nuova soglia di QiEXP. Il costo aumenta a ogni Stadio e fa un grande salto entrando in un Realm superiore.
+
+				COSTO DEL SINGOLO STADIO
+				Mortale: da 25 a 130 QiEXP
+				Raccolta del Qi: da 300 a 1.100 QiEXP
+				Fondazione Spirituale: da 1.500 a 5.500 QiEXP
+				Formazione del Nucleo: da 7.500 a 27.500 QiEXP
+				Anima Nascente: da 37.500 a 137.500 QiEXP
+
+				Il costo indicato si somma alla soglia totale gia raggiunta. Qi utilizzabile e QiEXP restano separati: spendere Qi per le abilita non riduce mai il progresso permanente.
+				'''
+		}
+
+		SpiritualQiZones: {
+			Title: Zone ad Alta Concentrazione di Qi
+			Body:
+				'''
+				Le miniere di Spirit Stone emanano Qi nell'area circostante. Meditare o recuperare Qi passivamente vicino a una miniera conferisce un moltiplicatore visibile sotto la barra del Qi.
+
+				CONCENTRAZIONE ENTRO 60 BLOCCHI
+				Livello 0 - nessun cristallo: +0%
+				Livello 1 - da 1 a 50 cristalli: +100% (2x totale)
+				Livello 2 - da 51 a 100 cristalli: +200% (3x totale)
+				Livelli 3-9 - ogni 50 cristalli aggiuntivi conferiscono un altro +100%
+				Livello 10 - almeno 451 cristalli: +1000% (11x totale)
+
+				Il moltiplicatore influenza sia la meditazione sia il recupero passivo del Qi. Il livello corrente, incluso il Livello 0, viene sempre mostrato sotto la barra del Qi. Il raggio e l'attivazione della meccanica possono essere modificati nella configurazione server. Estrarre i cristalli riduce la concentrazione e puo far scomparire completamente la zona.
+				'''
+		}
+
+		SpiritMines: {
+			Title: Miniere di Spirit Stone
+			Body:
+				'''
+				Le miniere sono camere naturali nello strato delle Caverne. Una corona continua di Cristallo Spirituale circonda la camera e altri cristalli affiorano sul pavimento.
+
+				DIMENSIONI
+				Piccola: circa 16-24 blocchi di larghezza
+				Media: circa 28-40 blocchi di larghezza
+				Grande: circa 44-60 blocchi di larghezza
+
+				Ogni mondo contiene almeno una miniera per dimensione. Le piccole sono comuni, le medie meno frequenti e le grandi rare.
+
+				La Bussola Cercavene Spirituali individua la vena piu vicina, poi mostra direzione e distanza per 10 secondi. Il suo raggio di ricerca predefinito e 250 blocchi ed e configurabile dal server.
+
+				Le miniere vengono create soltanto durante la generazione del mondo. Le Spirit Stone sono finite e non rigenerano automaticamente.
+				'''
+		}
+
+		Recipes3: {
+			Title: Potenziamenti Bussola e Alchimia Bestiale
+			Body: Le bussole superiori aumentano il raggio. I materiali delle Bestie Spirituali possono essere raffinati in pillole potenti nel Calderone Alchemico.
+		}
+
+		Recipes4: {
+			Title: Pillole di Progressione dei Regni
+			Body: Le pillole avanzate completano lo Stadio Alto di ogni Tier e la progressione Nascent Soul.
+		}
+
+		Recipes5: {
+			Title: Ricette delle Pillole di Utilita
+			Body: Pillole specializzate preparano le Tribulation, attirano Bestie Spirituali o occultano il coltivatore.
+		}
+
+		AbilityProgression: {
+			Title: Albero e Maestria delle Abilita
+			Body:
+				'''
+				Apri l'elenco delle abilita con [{0}]. Le tecniche sono divise in righe per Realm e ogni scheda mostra icona, nome, tipo attivo o passivo, livello e barra EXP. In ogni riga le passive vengono mostrate prima delle abilita attive. Quelle disponibili sono illuminate, mentre quelle dei Realm futuri rimangono visibili ma bloccate.
+
+				Ogni abilita guadagna EXP quando viene usata con successo. Meditazione, Volo, Percezione Qi e Pressione Spirituale progrediscono durante il loro utilizzo continuo. Le tecniche offensive ricevono EXP a ogni lancio riuscito e Protezione Qi quando assorbe danni.
+
+				Il livello massimo e 20. Salire di livello migliora potenza, durata, consumo, velocita o cooldown in base alla natura dell'abilita. L'EXP richiesta aumenta quadraticamente.
+
+				La scheda Path si trova nella parte superiore dello stesso menu. Contiene le professioni del coltivatore ed e predisposta per aggiungerne altre. Attualmente e disponibile il Path dell'Alchimia, con Calderone Alchemico e pillole conosciute.
+				'''
+		}
+
+		SpiritBeasts: {
+			Title: Bestie Spirituali
+			Body:
+				'''
+				Le Bestie Spirituali coltivano gli stessi Realm dei giocatori. La loro etichetta mostra Realm, Stadio e pericolosita relativa. Una bestia di un Realm superiore puo essere letale: controlla sempre l'etichetta prima di attaccare.
+
+				BESTIE CONOSCIUTE
+				Lepre Spirituale - Mortale - superficie di giorno, incluse foresta, neve, giungla e spiaggia. Timida e solitamente fugge.
+				Cervo dalle Corna di Giada - Raccolta del Qi - superficie di giorno, incluse foresta, neve, giungla e spiaggia. Carica quando minacciato.
+				Volpe dalla Coda Fiammeggiante - Fondazione Spirituale - superficie di notte, incluse foresta, neve, giungla e spiaggia. Scatta e lancia fiamme spirituali.
+				Tigre dagli Artigli Tonanti - Formazione del Nucleo - superficie della giungla di notte. Bestia d'elite che usa balzi e fulmini.
+				Al momento nel Dungeon e nel Deserto non compaiono Bestie Spirituali.
+
+				DISTANZA DALLO SPAWN DEL MONDO
+				0+ blocchi: Lepre Spirituale
+				200+ blocchi: Cervo dalle Corna di Giada
+				450+ blocchi: Volpe dalla Coda Fiammeggiante
+				700+ blocchi: Tigre dagli Artigli Tonanti
+				Lo Stadio medio cresce continuamente fino alla forza massima a circa 1.200 blocchi. Viene usato lo spawn condiviso del mondo, non i letti personali, quindi il sistema resta coerente in multiplayer.
+
+				Le bestie iniziano inoltre a comparire quando la tua coltivazione si avvicina al loro Realm. Vita, danni, difesa e ricompense scalano con lo Stadio. La pericolosita relativa confronta sia Realm sia Stadio. Lasciano pelliccia, sangue, essenze elementali e Nuclei Bestiali usati nelle nuove pillole.
+
+				La generazione naturale e la sua frequenza possono essere modificate nella configurazione server. Usa /xiadebug spawncheck per diagnosticare la zona attuale oppure /xiadebug beast <hare|deer|fox|tiger> per evocarne una in single-player.
+				'''
+		}
+
+		AlchemyPath: {
+			Title: Il Path dell'Alchimista
+			Body:
+				'''
+				L'Alchimia possiede cinque Tier di coltivazione e ogni Tier contiene gli Stadi Basso, Medio e Alto. Creare qualsiasi pillola Xianxia presso un Calderone Alchemico conferisce EXP al Path. Raggiungere il Tier e lo Stadio richiesti sblocca ricette piu potenti. Ogni avanzamento aumenta la probabilita di produrre una pillola aggiuntiva e riduce la probabilita di separare Scarti di Pillola.
+
+				TIER ALCHEMICI
+				Tier 0 - Mortale - Basso, Medio, Alto
+				Tier 1 - Raccolta del Qi - Basso, Medio, Alto
+				Tier 2 - Fondazione Spirituale - Basso, Medio, Alto
+				Tier 3 - Formazione del Nucleo - Basso, Medio, Alto
+				Tier 4 - Anima Nascente - Basso, Medio, Alto
+				Dopo aver completato lo Stadio Alto, il Path avanza allo Stadio Basso del Tier successivo. Tier 4 Alto e il massimo attuale.
+
+				ERBE SPIRITUALI
+				I semi di Erba Spirituale possono emergere dalla vegetazione comune. I semi del Loto di Fuoco sono associati al deserto, quelli del Fiore della Rugiada Lunare alla giungla e quelli della Radice di Ferro alla neve. Questi drop funzionano anche nei mondi esistenti. Pianta i semi su un terreno solido adatto, attendi tre stadi di crescita, quindi raccogli e ripianta.
+
+				GRADI DEL CALDERONE
+				Calderone Alchemico - raffinazione base.
+				Calderone di Giada Spirituale - +5% resa extra e -7% probabilita impurita.
+				Calderone Alchemico Profondo - +10% resa extra e -14% probabilita impurita.
+				I Calderoni migliorati soddisfano anche le ricette che richiedono quello base.
+
+				SATURAZIONE DELLE PILLOLE
+				Ogni pillola consumata aggiunge saturazione. Aumentando la saturazione, l'efficacia delle pillole scende gradualmente fino al 50%. Non puoi assumere una pillola se supererebbe 100 saturazione. La saturazione diminuisce naturalmente nel tempo, impedendo di accumulare pillole senza limiti ma conservandone l'uso strategico.
+
+				Apri il menu di coltivazione e seleziona Path > Alchimia per vedere Tier, Stadio, EXP, saturazione corrente, efficacia e bonus di raffinazione. La pagina Alchimia e divisa in cinque righe Tier; ogni pillola appare accanto al proprio Tier di Regno con lo Stadio Basso, Medio o Alto necessario per sbloccarla. Per i test usa /xiadebug alchemy <tier 0-4> <low|middle|high> oppure /xiadebug alchemy saturation <0-100>.
+				'''
+		}
+	}
+}

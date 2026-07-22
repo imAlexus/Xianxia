@@ -1,0 +1,1234 @@
+Keybinds: {
+	# The filename already scopes every entry under Mods.Xianxia.
+	
+	Meditate.DisplayName: Meditate
+	QiResistance.DisplayName: Qi Resistance
+	QiFlight.DisplayName: Qi Flight
+	Fireball.DisplayName: Fireball
+	QiPalm.DisplayName: Qi Palm
+	FlameStep.DisplayName: Flame Step
+	NascentTeleport.DisplayName: Void Step
+	SpiritualPressure.DisplayName: Spiritual Pressure
+	NightVision.DisplayName: Night Vision
+	AbilityWheel.DisplayName: Ability Wheel
+	AbilityTree.DisplayName: Ability Tree
+}
+
+Buffs: {
+	QiResistanceBuff: {
+		DisplayName: Qi Resistance
+		Description: +10 defense
+	}
+
+	SpiritGatheringBuff: {
+		DisplayName: Spiritual Circulation
+		Description: +2 passive Qi/s and +2 meditation Qi/s
+	}
+
+	BodyTemperingBuff: {
+		DisplayName: Body Tempering
+		Description: +8 defense and +10% melee damage
+	}
+
+	SpiritualPressureDebuff: {
+		DisplayName: Spiritual Oppression
+		Description: Movement slowed by the pressure of a superior cultivator
+	}
+
+	BeastBloodTemperingBuff: {
+		DisplayName: Beast Blood Tempering
+		Description: +12 defense, +10% damage and +5% damage reduction
+	}
+
+	FlameMeridianBuff: {
+		DisplayName: Flame Meridian
+		Description: +18% magic damage and immunity to fire
+	}
+
+	ThunderResistanceBuff: {
+		DisplayName: Thunder Resistance
+		Description: +20 defense, +12% damage reduction and immunity to Electrified
+	}
+
+	CoreRefinementBuff: {
+		DisplayName: Core Refinement
+		Description: +12 passive Qi/s and +12 meditation Qi/s
+	}
+
+	FoundationStabilizationBuff: {
+		DisplayName: Foundation Stabilization
+		Description: +15 defense, +4 life regeneration and 10% less Tribulation damage
+	}
+
+	GoldenCoreTemperingBuff: {
+		DisplayName: Golden Core Tempering
+		Description: +15% damage and 10% lower Qi costs
+	}
+
+	NascentSoulAwakeningBuff: {
+		DisplayName: Nascent Soul Awakening
+		Description: +8 life regeneration, +10% magic damage and stronger Nascent Soul techniques
+	}
+
+	SoulNourishingBuff: {
+		DisplayName: Soul Nourishment
+		Description: Greatly regenerates life and restores 0.5% maximum Qi per second
+	}
+
+	VoidInsightBuff: {
+		DisplayName: Void Insight
+		Description: 18% lower Qi costs and 25% shorter Flame Step and Void Step cooldowns
+	}
+
+	HeavenlyRebirthBuff: {
+		DisplayName: Heavenly Rebirth
+		Description: Prevents one death and restores 25% life
+	}
+
+	TribulationWardBuff: {
+		DisplayName: Tribulation Ward
+		Description: +10 defense, 25% less Tribulation damage and 20% lower Tribulation shield cost
+	}
+
+	SpiritBeastLureBuff: {
+		DisplayName: Spirit Beast Lure
+		Description: Greatly increases the appearance of Spirit Beasts
+	}
+
+	ConcealmentBuff: {
+		DisplayName: Spiritual Concealment
+		Description: Greatly reduces enemy attention and natural spawning
+	}
+}
+
+Abilities: {
+	RequiresRealm: Required Realm: {0}
+	NotEnoughQi: Not enough Qi. Required: {0}
+	AlreadyActive: Qi Resistance is already active
+	QiResistanceActivated: Qi Resistance activated for 1 minute
+	QiFlightEnabled: Qi Flight enabled
+	QiFlightDisabled: Qi Flight disabled
+	QiFlightExhausted: Qi Flight disabled - no Qi remaining
+	QiGatheringAbilitiesUnlocked: Abilities unlocked: Qi Sense and Qi Palm
+	FlameStepUnlocked: Ability unlocked: Flame Step
+	NascentTeleportUnlocked: Ability unlocked: Void Step
+	NascentTeleportBlocked: No clear space was found near the destination
+	NascentTeleportUsed: Void Step: -{0} Qi ({1} blocks)
+	SpiritualPressureUnlocked: Ability unlocked: Spiritual Pressure
+	SpiritualPressureEnabled: Spiritual Pressure enabled
+	SpiritualPressureDisabled: Spiritual Pressure disabled
+	SpiritualPressureExhausted: Spiritual Pressure disabled - not enough Qi
+	NightVisionUnlocked: Ability unlocked: Night Vision
+	NightVisionEnabled: Night Vision enabled
+	NightVisionDisabled: Night Vision disabled
+	NightVisionExhausted: Night Vision disabled - not enough Qi
+	QiSenseRequiresGathering: Qi Sense requires Qi Gathering
+	QiSenseEnabled: Qi Sense enabled
+	QiSenseDisabled: Qi Sense disabled
+	QiSenseExhausted: Qi Sense disabled - no Qi remaining
+	QiSenseUsage: Usage: /qisense [on|off]
+	QiSenseStatus: Qi Sense: {0} - 1 Qi per second
+	QiProtectionUnlocked: Passive unlocked: Qi Protection! Each damage absorbed costs 5 Qi
+	QiProtectionRequiresFoundation: Qi Protection requires Foundation Establishment
+	QiProtectionEnabled: Qi Protection enabled
+	QiProtectionDisabled: Qi Protection disabled
+	QiProtectionUsage: Usage: /qiprotection [on|off]
+	QiProtectionStatus: Qi Protection: {0} - base cost 5 Qi per damage
+	QiProtectionAbsorbed: Qi Shield: -{0} Qi
+	StateEnabled: Enabled
+	StateDisabled: Disabled
+}
+
+AbilityWheel: {
+	Title: Qi Ability Wheel
+	HoverHint: Move the cursor over an ability
+	Locked: LOCKED
+	Unbound: Unbound
+	ActiveKey: Key: [{0}]
+	PassiveToggle: "{0} - base cost 5 Qi per damage - Left-click to toggle"
+	QiSenseToggle: "{0} - reveals creatures, treasure and danger - 1 Qi/s - Left-click to toggle"
+	RequiresFoundation: Requires Foundation Establishment
+	RequiresQiGathering: Requires Qi Gathering
+	RequiresNascentSoul: Requires Nascent Soul
+	QiProtection: Qi Protection
+	QiSense: Qi Sense
+	NightVision: Night Vision
+	QiResistance: Qi Resistance
+	QiFlight: Qi Flight
+	QiFlightDescription: Controllable flight that consumes 1 Qi/s
+	NascentTeleport: Void Step
+	NascentTeleportDescription: Teleport to the cursor or map; 20 Qi + 2 per 2 blocks
+	FlameStep: Flame Step
+	FlameStepDescription: Directional fiery dash that damages and breaks terrain
+	Fireball: Fireball
+	FireballDescription: Explosive projectile; cost and size scale with damage
+	QiPalm: Qi Palm
+	QiPalmDescription: High-knockback Qi wave that breaks terrain
+	QiResistanceDescription: +10 defense for 1 minute; costs 60 Qi
+	SpiritualPressure: Spiritual Pressure
+	SpiritualPressureDescription: Toggle aura that damages and slows; costs 25 Qi/s
+	NightVisionDescription: Creates a local spiritual light aura; radius and efficiency improve with mastery
+}
+
+AbilityTree: {
+	Title: Cultivation Menu
+	Hint: Hover over a technique to see its progress and bonuses
+	Locked: LOCKED
+	Passive: PASSIVE
+	Active: ACTIVE
+	MaxLevel: MAX LEVEL
+	RequiresRealm: Requires Realm: {0}
+	LevelUp: "{0} reached level {1}!"
+	MeditationEffect: Level {0} | +5% meditation Qi per level | {1}
+	CombatEffect: Level {0} | +4% damage and -2.5% cooldown per level | {1}
+	ResistanceEffect: Level {0} | +2 defense and +5 seconds per level | {1}
+	ProtectionEffect: Level {0} | damage absorption cost falls every 5 levels | {1}
+	FlightEffect: Level {0} | +3% flight speed per level | {1}
+	TeleportEffect: Level {0} | cost and cooldown decrease with level | {1}
+	SenseEffect: Level {0} | Qi consumption becomes less frequent | {1}
+	SpiritBreathingEffect: Level {0} | +10% passive Qi recovery, then +3% per level | {1}
+	GoldenCoreEffect: Level {0} | -5% ability costs, then -1% per level | {1}
+	NascentSoulEffect: Level {0} | +4 life regeneration, then +2 per level | {1}
+	NightVisionEffect: Level {0} | larger light radius; costs 3 Qi/s, 2 at level 8 and 1 at level 15 | {1}
+
+	Tabs: {
+		Abilities: Abilities
+		Paths: Paths
+	}
+
+	Paths: {
+		Title: Professions
+		Available: AVAILABLE
+		FutureHint: New Paths will appear here
+
+		Alchemy: {
+			Name: Alchemy
+			Description: Refine herbs and spiritual resources into cultivator pills
+			Station: Main station: Alchemy Cauldron
+			KnownRecipes: Available pills
+			Tier: Tier {0} - {1} ({2})
+			Progress: "{0} Stage | {1}"
+			Bonuses: Bonus yield: {0}% | Impurity chance: {1}%
+			Saturation: Pill saturation: {0}/100 | Effectiveness: {1}%
+			Cauldrons: Refining cauldrons
+			TierComplete: COMPLETE
+			TierCurrent: CURRENT: {0}
+			Unlocked: UNLOCKED
+			PillRequirement: "{0} Stage | {1}"
+			NoPills: No pills discovered for this Tier yet
+		}
+	}
+
+	Abilities: {
+		Meditation.Name: Meditation
+		QiSense.Name: Qi Sense
+		QiResistance.Name: Qi Resistance
+		Fireball.Name: Fireball
+		QiPalm.Name: Qi Palm
+		QiProtection.Name: Qi Protection
+		FlameStep.Name: Flame Step
+		QiFlight.Name: Qi Flight
+		NascentTeleport.Name: Void Step
+		SpiritualPressure.Name: Spiritual Pressure
+		SpiritBreathing.Name: Spiritual Breathing
+		GoldenCoreCirculation.Name: Golden Core Circulation
+		NascentSoulRegeneration.Name: Nascent Soul Regeneration
+		NightVision.Name: Night Vision
+	}
+}
+
+TribulationConfirmation: {
+	Title: Heavenly Tribulation
+	Message: You are about to attempt the breakthrough to {0}
+	Strikes: You must survive {0} heavenly lightning strikes
+	Warning: Confirm only when your health, equipment and Qi are ready
+	Confirm: Confirm
+	Cancel: Cancel
+}
+
+Configs: {
+	CultivationServerConfig: {
+		DisplayName: Xianxia - Server Settings
+
+		EnableTimeAcceleration: {
+			Label: Accelerate time while meditating
+			Tooltip: If enabled, world time advances faster while at least one player is meditating
+		}
+
+		TimeMultiplier: {
+			Label: Time multiplier
+			Tooltip: Controls how quickly day and night pass during meditation
+		}
+
+		Headers: {
+			SpiritualQiZones: High spiritual Qi zones
+			SpiritBeasts: Spirit Beasts
+			Debug: Debug tools
+			AbilityTerrainDestruction: Ability world destruction
+		}
+
+		EnableSpiritualQiZones: {
+			Label: Enable spiritual Qi zones
+			Tooltip: Spirit Crystal veins increase meditation and passive recovery nearby
+		}
+
+		SpiritualQiZoneRadiusBlocks: {
+			Label: Zone radius in blocks
+			Tooltip: Maximum distance at which Spirit Crystals increase Qi gain
+		}
+
+		SpiritMineDetectorRadiusBlocks: {
+			Label: Spirit Vein Compass radius
+			Tooltip: Maximum distance in blocks within which the compass can detect a Spirit Stone vein
+		}
+
+		EnableSpiritBeasts: {
+			Label: Enable Spirit Beasts
+			Tooltip: Allows natural spawning of cultivation beasts in suitable biomes
+		}
+
+		EnableSpiritBeastDistanceScaling: {
+			Label: Scale Spirit Beasts with distance
+			Tooltip: Stronger Realms and higher Stages appear progressively farther from the shared world spawn
+		}
+
+		SpiritBeastSpawnRatePercent: {
+			Label: Spirit Beast spawn rate
+			Tooltip: Percentage multiplier applied to Spirit Beast natural spawn chances
+		}
+
+		EnableDebugCommandsInMultiplayer: {
+			Label: Enable debug commands in multiplayer
+			Tooltip: Allows every player on this test server to use /xiadebug. Keep disabled on public servers
+		}
+
+		EnableAbilityTerrainDestruction: {
+			Label: Enable world destruction
+			Tooltip: Master switch allowing offensive abilities to break tiles
+		}
+
+		EnableFireballTerrainDestruction: {
+			Label: Fireball
+			Tooltip: Allows Fireball to break terrain on impact
+		}
+
+		EnableQiPalmTerrainDestruction: {
+			Label: Qi Palm
+			Tooltip: Allows Qi Palm to break terrain on impact
+		}
+
+		EnableFlameStepTerrainDestruction: {
+			Label: Flame Step
+			Tooltip: Allows Flame Step to break terrain on impact
+		}
+	}
+
+	CultivationClientConfig: {
+		DisplayName: Xianxia - Interface and Effects
+
+		Headers: {
+			MeditationControls: Meditation controls
+			QiHud: Qi HUD
+			VisualEffects: Visual effects
+		}
+
+		ToggleMeditation: {
+			Label: Toggle meditation
+			Tooltip: Press the meditation key once to begin and again to stop. Disable this option to require holding the key
+		}
+
+		QiBarHorizontalPositionPercent: {
+			Label: Qi bar horizontal position
+			Tooltip: 0 places the bar on the left, 50 in the center and 100 on the right
+		}
+
+		QiBarVerticalPosition: {
+			Label: Qi bar vertical position
+			Tooltip: Distance in pixels from the top edge of the screen
+		}
+
+		QiBarScalePercent: {
+			Label: Qi bar scale
+			Tooltip: Changes the size of the Qi bar and its text
+		}
+
+		ShowQiConcentration: {
+			Label: Show Qi Concentration
+			Tooltip: Shows the nearby Spirit Stone concentration below the Qi bar
+		}
+
+		VisualEffectIntensityPercent: {
+			Label: Visual effect intensity
+			Tooltip: Controls Xianxia particles, spiritual lights, auras and projectile trails without changing gameplay
+		}
+	}
+}
+
+Items: {
+	SpiritVeinCompass: {
+		DisplayName: Spirit Vein Compass
+		Tooltip:
+			'''
+			Searches for the nearest Spirit Crystal vein
+			Default range: 250 blocks, configurable by the server
+			Shows its direction and distance for 10 seconds
+			'''
+		Found: Spirit Stone vein detected {0} blocks away
+		NotFound: No Spirit Stone vein detected within {0} blocks
+		Distance: "{0} blocks"
+	}
+
+	ResonantSpiritVeinCompass: {
+		DisplayName: Resonant Spirit Vein Compass
+		Tooltip: Upgraded version: +200 blocks to the configured range
+	}
+
+	HeavenlySpiritVeinCompass: {
+		DisplayName: Heavenly Spirit Vein Compass
+		Tooltip: Supreme version: +500 blocks to the configured range
+	}
+
+	CultivatorManual: {
+		DisplayName: Cultivator's Manual
+		Tooltip:
+			'''
+			A complete guide to Xianxia cultivation
+			Use it to open the manual
+			'''
+	}
+
+	AlchemyCauldron: {
+		DisplayName: Alchemy Cauldron
+		Tooltip: Crafting station used to refine herbs and spiritual resources into pills
+	}
+
+	SpiritJadeCauldron: {
+		DisplayName: Spirit Jade Cauldron
+		Tooltip: Grade II cauldron that improves pill yield and removes more impurities
+	}
+
+	ProfoundAlchemyCauldron: {
+		DisplayName: Profound Alchemy Cauldron
+		Tooltip: Grade III cauldron with the greatest refinement bonuses
+	}
+
+	PillDregs: {
+		DisplayName: Pill Dregs
+		Tooltip: Impurities separated during refinement; useful for recycling low-grade pills
+	}
+
+	MeridianCleansingPill: {
+		DisplayName: Meridian Cleansing Pill
+		Tooltip: Removes 40 Pill Saturation
+	}
+
+	GreaterQiRecoveryPill: {
+		DisplayName: Greater Qi Recovery Pill
+		Tooltip: Restores 10% of maximum Qi, with a minimum base restoration of 500 Qi
+	}
+
+	SpiritGrass: {
+		DisplayName: Spirit Grass
+		Tooltip: A common herb that gently gathers ambient Qi
+	}
+
+	FireLotus: {
+		DisplayName: Fire Lotus
+		Tooltip: A blazing spiritual flower found through desert vegetation
+	}
+
+	MoonDewFlower: {
+		DisplayName: Moon Dew Flower
+		Tooltip: A lunar herb found through jungle vegetation
+	}
+
+	Ironroot: {
+		DisplayName: Ironroot
+		Tooltip: A resilient spiritual root found through snow vegetation
+	}
+
+	SpiritGrassSeed: {
+		DisplayName: Spirit Grass Seed
+		Tooltip: Plant on suitable solid ground and wait for three growth stages
+	}
+
+	FireLotusSeed: {
+		DisplayName: Fire Lotus Seed
+		Tooltip: Plant on suitable solid ground and wait for three growth stages
+	}
+
+	MoonDewFlowerSeed: {
+		DisplayName: Moon Dew Flower Seed
+		Tooltip: Plant on suitable solid ground and wait for three growth stages
+	}
+
+	IronrootSeed: {
+		DisplayName: Ironroot Seed
+		Tooltip: Plant on suitable solid ground and wait for three growth stages
+	}
+
+	QiRecoveryPill: {
+		DisplayName: Qi Recovery Pill
+		Tooltip:
+			'''
+			Restores 100 Qi without increasing QiEXP
+			Cannot be used while Qi is already full
+			'''
+	}
+
+	SpiritGatheringPill: {
+		DisplayName: Spirit Gathering Pill
+		Tooltip: Increases passive regeneration and meditation by 2 Qi/s for 5 minutes
+	}
+
+	BodyTemperingPill: {
+		DisplayName: Body Tempering Pill
+		Tooltip: Grants +8 defense and +10% melee damage for 5 minutes
+	}
+
+	SpiritStone: {
+		DisplayName: Spirit Stone
+		Tooltip:
+			'''
+			A crystal filled with spiritual energy
+			Grants 25 permanent QiEXP and restores 25 Qi
+			Found in underground Spirit Crystal veins
+			'''
+	}
+
+	SpiritJadeOre: {
+		DisplayName: Spirit Jade Ore
+		Tooltip: Natural jade threaded with Qi
+	}
+
+	SpiritJadeBar: {
+		DisplayName: Spirit Jade Bar
+		Tooltip: Refined material for cultivator equipment
+	}
+
+	ProfoundIronOre: {
+		DisplayName: Profound Iron Ore
+		Tooltip: Dense spiritual iron mined in the deep caverns
+	}
+
+	ProfoundIronBar: {
+		DisplayName: Profound Iron Bar
+		Tooltip: Heavy metal capable of conducting Qi
+	}
+
+	FlyingSword: {
+		DisplayName: Flying Sword
+		Tooltip:
+			'''
+			Launches a spiritual sword that homes in on the closest enemy before returning
+			Requires Qi Gathering and consumes at least 6 Qi per use
+			Cost increases with final damage
+			'''
+	}
+
+	SpiritJadeSword: {
+		DisplayName: Spirit Jade Sword
+		Tooltip: A light blade nourished by natural Qi
+	}
+
+	ProfoundIronSpear: {
+		DisplayName: Profound Iron Spear
+		Tooltip: A heavy spiritual spear with high penetration
+	}
+
+	SpiritJadeHeadpiece: {
+		DisplayName: Spirit Jade Crown
+		Tooltip: +4% magic critical strike chance
+		SetBonus: +10% magic damage, +2 passive Qi/s and +1 meditation Qi/s
+	}
+
+	SpiritJadeRobe: {
+		DisplayName: Spirit Jade Robe
+		Tooltip: +7% magic damage
+	}
+
+	SpiritJadeLeggings: {
+		DisplayName: Spirit Jade Leggings
+		Tooltip: +8% movement speed
+	}
+
+	SpiritJadePendant: {
+		DisplayName: Spirit Jade Pendant
+		Tooltip: +2 defense and +1 Qi/s passive regeneration
+	}
+
+	SpiritGatheringTalisman: {
+		DisplayName: Spirit Gathering Talisman
+		Tooltip: +2 Qi/s meditation speed
+	}
+
+	ProfoundIronRing: {
+		DisplayName: Profound Iron Ring
+		Tooltip: +8% damage and +4 armor penetration
+	}
+
+	FireballTechnique: {
+		DisplayName: Fireball Technique
+		Tooltip:
+			'''
+			Casts a Qi Fireball toward the cursor
+			Requires Qi Gathering
+			Qi cost, damage and size scale with its final damage
+			'''
+	}
+
+	QiPalmTechnique: {
+		DisplayName: Qi Palm Technique
+		Tooltip:
+			'''
+			Allows Qi Palm to be used as an item
+			Requires Qi Gathering and consumes Qi based on damage
+			Size and damage increase with cultivation
+			'''
+	}
+
+	SpiritFur: {
+		DisplayName: Spirit Fur
+		Tooltip: Fur carrying a faint trace of natural Qi
+	}
+
+	SpiritBeastBlood: {
+		DisplayName: Spirit Beast Blood
+		Tooltip: Vital blood used to temper a cultivator's body
+	}
+
+	JadeAntler: {
+		DisplayName: Jade Antler
+		Tooltip: A crystallized antler filled with wood-aspected Qi
+	}
+
+	FlameEssence: {
+		DisplayName: Flame Essence
+		Tooltip: Condensed spiritual fire taken from a powerful beast
+	}
+
+	ThunderEssence: {
+		DisplayName: Thunder Essence
+		Tooltip: A volatile fragment of heavenly lightning
+	}
+
+	MortalBeastCore: {
+		DisplayName: Mortal Beast Core
+		Tooltip: The nascent core of a low-level Spirit Beast
+	}
+
+	QiGatheringBeastCore: {
+		DisplayName: Qi Gathering Beast Core
+		Tooltip: A beast core refined through Qi Gathering
+	}
+
+	FoundationBeastCore: {
+		DisplayName: Foundation Beast Core
+		Tooltip: A stable core formed by a Foundation Spirit Beast
+	}
+
+	CoreFormationBeastCore: {
+		DisplayName: Core Formation Beast Core
+		Tooltip: A precious core forged by a terrifying Spirit Beast
+	}
+
+	BeastBloodTemperingPill: {
+		DisplayName: Beast Blood Tempering Pill
+		Tooltip: Grants +12 defense, +10% damage and +5% damage reduction for 3 minutes
+	}
+
+	FlameMeridianPill: {
+		DisplayName: Flame Meridian Pill
+		Tooltip: Grants +18% magic damage and fire immunity for 3 minutes
+	}
+
+	ThunderResistancePill: {
+		DisplayName: Thunder Resistance Pill
+		Tooltip: Grants +20 defense, +12% damage reduction and Electrified immunity for 5 minutes
+	}
+
+	CoreRefinementPill: {
+		DisplayName: Core Refinement Pill
+		Tooltip: Grants +12 passive and meditation Qi per second for 3 minutes
+	}
+
+	FoundationStabilizationPill: {
+		DisplayName: Foundation Stabilization Pill
+		Tooltip: +15 defense, +4 life regeneration and 10% less Tribulation damage for 5 minutes
+	}
+
+	GoldenCoreTemperingPill: {
+		DisplayName: Golden Core Tempering Pill
+		Tooltip: +15% damage and 10% lower Qi costs for 4 minutes
+	}
+
+	NascentSoulAwakeningPill: {
+		DisplayName: Nascent Soul Awakening Pill
+		Tooltip: Strengthens magic, regeneration, Void Step and Spiritual Pressure for 4 minutes
+	}
+
+	SoulNourishingPill: {
+		DisplayName: Soul Nourishing Pill
+		Tooltip: Greatly regenerates life and restores 0.5% maximum Qi per second for 1 minute
+	}
+
+	VoidInsightPill: {
+		DisplayName: Void Insight Pill
+		Tooltip: Reduces Qi costs by 18% and movement-technique cooldowns by 25% for 5 minutes
+	}
+
+	HeavenlyRebirthPill: {
+		DisplayName: Heavenly Rebirth Pill
+		Tooltip: Prevents one death and restores 25% life; remains active for up to 10 minutes
+	}
+
+	TribulationWardPill: {
+		DisplayName: Tribulation Ward Pill
+		Tooltip: Reduces Tribulation damage and Qi shield consumption for 10 minutes
+	}
+
+	SpiritBeastLurePill: {
+		DisplayName: Spirit Beast Lure Pill
+		Tooltip: Multiplies Spirit Beast spawn weight by 2.5 for 5 minutes
+	}
+
+	ConcealmentPill: {
+		DisplayName: Concealment Pill
+		Tooltip: Greatly reduces enemy attention and natural spawning for 5 minutes
+	}
+}
+
+AlchemyPills.RebirthTriggered: The Heavenly Rebirth Pill defied death!
+
+Alchemy: {
+	TierUp: Alchemy advanced to Tier {0} - {1}, {2} Stage!
+	StageUp: Alchemy advanced to Tier {0} - {1}, {2} Stage!
+	BonusYield: Successful refinement produced an additional pill.
+	TooSaturated: Your meridians are saturated. Wait before consuming another pill.
+	RequiresRank: Requires Alchemy Tier {0} ({1}), {2} Stage
+	PillMasteryTooltip: Alchemy Tier {0} ({1}) - {2} Stage | Grants {3} Alchemy EXP
+
+	Stages: {
+		Low: Low
+		Middle: Middle
+		High: High
+	}
+
+	PillSaturationTooltip: Adds {0} Pill Saturation when consumed
+}
+
+NPCs: {
+	SpiritHare.DisplayName: Spirit Hare
+	JadeHornDeer.DisplayName: Jade Horn Deer
+	FlameTailedFox.DisplayName: Flame-Tailed Fox
+	ThunderclawTiger.DisplayName: Thunderclaw Tiger
+}
+
+Bestiary: {
+	SpiritHare: A timid creature that instinctively gathers the thinnest traces of spiritual Qi.
+	JadeHornDeer: Its antlers crystallize the life force of ancient forests into precious jade.
+	FlameTailedFox: A cunning Foundation beast whose twin tails burn with spiritual fire.
+	ThunderclawTiger: An elite predator that tempers its body beneath storms and hunts within the jungle at night.
+}
+
+SpiritBeasts: {
+	NameWithCultivation: "{0} - {1}, Stage {2}"
+	WorldLabel: "{0}, Stage {1} - {2}"
+
+	Danger: {
+		Trivial: Trivial
+		Weaker: Weaker
+		Equal: Equal
+		Dangerous: Dangerous
+		Overwhelming: Overwhelming
+	}
+}
+
+Cultivation: {
+	QiBar: Qi - {0}, Stage {1}
+	MaxRealm: "{0} Qi - MAX"
+	QiStatus: Qi {0}/{1} | QiEXP {2}/{3}
+	QiStatusMax: Qi {0}/{1} | QiEXP MAX
+	QiGain: +{0} Qi
+	Breakthrough: Breakthrough! You reached {0}
+	StageAdvanced: Advancement! {0} - Stage {1}
+	TribulationBegins: Heavenly Tribulation! To enter {0}, survive {1} lightning strikes
+	TribulationReady: A Heavenly Tribulation awaits your breakthrough to {0}
+	TribulationCancelled: Tribulation cancelled. Cultivate the breakthrough QiEXP again to retry
+	TribulationSurvived: Tribulation overcome! The heavens acknowledge your {0} cultivation
+	TribulationFailed: Tribulation failed! The Realm breakthrough was lost
+	TribulationDeath: "{0} was reduced to ashes by the Heavenly Tribulation."
+	Status: Realm: {0} - Stage {1} | Qi: {2}/{3} | QiEXP: {4}/{5}
+	NeedStillness: You must remain still to meditate
+	MeditationEnabled: Meditation enabled
+	MeditationDisabled: Meditation disabled
+	MeditationRate: Meditation: {0}/s QiEXP - missing Qi is restored at 10x this rate
+	PassiveQiRecovery: Passive recovery: {0} Qi/s while Qi is below QiEXP (scales with Realm)
+	RealmBonuses: +{0} max life | +{1} defense | +{2}% damage | +{3}% movement speed | +{4}% critical chance | +{5}% damage reduction | +{6} life regeneration
+	SpiritualQiZoneStatus: Qi Concentration Lv.{0}: +{1}% ({2} crystals)
+
+	BreakthroughTooltip: {
+		Title: Breakthrough Readiness
+		Next: Next advancement: {0}, Stage {1}
+		Progress: QiEXP {0}/{1} - {2} remaining
+		Bonuses: Next bonuses: +{0} life | +{1} defense | +{2}% damage | +{3}% speed | +{4}% crit | +{5}% damage reduction | +{6} regeneration
+		NextAbilities: Next abilities at {0}: {1}
+		Tribulation: Heavenly Tribulation: {0} strikes | shield ~{1} Qi each | ~{2} total
+		ShieldReady: Qi Protection is active and the current reserve covers the estimated shield cost
+		ShieldWarning: Warning: activate Qi Protection and arrive with a completely full Qi reserve
+		PenetrationWarning: At least 30% of every lightning strike penetrates the shield; health and equipment still matter
+		NoTribulation: No Heavenly Tribulation is required for this advancement
+		MaximumReached: Maximum cultivation reached
+	}
+
+	Realms: {
+		Mortal: Mortal
+		QiCondensation: Qi Gathering
+		FoundationEstablishment: Foundation Establishment
+		CoreFormation: Core Formation
+		NascentSoul: Nascent Soul
+	}
+}
+
+Projectiles: {
+	QiFireballProjectile.DisplayName: Qi Fireball Projectile
+	QiProtectionShieldProjectile.DisplayName: Qi Protection Shield
+	QiPalmProjectile.DisplayName: Qi Palm
+	FlameStepProjectile.DisplayName: Flame Step
+	FlyingSwordProjectile.DisplayName: Flying Sword
+	SpiritualPressureAuraProjectile.DisplayName: Spiritual Pressure Aura Projectile
+	SpiritVeinLocatorProjectile.DisplayName: Spirit Vein Locator Projectile
+	SpiritFlameProjectile.DisplayName: Spirit Flame
+	SpiritLightningProjectile.DisplayName: Spirit Lightning
+}
+
+Tiles: {
+	AlchemyCauldronTile.MapEntry: Alchemy Cauldron
+	SpiritJadeCauldronTile.MapEntry: Spirit Jade Cauldron
+	ProfoundAlchemyCauldronTile.MapEntry: Profound Alchemy Cauldron
+	SpiritGrassTile.MapEntry: Spirit Grass
+	FireLotusTile.MapEntry: Fire Lotus
+	MoonDewFlowerTile.MapEntry: Moon Dew Flower
+	IronrootTile.MapEntry: Ironroot
+	SpiritCrystalOreTile.MapEntry: Spirit Crystal
+	SpiritCrystalClusterTile.MapEntry: Spirit Crystal Cluster
+	SpiritJadeOreTile.MapEntry: Spirit Jade Ore
+	ProfoundIronOreTile.MapEntry: Profound Iron Ore
+}
+
+WorldGeneration.SpiritualOres: Generating Xianxia spiritual veins
+
+DebugCommands: {
+	MultiplayerDisabled: Debug commands are disabled in multiplayer. Enable them explicitly in the server configuration for a private test session
+	HelpTitle: Xianxia debug commands (Realm numbers: 1-5)
+	Help1: /xiadebug status - show current test state
+	Help2: /xiadebug set <realm> <stage> - jump to a Realm and Stage
+	Help3: /xiadebug qi <amount|fill|empty> - change usable Qi
+	Help4: /xiadebug advance - trigger the next normal breakthrough
+	Help5: /xiadebug tribulation <core|nascent> - prepare a Tribulation confirmation
+	Help6: /xiadebug tribulation <win|fail> - resolve the current Tribulation instantly
+	Help7: /xiadebug ability <name|all> <1-20> - set technique level
+	Help8: /xiadebug effect <stage|realm> | /xiadebug reset
+	Help9: /xiadebug beast <hare|deer|fox|tiger> - spawn a Spirit Beast
+	Help10: /xiadebug spawncheck - explain which Spirit Beasts can spawn here
+	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
+	Unknown: Unknown debug action: {0}
+	SetUsage: Usage: /xiadebug set <realm 1-5|name> <stage 1-9>
+	QiUsage: Usage: /xiadebug qi <amount|fill|empty>
+	TribulationUsage: Usage: /xiadebug tribulation <core|nascent|win|fail>
+	AbilityUsage: Usage: /xiadebug ability <ability name|all> <level 1-20>
+	EffectUsage: Usage: /xiadebug effect <stage|realm>
+	BeastUsage: Usage: /xiadebug beast <hare|deer|fox|tiger>
+	BeastSinglePlayer: Spirit Beast spawning is available only in single-player
+	BeastSpawned: Spawned: {0}
+	AlchemyUsage: Usage: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	AlchemyRankSet: Alchemy debug rank set to Tier {0} - {1}, {2} Stage
+	AlchemySaturationSet: Pill Saturation set to {0}/100
+	SpawnCheckTitle: === Spirit Beast spawn check ===
+	SpawnCheckEnvironment: Biome: {0} | {1} | {2} blocks from world spawn | {3}, Stage {4}
+	SpawnCheckSettings: Enabled: {0} | Distance scaling: {1} | Rate: {2}% | Safe zone: {3} | Invasion: {4}
+	SpawnCheckEligible: "[CAN SPAWN] {0}"
+	SpawnCheckBlocked: "[BLOCKED] {0}: {1}"
+	SpawnCheckReasonDisabled: Spirit Beasts are disabled in the server configuration
+	SpawnCheckReasonSafe: town NPCs or a Peace Candle make this a safe zone
+	SpawnCheckReasonInvasion: an invasion is active
+	SpawnCheckReasonRealm: requires player Realm: {0}
+	SpawnCheckReasonDistance: move at least {0} more blocks from world spawn (minimum {1})
+	SpawnCheckReasonHabitat: biome, depth or time requirement is not met
+	SpawnCheckCandidateNote: Natural spawning also requires Terraria to choose a dry land tile outside a safe area and to have room under the NPC cap.
+	SpawnCheckDay: Day
+	SpawnCheckNight: Night
+	SpawnCheckBiomeForest: Forest surface
+	SpawnCheckBiomeSnow: Snow surface
+	SpawnCheckBiomeJungle: Jungle surface
+	SpawnCheckBiomeBeach: Beach surface
+	SpawnCheckBiomeDesert: Desert
+	SpawnCheckBiomeDungeon: Dungeon
+	SpawnCheckBiomeUnderground: Underground
+	ProgressionSet: Debug progression set to {0}, Stage {1}
+	QiSet: Debug Qi set to {0}/{1}
+	CannotAdvance: Cannot advance: cultivation is maxed or a Tribulation is already pending
+	NoTribulation: No pending or active Tribulation was found
+	AbilityUnknown: Unknown ability: {0}
+	AbilitySet: "{0} debug level set to {1}"
+	AllAbilitiesSet: All ability debug levels set to {0}
+	EffectPlayed: Playing {0} breakthrough effect
+	Reset: Debug cultivation and ability levels reset
+}
+
+Manual: {
+	Title: Cultivator's Manual
+	Received: You received the Cultivator's Manual. Use it to learn about the Xianxia world
+	Previous: Previous
+	Next: Next
+	Close: Close
+	IndexButton: Index
+	PageNumber: Page {0}/{1}
+	ScrollForMore: Scroll for more
+
+	Index: {
+		Title: Index
+		Hint: Select a section to open it directly
+
+		Entries: {
+			Fundamentals: Cultivation Fundamentals
+			QiMeditation: Qi, QiEXP and Meditation
+			PassiveAbilities: Passive Abilities
+			CombatTechniques: Combat Techniques
+			Movement: Movement and Ability Wheel
+			BreakthroughResources: Breakthroughs and Resources
+			WorldConfiguration: World Configuration
+			CraftingRecipes: Crafting Recipes
+			CultivationGrowth: Stat Growth
+			QiRequirements: Qi and QiEXP Requirements
+			SpiritualQiZones: Spiritual Qi Zones
+			SpiritMines: Spirit Stone Mines
+			AbilityProgression: Ability Tree and Levels
+			SpiritBeasts: Spirit Beasts
+			AlchemyPath: Alchemy Path
+			AdvancedPills: Advanced Pill Recipes
+		}
+	}
+
+	Pages: {
+		Page0: {
+			Title: Cultivation Fundamentals
+			Body:
+				'''
+				Cultivation is divided into five Realms: Mortal, Qi Gathering, Foundation Establishment, Core Formation and Nascent Soul.
+
+				Each Realm contains 9 Stages. Every advancement increases health, defense, damage, speed and other statistics. Later Stages require progressively more QiEXP.
+
+				The upper bar displays current Qi and QiEXP. Qi powers techniques and defenses; QiEXP represents permanent progress and does not decrease when an ability is used. Hover over the bar to inspect the next advancement, its stat bonuses, future abilities and Tribulation preparation estimate.
+
+				The /cultivation command displays your current Realm, Stage, bonuses and recovery rates.
+				'''
+		}
+
+		Page1: {
+			Title: Qi, QiEXP and Meditation
+			Body:
+				'''
+				Qi is your usable reserve. QiEXP is permanent experience required to advance. Spending Qi never causes the loss of a Stage or Realm.
+
+				While Qi is below QiEXP, passive recovery scales by Realm: 1 / 2 / 4 / 8 / 16 Qi per second.
+
+				Press [{0}] once while remaining still to begin meditating, then press it again to stop. Toggle meditation is enabled by default and can be changed to hold mode in the client configuration. Moving, attacking, mounting, opening chat or opening the Cultivation Menu stops meditation. If Qi is missing, meditation restores it at 10x speed. If the reserve fills partway through a meditation second, the remaining time immediately cultivates new QiEXP; upkeep from toggle abilities therefore does not block progression. Base growth is 1 / 4 / 16 / 64 / 256 QiEXP per second depending on Realm.
+
+				You can meditate while flying if you remain still. Pendants, talismans, armor and pills can improve these rates.
+				'''
+		}
+
+		Page2: {
+			Title: Passive Abilities
+			Body:
+				'''
+				SPIRITUAL BREATHING - Mortal
+				Always active. Increases passive Qi recovery by 10% and trains while restoring missing Qi.
+
+				QI SENSE - Qi Gathering
+				Reveals creatures, treasure and danger. Costs 1 Qi/s. Toggle it from the Ability Wheel or with /qisense on|off.
+
+				QI PROTECTION - Foundation Establishment
+				Absorbs incoming damage at a cost of 5 Qi per damage, including damage over time from fire, poison and similar debuffs. When breath is exhausted underwater, it also spends Qi to prevent drowning while keeping the breath meter at its last sliver. Cultivation life regeneration is applied before the shield and can reduce or overcome negative regeneration. A spiritual shield appears when activated. Toggle it from the wheel or with /qiprotection on|off.
+
+				GOLDEN CORE CIRCULATION - Core Formation
+				Always active. Reduces Qi consumed by abilities by 5% and trains whenever you spend Qi.
+
+				NASCENT SOUL REGENERATION - Nascent Soul
+				Always active. Grants +4 life regeneration and trains while healing wounds.
+				'''
+		}
+
+		Page3: {
+			Title: Combat Techniques
+			Body:
+				'''
+				QI RESISTANCE [{0}] - Qi Gathering
+				Consumes 60 Qi and grants +10 defense for 1 minute.
+
+				FIREBALL [{1}] - Qi Gathering
+				Launches a fiery sphere. Damage, cost and size scale together. The explosion can break terrain.
+
+				QI PALM [{2}] - Qi Gathering
+				Projects a large spiritual palm with strong knockback. Damage, size and cost increase with cultivation, and it can destroy terrain. It can also be used through the Qi Palm Technique item.
+
+				SPIRITUAL PRESSURE [{3}] - Nascent Soul
+				Toggles an aura that consumes 25 Qi/s, periodically damages and slows enemies. Radius and damage increase with Stage; bosses resist more of the slowing effect. Its compact visual rings do not represent the full damage radius.
+
+				NIGHT VISION [{4}] - Foundation Establishment
+				Toggle enhanced vision and a spiritual light aura around your character, allowing exploration in complete darkness without illuminating the entire screen. The aura radius grows with mastery. It costs 3 Qi per second at level 1, 2 Qi per second from level 8 and 1 Qi per second from level 15.
+				'''
+		}
+
+		Page4: {
+			Title: Movement and Ability Wheel
+			Body:
+				'''
+				FLAME STEP [{0}] - Foundation Establishment
+				Dash in the direction of the movement keys or cursor, damaging enemies and igniting the path.
+
+				QI FLIGHT [{1}] - Core Formation
+				Toggle flight on or off. It consumes 1 Qi/s and becomes faster with every Realm. You can meditate while hovering motionless. Opening the Ability Menu or chat holds you stationary in the air while the normal Qi cost continues, so writing commands never disables flight.
+
+				VOID STEP [{2}] - Nascent Soul
+				Teleport to the cursor. It also works on the fullscreen map. Costs 20 Qi + 2 Qi per 2 blocks traveled and finds a clear space near the selected point.
+
+				ABILITY WHEEL [{3}]
+				Hold the key to view abilities, requirements, controls and passive states. Click a passive to toggle it.
+				'''
+		}
+
+		Page5: {
+			Title: Breakthroughs, Resources and Alchemy
+			Body:
+				'''
+				Reaching the QiEXP threshold causes a breakthrough. From Core Formation onward, you must confirm and survive a Heavenly Tribulation. The first contains 9 lightning strikes; failure prevents advancement.
+
+				Heavenly lightning pierces ordinary defenses. At base mastery, Qi Protection consumes about 12% of maximum Qi per Core Formation strike and blocks 70% of its health damage; the rest penetrates the shield. Nascent Soul strikes consume about 15% and deal substantially more damage. Qi Protection mastery lowers the reserve cost. Arrive with full Qi, healing and suitable equipment.
+
+				Spirit Stones cannot be crafted: they are mined from Spirit Crystal veins. Spirit Jade and Profound Iron make bars for armor, accessories, weapons and Flying Swords.
+
+				The Alchemy Cauldron crafts pills. A Qi Recovery Pill restores 100 Qi without increasing QiEXP; other pills temporarily improve meditation, defense and damage.
+
+				The Flying Sword requires Qi Gathering and consumes Qi with every launch. It automatically homes in on the closest visible enemy within 60 blocks; if no target is found it continues normally, then returns to its owner.
+				'''
+		}
+
+		Page6: {
+			Title: World Configuration
+			Body:
+				'''
+				In the mod's Config menu, the ABILITY WORLD DESTRUCTION section controls which techniques may break terrain.
+
+				The master switch disables all ability destruction at once. Below it, Fireball, Qi Palm and Flame Step can be configured separately.
+
+				Every option is enabled by default. These are server settings, so multiplayer uses the host or server choices.
+
+				CLIENT INTERFACE AND EFFECTS
+				Each player can move and scale the Qi bar, hide the Qi Concentration line and reduce Xianxia particles, spiritual lights, auras and trails. These client settings never alter damage or server gameplay.
+
+				DEBUG COMMANDS
+				Use /xiadebug help to list progression, Qi, ability, effect and Tribulation testing tools. They work immediately in single-player. In multiplayer they are disabled by default and must be enabled by the server; when enabled, every player can use them, so keep them off on public servers.
+				'''
+		}
+
+		Recipes1: {
+			Title: Recipes - Materials and Equipment
+			Body:
+				'''
+				MATERIALS AND STATIONS
+				Spirit Jade Bar: 4 Spirit Jade Ore - Furnace
+				Profound Iron Bar: 4 Profound Iron Ore - Hellforge
+				Alchemy Cauldron: 10 Profound Iron Bars + 5 Spirit Jade Bars + 3 Spirit Stones - Anvil
+
+				SPIRIT JADE ARMOR - ANVIL
+				Headpiece: 10 Spirit Jade Bars + 1 Spirit Stone
+				Robe: 18 Spirit Jade Bars + 2 Spirit Stones
+				Leggings: 14 Spirit Jade Bars + 1 Spirit Stone
+
+				WEAPONS - ANVIL
+				Spirit Jade Sword: 8 Spirit Jade Bars
+				Profound Iron Spear: 10 Profound Iron Bars + 2 Spirit Stones
+				Flying Sword: 12 Spirit Jade Bars + 3 Spirit Stones
+				'''
+		}
+
+		Recipes2: {
+			Title: Recipes - Accessories, Techniques and Pills
+			Body:
+				'''
+				ACCESSORIES
+				Profound Iron Ring: 6 Profound Iron Bars + 2 Spirit Stones - Anvil
+				Spirit Jade Pendant: 6 Spirit Jade Bars + 2 Spirit Stones - Anvil
+				Spirit Gathering Talisman: 5 Silk + 3 Spirit Jade Bars + 3 Spirit Stones - Work Bench
+
+				TECHNIQUES AND GUIDES
+				Fireball Technique: Book + Spirit Stone + 5 Fallen Stars - Bookcase
+				Qi Palm Technique: Book + 2 Spirit Stones + 5 Fallen Stars - Bookcase
+				Spirit Vein Compass: Compass + 8 Gold or Platinum Bars + 5 Fallen Stars + 3 Amethysts - Anvil
+				Cultivator's Manual: Book + Spirit Stone - Work Bench
+
+				PILLS x2 - ALCHEMY CAULDRON
+				Qi Recovery: Bottled Water + 2 Daybloom + Moonglow + Spirit Stone
+				Spirit Gathering: Bottled Water + 2 Moonglow + Waterleaf + 3 Spirit Jade Ore + Spirit Stone
+				Body Tempering: Bottled Water + 2 Blinkroot + Deathweed + 3 Profound Iron Ore + Spirit Stone
+				'''
+		}
+
+		CultivationGrowth: {
+			Title: Stage and Realm Growth
+			Body:
+				'''
+				Bonuses are cumulative and increase rapidly in higher Realms. Entering Stage 1 of a new Realm grants 3 times that Realm's normal Stage increase.
+
+				INCREASE PER STAGE
+				Mortal: +3 life, +0.5 defense, +0.5% damage
+				Qi Gathering: +8 life, +1 defense, +1.5% damage
+				Foundation Establishment: +20 life, +2 defense, +4% damage
+				Core Formation: +50 life, +5 defense, +9% damage
+				Nascent Soul: +120 life, +12 defense, +20% damage
+
+				Each increase also grants movement speed, critical chance, damage reduction and life regeneration. These secondary bonuses follow the same Realm-based growth.
+				'''
+		}
+
+		QiRequirements: {
+			Title: Qi and QiEXP Requirements
+			Body:
+				'''
+				To advance, fill your reserve to the new QiEXP threshold. The cost increases with every Stage and makes a large jump upon entering a higher Realm.
+
+				COST OF EACH STAGE
+				Mortal: 25 to 130 QiEXP
+				Qi Gathering: 300 to 1,100 QiEXP
+				Foundation Establishment: 1,500 to 5,500 QiEXP
+				Core Formation: 7,500 to 27,500 QiEXP
+				Nascent Soul: 37,500 to 137,500 QiEXP
+
+				The listed cost is added to the total threshold already reached. Usable Qi and QiEXP remain separate: spending Qi on abilities never reduces permanent progress.
+				'''
+		}
+
+		SpiritualQiZones: {
+			Title: High Spiritual Qi Zones
+			Body:
+				'''
+				Spirit Stone mines radiate Qi into the surrounding area. Meditating or passively recovering Qi near a mine grants a multiplier shown below the Qi bar.
+
+				CONCENTRATION WITHIN 60 BLOCKS
+				Level 0 - no crystals: +0%
+				Level 1 - 1 to 50 crystals: +100% (2x total)
+				Level 2 - 51 to 100 crystals: +200% (3x total)
+				Levels 3-9 - every 50 additional crystals grant another +100%
+				Level 10 - at least 451 crystals: +1000% (11x total)
+
+				The multiplier affects both meditation and passive Qi recovery. The current level, including Level 0, is always displayed below the Qi bar. The radius and the entire mechanic can be changed in the server configuration. Mining the crystals lowers the concentration and may remove the zone completely.
+				'''
+		}
+
+		SpiritMines: {
+			Title: Spirit Stone Mines
+			Body:
+				'''
+				Mines are natural chambers in the Cavern layer. A continuous shell of Spirit Crystal surrounds the chamber and more crystals emerge from its floor.
+
+				SIZES
+				Small: about 16-24 blocks wide
+				Medium: about 28-40 blocks wide
+				Large: about 44-60 blocks wide
+
+				Every world contains at least one mine of each size. Small mines are common, medium mines less frequent and large mines rare.
+
+				The Spirit Vein Compass locates the nearest vein, then shows its direction and distance for 10 seconds. Its default search radius is 250 blocks and is configurable by the server.
+
+				Mines are created only during world generation. Spirit Stones are finite and do not regenerate automatically.
+				'''
+		}
+
+		Recipes3: {
+			Title: Compass Upgrades and Beast Alchemy
+			Body: Higher compass versions increase detection range. Spirit Beast materials can be refined into powerful pills at the Alchemy Cauldron.
+		}
+
+		Recipes4: {
+			Title: Realm Progression Pills
+			Body: Advanced pills complete the High Stage of each Tier and the Nascent Soul progression.
+		}
+
+		Recipes5: {
+			Title: Utility Pill Recipes
+			Body: Specialized pills prepare Tribulations, attract Spirit Beasts or conceal the cultivator.
+		}
+
+		AbilityProgression: {
+			Title: Ability Tree and Mastery
+			Body:
+				'''
+				Open the ability list with [{0}]. Techniques are divided into Realm rows, and each card shows its icon, name, active or passive type, level and EXP bar. Passives are shown before active abilities in every row. Available abilities are illuminated, while abilities from future Realms remain visible but locked.
+
+				Each ability earns EXP when used successfully. Meditation, Flight, Qi Sense and Spiritual Pressure progress during continuous use. Offensive techniques earn EXP on successful casts, and Qi Protection progresses when it absorbs damage.
+
+				The maximum level is 20. Leveling improves power, duration, consumption, speed or cooldown according to the ability. Required EXP grows quadratically.
+
+				The Paths tab is located at the top of the same menu. It contains cultivator professions and is ready for more to be added. The Alchemy Path is currently available, showing the Alchemy Cauldron and known pills.
+				'''
+		}
+
+		SpiritBeasts: {
+			Title: Spirit Beasts
+			Body:
+				'''
+				Spirit Beasts cultivate the same Realms as players. Their nameplate shows Realm, Stage and relative danger. A beast one Realm above you can be a lethal encounter, so inspect the label before attacking.
+
+				KNOWN BEASTS
+				Spirit Hare - Mortal - daytime surface, including forest, snow, jungle and beach. Timid and usually flees.
+				Jade Horn Deer - Qi Gathering - daytime surface, including forest, snow, jungle and beach. Charges when threatened.
+				Flame-Tailed Fox - Foundation Establishment - surface at night, including forest, snow, jungle and beach. Dashes and launches spiritual flame.
+				Thunderclaw Tiger - Core Formation - jungle surface at night. An elite beast using leaps and lightning.
+				The Dungeon and Desert do not currently host Spirit Beasts.
+
+				DISTANCE FROM WORLD SPAWN
+				0+ blocks: Spirit Hare
+				200+ blocks: Jade Horn Deer
+				450+ blocks: Flame-Tailed Fox
+				700+ blocks: Thunderclaw Tiger
+				The average Stage rises continuously until reaching maximum strength at about 1,200 blocks. This uses the shared world spawn, not personal beds, and therefore remains consistent in multiplayer.
+
+				Beasts also begin appearing when your cultivation approaches their Realm. Their life, damage, defense and rewards scale with Stage. Relative danger compares both Realm and Stage. They drop fur, blood, elemental essences and Realm Beast Cores used for new pills.
+
+				Natural spawning and its rate can be changed in the server configuration. Use /xiadebug spawncheck to diagnose the current area or /xiadebug beast <hare|deer|fox|tiger> to summon one in single-player.
+				'''
+		}
+
+		AlchemyPath: {
+			Title: The Alchemist's Path
+			Body:
+				'''
+				Alchemy has five cultivation Tiers, and every Tier contains Low, Middle and High Stages. Crafting any Xianxia pill at an Alchemy Cauldron grants Path EXP. Reaching the required Tier and Stage unlocks stronger recipes. Every advancement improves the chance of producing one additional pill and reduces the chance of separating Pill Dregs.
+
+				ALCHEMY TIERS
+				Tier 0 - Mortal - Low, Middle, High
+				Tier 1 - Qi Gathering - Low, Middle, High
+				Tier 2 - Foundation Establishment - Low, Middle, High
+				Tier 3 - Core Formation - Low, Middle, High
+				Tier 4 - Nascent Soul - Low, Middle, High
+				After completing High Stage, the Path advances to Low Stage of the next Tier. Tier 4 High is the current maximum.
+
+				SPIRITUAL HERBS
+				Spirit Grass seeds can emerge from ordinary vegetation. Fire Lotus seeds are associated with deserts, Moon Dew Flower seeds with jungles, and Ironroot seeds with snow biomes. These drops work in existing worlds. Plant seeds on suitable solid ground, allow them to pass through three growth stages, then harvest and replant them.
+
+				CAULDRON GRADES
+				Alchemy Cauldron - basic refinement.
+				Spirit Jade Cauldron - +5% bonus yield and -7% impurity chance.
+				Profound Alchemy Cauldron - +10% bonus yield and -14% impurity chance.
+				Upgraded Cauldrons also satisfy recipes requiring the basic Alchemy Cauldron.
+
+				PILL SATURATION
+				Every consumed pill adds saturation. As saturation rises, pill effectiveness falls gradually to 50%. A pill cannot be consumed if it would exceed 100 saturation. Saturation naturally decreases over time, preventing unlimited pill stacking while preserving their strategic use.
+
+				Open the cultivation menu and select Paths > Alchemy to inspect Tier, Stage, EXP, current saturation, pill effectiveness and refinement bonuses. The Alchemy page is divided into five Tier rows; every pill appears beside its Realm Tier with the Low, Middle or High Stage required to unlock it. For testing, use /xiadebug alchemy <tier 0-4> <low|middle|high> or /xiadebug alchemy saturation <0-100>.
+				'''
+		}
+	}
+}

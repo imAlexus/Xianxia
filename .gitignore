@@ -1,0 +1,18 @@
+# tModLoader and .NET build output
+bin/
+obj/
+*.tmod
+
+# Temporary working files
+tmp/
+.tmp/
+
+# IDE and user-specific settings
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db

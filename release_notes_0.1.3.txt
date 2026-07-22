@@ -1,0 +1,49 @@
+[h1]Xianxia v0.1.3 - Spirit Beasts[/h1]
+
+Spirit Beasts have entered the world of Terraria! Their strength, cultivation Stage, and rewards increase as you travel farther from the world spawn.
+
+[h2]Spirit Beasts[/h2]
+[list]
+[*]Added the Spirit Hare, a timid Mortal beast.[/*]
+[*]Added the Jade Horn Deer, a charging Qi Gathering beast.[/*]
+[*]Added the Flame-Tailed Fox, a Foundation Establishment beast that uses spiritual flames.[/*]
+[*]Added the Thunderclaw Tiger, a Core Formation beast that attacks with leaps and lightning.[/*]
+[*]Added animated sprites with improved ground alignment and movement direction.[/*]
+[*]Added readable nameplates displaying the beast's name, Realm, Stage, and relative danger.[/*]
+[/list]
+
+[h2]Distance-Based Progression[/h2]
+[list]
+[*]Stronger Spirit Beasts appear progressively farther from the world spawn.[/*]
+[*]Their average Stage increases with distance, reaching maximum scaling at approximately 1,200 blocks.[/*]
+[*]Distance progression uses the shared world spawn for consistent multiplayer behavior.[/*]
+[*]Spirit Beasts can appear in forests, snow biomes, jungles, and beaches.[/*]
+[*]Natural spawning, distance scaling, and spawn rate can be configured.[/*]
+[/list]
+
+[h2]New Materials and Alchemy[/h2]
+[list]
+[*]Added Spirit Fur and Spirit Beast Blood.[/*]
+[*]Added Jade Antler, Flame Essence, and Thunder Essence.[/*]
+[*]Added Beast Cores for multiple cultivation Realms.[/*]
+[*]Added new Spirit Beast pills crafted at the Alchemy Cauldron.[/*]
+[*]Added unique textures for every new material and drop.[/*]
+[/list]
+
+[h2]Debugging and Improvements[/h2]
+[list]
+[*]Added [b]/xiadebug beast <hare|deer|fox|tiger>[/b] to summon Spirit Beasts for testing.[/*]
+[*]Added [b]/xiadebug spawncheck[/b] to explain which Spirit Beasts can spawn in the current area.[/*]
+[*]The spawn check reports biome, time, distance, Realm requirements, safe zones, invasions, and configuration status.[/*]
+[*]Fixed Qi Flight being interrupted when opening chat to enter commands.[/*]
+[*]Updated the Cultivator's Manual in English and Italian.[/*]
+[*]Improved Spirit Beast labels with larger text, a dark background, and Realm-colored borders.[/*]
+[/list]
+
+Thank you for playing Xianxia. Spirit Beasts, balance, rewards, and regional variety will continue to expand in future updates.
+
+[quote=tModLoader Xianxia]
+Developed By imAlexus
+[/quote]
+
+Version 0.1.3 has been published to Stable tModLoader v2026.5. Learn more on the [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3768052356]Workshop page[/url].
