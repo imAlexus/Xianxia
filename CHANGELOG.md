@@ -2,6 +2,18 @@
 
 All notable Xianxia releases are documented here.
 
+## [0.1.5] - 2026-07-23
+
+### Equipment and Manual Refinement
+
+- Added the craftable Novice Disciple armor set with modest early-game bonuses.
+- Added full support for Terraria dyes across the new outfit.
+- Redesigned the Spirit Jade armor with native-resolution item and equipment textures.
+- Consolidated all crafting recipes into one scrollable Manual catalogue with category headers.
+- Added Alchemy rank requirements directly to pill entries in the Manual.
+- Added a client option to hide Spirit Beast nameplates.
+- Updated English, Italian, and Simplified Chinese localization.
+
 ## [0.1.4] - 2026-07-22
 
 ### Alchemy Expansion and Chinese Localization
@@ -55,6 +67,7 @@ All notable Xianxia releases are documented here.
 - Added Spirit Stone mines, spiritual equipment, basic alchemy, and the Cultivator's Manual.
 - Added English and Italian localization.
 
+[0.1.5]: https://github.com/imAlexus/Xianxia/releases/tag/v0.1.5
 [0.1.4]: https://github.com/imAlexus/Xianxia/releases/tag/v0.1.4
 [0.1.3]: https://github.com/imAlexus/Xianxia/releases/tag/v0.1.3
 [0.1.2]: https://github.com/imAlexus/Xianxia/releases/tag/v0.1.2

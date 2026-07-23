@@ -329,6 +329,7 @@ Configs: {
 		Headers: {
 			MeditationControls: Controlli della meditazione
 			QiHud: Interfaccia del Qi
+			SpiritBeasts: Bestie Spirituali
 			VisualEffects: Effetti visivi
 		}
 
@@ -355,6 +356,11 @@ Configs: {
 		ShowQiConcentration: {
 			Label: Mostra Concentrazione Qi
 			Tooltip: Mostra la concentrazione di Spirit Stone nelle vicinanze sotto la barra Qi
+		}
+
+		ShowSpiritBeastNameplates: {
+			Label: Mostra riquadri delle Bestie Spirituali
+			Tooltip: Mostra nome, Regno, Stadio e pericolosita relativa sopra le Bestie Spirituali
 		}
 
 		VisualEffectIntensityPercent: {
@@ -550,6 +556,22 @@ Items: {
 	SpiritJadeLeggings: {
 		DisplayName: Calzari di Giada Spirituale
 		Tooltip: +8% velocita di movimento
+	}
+
+	NoviceDiscipleHeadband: {
+		DisplayName: Fascia del Discepolo Novizio
+		Tooltip: +2% probabilita di colpo critico
+		SetBonus: +1 Qi/s durante la meditazione
+	}
+
+	NoviceDiscipleRobe: {
+		DisplayName: Veste del Discepolo Novizio
+		Tooltip: +3% danni
+	}
+
+	NoviceDiscipleTrousers: {
+		DisplayName: Pantaloni del Discepolo Novizio
+		Tooltip: +4% velocita di movimento
 	}
 
 	SpiritJadePendant: {
@@ -885,6 +907,16 @@ Manual: {
 	IndexButton: Indice
 	PageNumber: Pagina {0}/{1}
 	ScrollForMore: Scorri per continuare
+	AlchemyRequirement: Alchimia: {0}, Stadio {1}
+
+	RecipeSections: {
+		NoviceAttire: Abiti del Discepolo Novizio
+		MaterialsEquipment: Materiali, Equipaggiamento e Armi
+		AccessoriesTechniques: Accessori, Tecniche e Pillole Base
+		CauldronsBeastPills: Calderoni, Bussole e Pillole delle Bestie
+		ProgressionPills: Pillole di Progressione
+		UtilityPills: Pillole di Utilita
+	}
 
 	Index: {
 		Title: Indice
@@ -1034,7 +1066,7 @@ Manual: {
 		}
 
 		Recipes1: {
-			Title: Ricette - Materiali ed Equipaggiamento
+			Title: Catalogo Completo delle Ricette
 			Body:
 				'''
 				MATERIALI E STAZIONI

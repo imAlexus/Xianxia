@@ -329,6 +329,7 @@ Configs: {
 		Headers: {
 			MeditationControls: 冥想控制
 			QiHud: 真气界面
+			SpiritBeasts: 灵兽
 			VisualEffects: 视觉特效
 		}
 
@@ -355,6 +356,11 @@ Configs: {
 		ShowQiConcentration: {
 			Label: 显示灵气浓度
 			Tooltip: 在真气条下显示附近灵石浓度
+		}
+
+		ShowSpiritBeastNameplates: {
+			Label: 显示灵兽信息框
+			Tooltip: 在灵兽上方显示名称、境界、阶段和相对危险程度
 		}
 
 		VisualEffectIntensityPercent: {
@@ -550,6 +556,22 @@ Items: {
 	SpiritJadeLeggings: {
 		DisplayName: 灵玉护腿
 		Tooltip: +8% 移动速度
+	}
+
+	NoviceDiscipleHeadband: {
+		DisplayName: 初入门弟子头带
+		Tooltip: +2% 暴击率
+		SetBonus: 冥想时每秒额外恢复 1 点真气
+	}
+
+	NoviceDiscipleRobe: {
+		DisplayName: 初入门弟子袍
+		Tooltip: +3% 伤害
+	}
+
+	NoviceDiscipleTrousers: {
+		DisplayName: 初入门弟子裤
+		Tooltip: +4% 移动速度
 	}
 
 	SpiritJadePendant: {
@@ -885,6 +907,16 @@ Manual: {
 	IndexButton: 目录
 	PageNumber: 第 {0}/{1} 页
 	ScrollForMore: 滚动查看更多
+	AlchemyRequirement: 炼丹：{0}，{1}阶段
+
+	RecipeSections: {
+		NoviceAttire: 初入门弟子服饰
+		MaterialsEquipment: 材料、装备与武器
+		AccessoriesTechniques: 饰品、功法与基础丹药
+		CauldronsBeastPills: 丹炉、罗盘与灵兽丹药
+		ProgressionPills: 修炼进阶丹药
+		UtilityPills: 辅助丹药
+	}
 
 	Index: {
 		Title: 目录
@@ -1034,7 +1066,7 @@ Manual: {
 		}
 
 		Recipes1: {
-			Title: 配方 - 材料与装备
+			Title: 完整制作配方
 			Body:
 				'''
 				材料与设施

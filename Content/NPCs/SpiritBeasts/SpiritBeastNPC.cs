@@ -128,6 +128,11 @@ public abstract class SpiritBeastNPC : ModNPC
 			return;
 		}
 
+		if (!(CultivationClientConfig.Instance?.ShowSpiritBeastNameplates ?? true))
+		{
+			return;
+		}
+
 		CultivationPlayer cultivation = Main.LocalPlayer.GetModPlayer<CultivationPlayer>();
 		// A Realm breakthrough is worth more than the nine internal Stages, while
 		// Stage differences still affect the warning inside the same Realm.

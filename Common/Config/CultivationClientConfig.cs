@@ -37,6 +37,10 @@ public class CultivationClientConfig : ModConfig
 	[DefaultValue(true)]
 	public bool ShowQiConcentration;
 
+	[Header("SpiritBeasts")]
+	[DefaultValue(true)]
+	public bool ShowSpiritBeastNameplates;
+
 	[Header("VisualEffects")]
 	[DefaultValue(100)]
 	[Range(0, 100)]

@@ -60,7 +60,8 @@ Cultivate Qi and walk the path to immortality in Terraria.
 
 [h2]Items, Equipment, and Alchemy[/h2]
 [list]
-[*]A complete Spirit Jade armor set.[/*]
+[*]Craftable Novice Disciple attire with modest early-game cultivation bonuses and full dye support.[/*]
+[*]A complete Spirit Jade armor set with native-resolution item and equipment textures.[/*]
 [*]Spirit Jade Sword, Profound Iron Spear, and a homing Flying Sword.[/*]
 [*]A ring, pendant, and talisman with cultivation-related bonuses.[/*]
 [*]An Alchemy Cauldron and the Alchemy Path.[/*]
@@ -76,15 +77,16 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [h2]Quality of Life and Configuration[/h2]
 [list]
 [*]A Cultivator's Manual received upon first entering a world, featuring an interactive index, explanations, and illustrated recipes.[/*]
+[*]A complete crafting catalogue on one scrollable page, organized by category with Alchemy requirements.[/*]
 [*]Scrollable Manual pages with mouse-wheel, draggable scrollbar, return-to-top control, and remembered page.[/*]
 [*]Hover over the Qi bar for next-Stage requirements, stat gains, ability unlocks, and Tribulation preparation estimates.[/*]
-[*]Client options for Qi bar position and scale, Qi Concentration visibility, and visual effect intensity.[/*]
+[*]Client options for Qi bar position and scale, Qi Concentration visibility, Spirit Beast nameplates, and visual effect intensity.[/*]
 [*]Commands for inspecting cultivation progress and controlling certain passive abilities.[/*]
 [*]Optional debug commands for testing Realms, Stages, abilities, effects, Heavenly Tribulations, and Spirit Beasts.[/*]
 [*]Use [b]/xiadebug spawncheck[/b] to diagnose Spirit Beast spawning in the current area.[/*]
 [*]Fully configurable keybinds.[/*]
 [*]Ability terrain destruction can be disabled globally or separately for each technique.[/*]
-[*]Full English and Italian localization.[/*]
+[*]Full English, Italian, and Simplified Chinese localization.[/*]
 [/list]
 
 [b]Note:[/b] To discover Spirit Stone mines, explore a world created with the mod enabled.

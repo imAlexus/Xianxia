@@ -11,6 +11,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Xianxia.Common.Players;
 using Xianxia.Content.Items;
 using Xianxia.Content.Items.Accessories;
 using Xianxia.Content.Items.Alchemy;
@@ -24,7 +25,7 @@ namespace Xianxia.Common.Systems;
 
 public class CultivationManualSystem : ModSystem
 {
-	private const int PageCount = 20;
+	private const int PageCount = 16;
 
 	private readonly record struct ManualIndexEntry(string LocalizationKey, int TargetPage);
 	private readonly record struct ManualTextLine(string Text, float Y);
@@ -34,6 +35,10 @@ public class CultivationManualSystem : ModSystem
 		int ResultStack,
 		int StationType,
 		ManualIngredient[] Ingredients
+	);
+	private readonly record struct ManualRecipeGroup(
+		string LocalizationKey,
+		ManualRecipe[] Recipes
 	);
 
 	private static readonly ManualIndexEntry[] IndexEntries =
@@ -46,14 +51,13 @@ public class CultivationManualSystem : ModSystem
 		new("BreakthroughResources", 6),
 		new("WorldConfiguration", 7),
 		new("CraftingRecipes", 8),
-		new("CultivationGrowth", 10),
-		new("QiRequirements", 11),
-		new("SpiritualQiZones", 12),
-		new("SpiritMines", 13),
-		new("AbilityProgression", 15),
-		new("SpiritBeasts", 16),
-		new("AlchemyPath", 17),
-		new("AdvancedPills", 18)
+		new("CultivationGrowth", 9),
+		new("QiRequirements", 10),
+		new("SpiritualQiZones", 11),
+		new("SpiritMines", 12),
+		new("AbilityProgression", 13),
+		new("SpiritBeasts", 14),
+		new("AlchemyPath", 15)
 	];
 
 	private static bool isOpen;
@@ -115,6 +119,8 @@ public class CultivationManualSystem : ModSystem
 			return true;
 		}
 
+		currentPage = Math.Clamp(currentPage, 0, PageCount - 1);
+
 		int panelWidth = Math.Min(900, Main.screenWidth - 40);
 		int panelHeight = Math.Min(640, Main.screenHeight - 40);
 		Rectangle panel = new(
@@ -175,9 +181,9 @@ public class CultivationManualSystem : ModSystem
 		{
 			DrawIndex(textArea, mouse);
 		}
-		else if (currentPage is 8 or 9 or 14 or 18 or 19)
+		else if (currentPage == 8)
 		{
-			DrawRecipePage(textArea, mouse, currentPage);
+			DrawRecipePage(textArea, mouse);
 		}
 		else
 		{
@@ -294,29 +300,102 @@ public class CultivationManualSystem : ModSystem
 	{
 		>= 1 and <= 7 => $"Page{page - 1}",
 		8 => "Recipes1",
-		9 => "Recipes2",
-		10 => "CultivationGrowth",
-		11 => "QiRequirements",
-		12 => "SpiritualQiZones",
-		13 => "SpiritMines",
-		14 => "Recipes3",
-		15 => "AbilityProgression",
-		16 => "SpiritBeasts",
-		17 => "AlchemyPath",
-		18 => "Recipes4",
-		19 => "Recipes5",
+		9 => "CultivationGrowth",
+		10 => "QiRequirements",
+		11 => "SpiritualQiZones",
+		12 => "SpiritMines",
+		13 => "AbilityProgression",
+		14 => "SpiritBeasts",
+		15 => "AlchemyPath",
 		_ => "Page0"
 	};
 
-	private void DrawRecipePage(Rectangle area, Point mouse, int page)
+	private void DrawRecipePage(Rectangle area, Point mouse)
 	{
-		ManualRecipe[] recipes = BuildRecipePage(page);
-		int rowHeight = recipes.Length >= 10 ? 39 : 42;
-		for (int i = 0; i < recipes.Length; i++)
+		ManualRecipeGroup[] groups = BuildRecipeGroups();
+		const int rowHeight = 39;
+		const int groupHeaderHeight = 28;
+		Rectangle contentArea = new(area.X, area.Y, area.Width - 20, area.Height - 18);
+		int recipeCount = 0;
+		foreach (ManualRecipeGroup group in groups)
 		{
-			Rectangle row = new(area.X, area.Y + i * rowHeight, area.Width, rowHeight - 3);
-			DrawRecipeRow(row, mouse, recipes[i], i % 2 == 0);
+			recipeCount += group.Recipes.Length;
 		}
+		float contentHeight = recipeCount * rowHeight + groups.Length * groupHeaderHeight;
+		float maxScroll = Math.Max(0f, contentHeight - contentArea.Height);
+		scrollOffset = MathHelper.Clamp(scrollOffset, 0f, maxScroll);
+
+		Rectangle topButton = new(area.Right - 18, area.Y, 18, 20);
+		Rectangle track = new(area.Right - 10, area.Y + 26, 8, area.Height - 44);
+		int handleHeight = Math.Max(36,
+			(int)(track.Height * (contentArea.Height / contentHeight)));
+		int handleTravel = track.Height - handleHeight;
+		int handleY = track.Y + (maxScroll <= 0f
+			? 0
+			: (int)(handleTravel * (scrollOffset / maxScroll)));
+		Rectangle handle = new(track.X - 2, handleY, track.Width + 4, handleHeight);
+
+		HandleScrollInput(area, mouse, topButton, track, handle, maxScroll, handleTravel);
+		DrawScrollBar(track, handle, mouse);
+		DrawButton(topButton, "↑", topButton.Contains(mouse), scrollOffset > 0f);
+
+		float contentY = contentArea.Y - scrollOffset;
+		int recipeIndex = 0;
+		foreach (ManualRecipeGroup group in groups)
+		{
+			Rectangle header = new(
+				contentArea.X,
+				(int)contentY,
+				contentArea.Width,
+				groupHeaderHeight - 4);
+			if (header.Y >= contentArea.Y && header.Bottom <= contentArea.Bottom)
+			{
+				DrawRecipeGroupHeader(header, group.LocalizationKey);
+			}
+			contentY += groupHeaderHeight;
+
+			foreach (ManualRecipe recipe in group.Recipes)
+			{
+				Rectangle row = new(
+					contentArea.X,
+					(int)contentY,
+					contentArea.Width,
+					rowHeight - 3);
+				if (row.Y >= contentArea.Y && row.Bottom <= contentArea.Bottom)
+				{
+					DrawRecipeRow(row, mouse, recipe, recipeIndex % 2 == 0);
+				}
+
+				contentY += rowHeight;
+				recipeIndex++;
+			}
+		}
+
+		if (scrollOffset < maxScroll - 1f)
+		{
+			string hint = Mod.GetLocalization("Manual.ScrollForMore").Value;
+			Vector2 hintSize = FontAssets.MouseText.Value.MeasureString(hint) * 0.52f;
+			Rectangle hintBackground = new(
+				(int)(contentArea.Right - hintSize.X - 10f), area.Bottom - 17,
+				(int)hintSize.X + 10, 16);
+			Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hintBackground,
+				new Color(224, 218, 181, 235));
+			DrawCentered(hint, hintBackground.Center.ToVector2(), new Color(72, 83, 72), 0.52f);
+		}
+	}
+
+	private void DrawRecipeGroupHeader(Rectangle header, string localizationKey)
+	{
+		Texture2D pixel = TextureAssets.MagicPixel.Value;
+		Main.spriteBatch.Draw(pixel, header, new Color(45, 111, 92));
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(header.X + 2, header.Y + 2, header.Width - 4, header.Height - 4),
+			new Color(198, 180, 128));
+		DrawCentered(
+			Mod.GetLocalization($"Manual.RecipeSections.{localizationKey}").Value,
+			header.Center.ToVector2(),
+			new Color(78, 57, 25),
+			0.62f);
 	}
 
 	private void DrawRecipeRow(Rectangle row, Point mouse, ManualRecipe recipe, bool alternate)
@@ -330,10 +409,25 @@ public class CultivationManualSystem : ModSystem
 		DrawRecipeItem(resultSlot, mouse, recipe.ResultType, recipe.ResultStack,
 			new Color(42, 105, 86));
 
-		string resultName = Lang.GetItemNameValue(recipe.ResultType);
+		Item resultItem = new();
+		resultItem.SetDefaults(recipe.ResultType);
+		string resultName = resultItem.Name;
+		bool isAlchemyPill = resultItem.ModItem is IAlchemyPill;
 		Main.spriteBatch.DrawString(FontAssets.MouseText.Value, resultName,
-			new Vector2(row.X + 42, row.Y + 11), new Color(47, 55, 49), 0f,
-			Vector2.Zero, 0.56f, SpriteEffects.None, 0f);
+			new Vector2(row.X + 42, row.Y + (isAlchemyPill ? 4 : 11)), new Color(47, 55, 49), 0f,
+			Vector2.Zero, isAlchemyPill ? 0.5f : 0.56f, SpriteEffects.None, 0f);
+
+		if (resultItem.ModItem is IAlchemyPill pill)
+		{
+			string realm = Mod.GetLocalization(
+				$"Cultivation.Realms.{AlchemyPlayer.GetTierRealmKey(pill.RequiredAlchemyTier)}").Value;
+			string stage = Mod.GetLocalization(
+				$"Alchemy.Stages.{AlchemyPlayer.GetStageKey(pill.RequiredAlchemyStage)}").Value;
+			string requirement = Mod.GetLocalization("Manual.AlchemyRequirement").Format(realm, stage);
+			Main.spriteBatch.DrawString(FontAssets.MouseText.Value, requirement,
+				new Vector2(row.X + 42, row.Y + 20), new Color(106, 72, 33), 0f,
+				Vector2.Zero, 0.4f, SpriteEffects.None, 0f);
+		}
 
 		DrawCentered("=", new Vector2(row.X + 198, row.Center.Y), new Color(103, 67, 24), 0.7f);
 		int ingredientX = row.X + 216;
@@ -387,7 +481,28 @@ public class CultivationManualSystem : ModSystem
 		}
 	}
 
-	private static ManualRecipe[] BuildRecipePage(int page)
+	private static ManualRecipeGroup[] BuildRecipeGroups()
+	{
+		return
+		[
+			new("NoviceAttire",
+			[
+				new(ModContent.ItemType<NoviceDiscipleHeadband>(), 1, ItemID.Loom,
+					[new(ItemID.Silk, 2)]),
+				new(ModContent.ItemType<NoviceDiscipleRobe>(), 1, ItemID.Loom,
+					[new(ItemID.Silk, 8)]),
+				new(ModContent.ItemType<NoviceDiscipleTrousers>(), 1, ItemID.Loom,
+					[new(ItemID.Silk, 6)])
+			]),
+			new("MaterialsEquipment", BuildRecipeSection(8)),
+			new("AccessoriesTechniques", BuildRecipeSection(9)),
+			new("CauldronsBeastPills", BuildRecipeSection(14)),
+			new("ProgressionPills", BuildRecipeSection(18)),
+			new("UtilityPills", BuildRecipeSection(19))
+		];
+	}
+
+	private static ManualRecipe[] BuildRecipeSection(int page)
 	{
 		if (page == 8)
 		{
@@ -526,6 +641,8 @@ public class CultivationManualSystem : ModSystem
 				[new(ItemID.Book), new(ModContent.ItemType<SpiritStone>(), 2), new(ItemID.FallenStar, 5)]),
 			new(ModContent.ItemType<SpiritVeinCompass>(), 1, ItemID.IronAnvil,
 				[new(ItemID.Compass), new(ItemID.GoldBar, 8), new(ItemID.FallenStar, 5), new(ItemID.Amethyst, 3)]),
+			new(ModContent.ItemType<SpiritVeinCompass>(), 1, ItemID.IronAnvil,
+				[new(ItemID.Compass), new(ItemID.PlatinumBar, 8), new(ItemID.FallenStar, 5), new(ItemID.Amethyst, 3)]),
 			new(ModContent.ItemType<CultivatorManual>(), 1, ItemID.WorkBench,
 				[new(ItemID.Book), new(ModContent.ItemType<SpiritStone>())]),
 			new(ModContent.ItemType<QiRecoveryPill>(), 2, ModContent.ItemType<AlchemyCauldron>(),
@@ -560,7 +677,7 @@ public class CultivationManualSystem : ModSystem
 			FormatKeybind(Xianxia.QiFlightKeybind),
 			FormatKeybind(Xianxia.NascentTeleportKeybind),
 			FormatKeybind(Xianxia.AbilityWheelKeybind)),
-		15 => Mod.GetLocalization("Manual.Pages.AbilityProgression.Body").Format(
+		13 => Mod.GetLocalization("Manual.Pages.AbilityProgression.Body").Format(
 			FormatKeybind(Xianxia.AbilityTreeKeybind)),
 		_ => Mod.GetLocalization($"Manual.Pages.{GetContentPageKey(page)}.Body").Value
 	};

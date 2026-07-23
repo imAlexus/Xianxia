@@ -1,0 +1,38 @@
+[h1]Xianxia v0.1.5 - Equipment and Manual Refinement[/h1]
+
+This update improves early-game presentation, redraws cultivation equipment, and makes the Cultivator's Manual easier to browse.
+
+[h2]Novice Disciple Attire[/h2]
+[list]
+[*]Added a craftable Novice Disciple Headband, Robe, and Trousers.[/*]
+[*]The set provides modest early-game defense, damage, movement, critical chance, and meditation bonuses.[/*]
+[*]Every piece supports Terraria dyes and can also be used in vanity slots.[/*]
+[/list]
+
+[h2]Spirit Jade Armor Redesign[/h2]
+[list]
+[*]Replaced the oversized crown with a slim jade circlet.[/*]
+[*]Redesigned the robe and leggings with a cleaner Xianxia silhouette.[/*]
+[*]Rebuilt item icons directly at native resolution.[/*]
+[*]Updated equipment sheets without resizing source artwork.[/*]
+[/list]
+
+[h2]Cultivator's Manual[/h2]
+[list]
+[*]Consolidated all crafting recipes into one scrollable catalogue.[/*]
+[*]Added category headers for attire, equipment, techniques, cauldrons, and pills.[/*]
+[*]Added Alchemy rank requirements beneath pill names.[/*]
+[*]Added all Novice Disciple recipes and both Spirit Vein Compass variants.[/*]
+[/list]
+
+[h2]Configuration[/h2]
+[list]
+[*]Added a client option to hide Spirit Beast nameplates.[/*]
+[*]Updated English, Italian, and Simplified Chinese localization.[/*]
+[/list]
+
+Thank you for playing Xianxia.
+
+[quote=tModLoader Xianxia]
+Developed By imAlexus
+[/quote]

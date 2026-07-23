@@ -329,6 +329,7 @@ Configs: {
 		Headers: {
 			MeditationControls: Meditation controls
 			QiHud: Qi HUD
+			SpiritBeasts: Spirit Beasts
 			VisualEffects: Visual effects
 		}
 
@@ -355,6 +356,11 @@ Configs: {
 		ShowQiConcentration: {
 			Label: Show Qi Concentration
 			Tooltip: Shows the nearby Spirit Stone concentration below the Qi bar
+		}
+
+		ShowSpiritBeastNameplates: {
+			Label: Show Spirit Beast nameplates
+			Tooltip: Shows the name, cultivation Realm, Stage and relative danger above Spirit Beasts
 		}
 
 		VisualEffectIntensityPercent: {
@@ -550,6 +556,22 @@ Items: {
 	SpiritJadeLeggings: {
 		DisplayName: Spirit Jade Leggings
 		Tooltip: +8% movement speed
+	}
+
+	NoviceDiscipleHeadband: {
+		DisplayName: Novice Disciple Headband
+		Tooltip: +2% critical strike chance
+		SetBonus: +1 Qi/s while meditating
+	}
+
+	NoviceDiscipleRobe: {
+		DisplayName: Novice Disciple Robe
+		Tooltip: +3% damage
+	}
+
+	NoviceDiscipleTrousers: {
+		DisplayName: Novice Disciple Trousers
+		Tooltip: +4% movement speed
 	}
 
 	SpiritJadePendant: {
@@ -885,6 +907,16 @@ Manual: {
 	IndexButton: Index
 	PageNumber: Page {0}/{1}
 	ScrollForMore: Scroll for more
+	AlchemyRequirement: Alchemy: {0}, {1} Stage
+
+	RecipeSections: {
+		NoviceAttire: Novice Disciple Attire
+		MaterialsEquipment: Materials, Equipment and Weapons
+		AccessoriesTechniques: Accessories, Techniques and Basic Pills
+		CauldronsBeastPills: Cauldrons, Compasses and Spirit Beast Pills
+		ProgressionPills: Cultivation Progression Pills
+		UtilityPills: Utility Pills
+	}
 
 	Index: {
 		Title: Index
@@ -1034,7 +1066,7 @@ Manual: {
 		}
 
 		Recipes1: {
-			Title: Recipes - Materials and Equipment
+			Title: Complete Crafting Catalogue
 			Body:
 				'''
 				MATERIALS AND STATIONS

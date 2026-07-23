@@ -9,7 +9,9 @@ Meditate, master techniques, survive Heavenly Tribulations, explore Spirit Stone
 - Five cultivation Realms with nine Stages each
 - Qi, meditation, techniques, passive abilities, and Heavenly Tribulations
 - Spirit Stone mines, Spirit Beasts, spiritual ores, equipment, and treasures
+- Dye-compatible Novice Disciple attire and redesigned Spirit Jade armor
 - A complete alchemy path with herbs, cauldrons, mastery, and pills
+- A scrollable crafting catalogue in the Cultivator's Manual
 - English, Italian, and Simplified Chinese localization
 
 ## Installation

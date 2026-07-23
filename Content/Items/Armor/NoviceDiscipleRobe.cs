@@ -1,12 +1,11 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Xianxia.Content.Items.Materials;
 
 namespace Xianxia.Content.Items.Armor;
 
 [AutoloadEquip(EquipType.Body)]
-public class SpiritJadeRobe : ModItem
+public class NoviceDiscipleRobe : ModItem
 {
 	public override void SetStaticDefaults()
 	{
@@ -17,22 +16,21 @@ public class SpiritJadeRobe : ModItem
 	{
 		Item.width = 40;
 		Item.height = 40;
-		Item.defense = 7;
-		Item.value = Item.buyPrice(gold: 1, silver: 50);
-		Item.rare = ItemRarityID.Green;
+		Item.defense = 2;
+		Item.value = Item.buyPrice(silver: 10);
+		Item.rare = ItemRarityID.White;
 	}
 
 	public override void UpdateEquip(Player player)
 	{
-		player.GetDamage(DamageClass.Magic) += 0.07f;
+		player.GetDamage(DamageClass.Generic) += 0.03f;
 	}
 
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient<SpiritJadeBar>(18)
-			.AddIngredient<SpiritStone>(2)
-			.AddTile(TileID.Anvils)
+			.AddIngredient(ItemID.Silk, 8)
+			.AddTile(TileID.Loom)
 			.Register();
 	}
 }

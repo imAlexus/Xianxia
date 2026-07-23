@@ -1,12 +1,11 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Xianxia.Content.Items.Materials;
 
 namespace Xianxia.Content.Items.Armor;
 
 [AutoloadEquip(EquipType.Legs)]
-public class SpiritJadeLeggings : ModItem
+public class NoviceDiscipleTrousers : ModItem
 {
 	public override void SetStaticDefaults()
 	{
@@ -18,22 +17,21 @@ public class SpiritJadeLeggings : ModItem
 	{
 		Item.width = 40;
 		Item.height = 40;
-		Item.defense = 6;
-		Item.value = Item.buyPrice(gold: 1, silver: 25);
-		Item.rare = ItemRarityID.Green;
+		Item.defense = 1;
+		Item.value = Item.buyPrice(silver: 8);
+		Item.rare = ItemRarityID.White;
 	}
 
 	public override void UpdateEquip(Player player)
 	{
-		player.moveSpeed += 0.08f;
+		player.moveSpeed += 0.04f;
 	}
 
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient<SpiritJadeBar>(14)
-			.AddIngredient<SpiritStone>()
-			.AddTile(TileID.Anvils)
+			.AddIngredient(ItemID.Silk, 6)
+			.AddTile(TileID.Loom)
 			.Register();
 	}
 }
