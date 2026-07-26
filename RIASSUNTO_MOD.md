@@ -659,7 +659,17 @@ Equipment and manual:
 
 ### 0.1.6
 
-This is the current version listed in `build.txt`. The available public changelog file currently ends at 0.1.5.
+Sects and permanent formations:
+
+- Verdant Cloud Sect, Elder Jian, ranks, missions, Contribution Tokens, and manuals
+- Sword Intent, Spirit Sword Rain, and expanded Sect Protection Formation
+- Array Formation Path and persistent Formation Cores
+- Protection, Spirit Gathering, Suppression, and Restoration arrays
+- Manual structural upgrades with material and Beast Core costs
+- Relay Flags, Relay UI, Normal Extension, and exclusive specializations
+- Spirit Vein power generation for Core and Relay networks
+- Persistent pill quality affecting strength and Saturation
+- Updated manual, interfaces, visuals, and localization
 
 ---
 

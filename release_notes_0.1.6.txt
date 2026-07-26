@@ -1,0 +1,59 @@
+[h1]Xianxia v0.1.6 - Sects and Permanent Formations[/h1]
+
+This update introduces the Verdant Cloud Sect, pill quality, and a complete persistent Array Formation system.
+
+[h2]Verdant Cloud Sect[/h2]
+[list]
+[*]Added Elder Jian, who can join a suitable house and accepts cultivators from Qi Gathering onward.[/*]
+[*]Added four Sect ranks: Outer Disciple, Inner Disciple, Core Disciple, and Sect Elder.[/*]
+[*]Added hunting, delivery, Alchemy, Spirit Vein exploration, and Heavenly Tribulation missions.[/*]
+[*]Added Sect Contribution Tokens, lifetime contribution, a dedicated Sect menu, and the Sect shop.[/*]
+[*]Added Sword Intent, Spirit Sword Rain, and Sect Protection Formation manuals.[/*]
+[*]Improved Spirit Sword Rain so five swords launch from the cultivator toward the cursor.[/*]
+[*]Expanded Sect Protection Formation with shared Qi support, allied meditation contributions, automatic Spirit Stone use, Spirit Vein power, scaling integrity, and longer duration.[/*]
+[/list]
+
+[h2]Permanent Array Formations[/h2]
+[list]
+[*]Added the Array Formation Path with five Tiers and Low, Middle, and High Stages.[/*]
+[*]Path EXP is earned through real Formation use: maintaining territory during combat, absorbing damage, linking Spirit Veins, and intercepting Tribulations.[/*]
+[*]Added placeable Permanent Formation Cores with persistent ownership, stored Qi, integrity, access rules, world resource bars, and a dedicated control UI.[/*]
+[*]Added Protection, Spirit Gathering, Suppression, and Restoration modes. Higher structural Tiers can operate multiple modes together.[/*]
+[*]Protection barriers destroy hostile projectiles entering from outside, lose integrity from impacts, repel enemies, prevent hostile natural spawning, and intercept Heavenly Tribulation lightning.[/*]
+[*]Formation integrity automatically repairs by consuming network Qi.[/*]
+[*]Core upgrades are now manual. Every structural Stage and Tier consumes materials, requires sufficient Array Formation mastery, and improves Formation statistics.[/*]
+[*]Spirit Stone mines can automatically power nearby Cores and Relay Flags, with generation limited by local Qi Concentration.[/*]
+[/list]
+
+[h2]Formation Relay Flags[/h2]
+[list]
+[*]Added Relay Flags that extend a Core network with separate 40-block territories beyond the Core's maximum 80-block radius.[/*]
+[*]Relays share the Core's Qi and integrity, have their own upkeep, display world bars, and can channel distant Spirit Veins.[/*]
+[*]Added a Relay status UI showing its parent Core, link distance, upkeep, shared resources, and local spiritual concentration.[/*]
+[*]Normal Extension carries every enabled Core mode into Relay territory at standard strength.[/*]
+[*]Relays can instead specialize in Protection, Spirit Gathering, Suppression, or Restoration for stronger local effects.[/*]
+[*]Relay limits, link range, choices, and network state are saved and synchronized in multiplayer.[/*]
+[/list]
+
+[h2]Alchemy and Pill Quality[/h2]
+[list]
+[*]Every crafted pill now receives a persistent quality: Impure, Common, Refined, Earth Grade, or Heaven Grade.[/*]
+[*]Quality changes pill strength, buff duration, cleansing power, and Saturation cost.[/*]
+[*]Alchemy mastery and improved Cauldrons increase quality rolls, while impurities can create Pill Dregs.[/*]
+[*]Improved the visibility and growth-stage presentation of spiritual herbs.[/*]
+[/list]
+
+[h2]Interface, Balance, and Fixes[/h2]
+[list]
+[*]Added dedicated Sect, Formation Core, Relay, and Array Formation Path interfaces.[/*]
+[*]Updated the Cultivator's Manual with Sect, pill quality, permanent Formation, upgrade, and Relay information.[/*]
+[*]Added new Formation and Sect items, materials, sprites, projectiles, buffs, and visual effects.[/*]
+[*]Improved NPC movement direction and several projectile behaviors.[/*]
+[*]Updated English, Italian, and Simplified Chinese localization.[/*]
+[/list]
+
+Thank you for playing Xianxia and for continuing to share feedback.
+
+[quote=tModLoader Xianxia]
+Developed By imAlexus
+[/quote]
