@@ -14,6 +14,8 @@ using Xianxia.Common.Config;
 using Xianxia.Content.Buffs;
 using Xianxia.Common.Abilities;
 using Xianxia.Content.Items.Alchemy;
+using Xianxia.Content.Items.Formations;
+using Xianxia.Content.Items.Sect;
 
 namespace Xianxia.Common.Systems;
 
@@ -22,10 +24,17 @@ public class CultivationUISystem : ModSystem
 	private enum AbilityMenuPage
 	{
 		Abilities,
-		Paths
+		Paths,
+		Sect
 	}
 
 	private static AbilityMenuPage abilityMenuPage;
+	private enum PathMenuPage
+	{
+		Alchemy,
+		Formations
+	}
+	private static PathMenuPage pathMenuPage;
 	private const int BarWidth = 300;
 	private const int BarHeight = 22;
 	private const int BorderSize = 2;
@@ -142,8 +151,9 @@ public class CultivationUISystem : ModSystem
 		Main.spriteBatch.Draw(pixel, inner, new Color(10, 17, 29, 250));
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Title").Value,
 			new Vector2(panel.Center.X, panel.Y + 27), Color.White, 1.05f);
-		Rectangle abilitiesTab = new(panel.Center.X - 190, panel.Y + 47, 180, 31);
-		Rectangle pathsTab = new(panel.Center.X + 10, panel.Y + 47, 180, 31);
+		Rectangle abilitiesTab = new(panel.Center.X - 270, panel.Y + 47, 170, 31);
+		Rectangle pathsTab = new(panel.Center.X - 85, panel.Y + 47, 170, 31);
+		Rectangle sectTab = new(panel.Center.X + 100, panel.Y + 47, 170, 31);
 		Point mouse = Main.MouseScreen.ToPoint();
 		DrawAbilityMenuTab(pixel, abilitiesTab,
 			Mod.GetLocalization("AbilityTree.Tabs.Abilities").Value,
@@ -151,6 +161,9 @@ public class CultivationUISystem : ModSystem
 		DrawAbilityMenuTab(pixel, pathsTab,
 			Mod.GetLocalization("AbilityTree.Tabs.Paths").Value,
 			abilityMenuPage == AbilityMenuPage.Paths, pathsTab.Contains(mouse));
+		DrawAbilityMenuTab(pixel, sectTab,
+			Mod.GetLocalization("AbilityTree.Tabs.Sect").Value,
+			abilityMenuPage == AbilityMenuPage.Sect, sectTab.Contains(mouse));
 		if (Main.mouseLeft && Main.mouseLeftRelease)
 		{
 			if (abilitiesTab.Contains(mouse))
@@ -165,6 +178,12 @@ public class CultivationUISystem : ModSystem
 				Main.mouseLeftRelease = false;
 				SoundEngine.PlaySound(SoundID.MenuTick);
 			}
+			else if (sectTab.Contains(mouse))
+			{
+				abilityMenuPage = AbilityMenuPage.Sect;
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
 		}
 
 		if (abilityMenuPage == AbilityMenuPage.Paths)
@@ -172,15 +191,21 @@ public class CultivationUISystem : ModSystem
 			DrawPathPage(pixel, panel, mouse);
 			return true;
 		}
+		if (abilityMenuPage == AbilityMenuPage.Sect)
+		{
+			DrawSectPage(pixel, panel, mouse);
+			return true;
+		}
 
 		CultivationAbility[][] abilityGroups =
 		[
 			[CultivationAbility.SpiritBreathing, CultivationAbility.Meditation],
-			[CultivationAbility.QiSense, CultivationAbility.QiResistance,
-				CultivationAbility.Fireball, CultivationAbility.QiPalm],
+			[CultivationAbility.QiSense, CultivationAbility.SwordIntent,
+				CultivationAbility.QiResistance, CultivationAbility.Fireball, CultivationAbility.QiPalm],
 			[CultivationAbility.QiProtection, CultivationAbility.FlameStep,
-				CultivationAbility.NightVision],
-			[CultivationAbility.GoldenCoreCirculation, CultivationAbility.QiFlight],
+				CultivationAbility.NightVision, CultivationAbility.SpiritSwordRain],
+			[CultivationAbility.GoldenCoreCirculation, CultivationAbility.QiFlight,
+				CultivationAbility.SectProtectionFormation],
 			[CultivationAbility.NascentSoulRegeneration,
 				CultivationAbility.NascentTeleport, CultivationAbility.SpiritualPressure]
 		];
@@ -239,7 +264,8 @@ public class CultivationUISystem : ModSystem
 					or CultivationAbility.QiProtection
 					or CultivationAbility.SpiritBreathing
 					or CultivationAbility.GoldenCoreCirculation
-					or CultivationAbility.NascentSoulRegeneration;
+					or CultivationAbility.NascentSoulRegeneration
+					or CultivationAbility.SwordIntent;
 				string abilityType = Mod.GetLocalization(passive
 					? "AbilityTree.Passive"
 					: "AbilityTree.Active").Value;
@@ -270,10 +296,13 @@ public class CultivationUISystem : ModSystem
 		{
 			CultivationAbility ability = hovered.Value;
 			bool unlocked = cultivation.IsAbilityUnlocked(ability);
+			bool realmReached = cultivation.RealmIndex >= CultivationAbilityInfo.RequiredRealm(ability);
 			string text = unlocked
 				? GetAbilityTreeDetails(cultivation, ability)
-				: Mod.GetLocalization("AbilityTree.RequiresRealm").Format(
-					Mod.GetLocalization($"Cultivation.Realms.{GetRealmLocalizationKey(CultivationAbilityInfo.RequiredRealm(ability))}").Value);
+				: realmReached
+					? Mod.GetLocalization("Sect.RequiresManual").Value
+					: Mod.GetLocalization("AbilityTree.RequiresRealm").Format(
+						Mod.GetLocalization($"Cultivation.Realms.{GetRealmLocalizationKey(CultivationAbilityInfo.RequiredRealm(ability))}").Value);
 			DrawCenteredText(text, details.Center.ToVector2(), unlocked ? Color.White : Color.Gray, 0.66f);
 		}
 		else
@@ -282,6 +311,74 @@ public class CultivationUISystem : ModSystem
 				details.Center.ToVector2(), Color.LightGray, 0.66f);
 		}
 		return true;
+	}
+
+	private void DrawSectPage(Texture2D pixel, Rectangle panel, Point mouse)
+	{
+		SectPlayer sect = Main.LocalPlayer.GetModPlayer<SectPlayer>();
+		Rectangle content = new(panel.X + 18, panel.Y + 90, panel.Width - 36, panel.Height - 112);
+		Main.spriteBatch.Draw(pixel, content, new Color(15, 24, 38, 245));
+		DrawCenteredText(Mod.GetLocalization("Sect.UI.Title").Value,
+			new Vector2(content.Center.X, content.Y + 28), new Color(105, 235, 205), 0.95f);
+
+		if (!sect.JoinedSect)
+		{
+			DrawCenteredText(Mod.GetLocalization("Sect.UI.NotJoined").Value,
+				new Vector2(content.Center.X, content.Center.Y - 20), Color.LightGray, 0.75f);
+			DrawCenteredText(Mod.GetLocalization("Sect.UI.FindElder").Value,
+				new Vector2(content.Center.X, content.Center.Y + 20), Color.LightGreen, 0.65f);
+			return;
+		}
+
+		Rectangle status = new(content.X + 16, content.Y + 55, content.Width - 32, 92);
+		Main.spriteBatch.Draw(pixel, status, new Color(20, 39, 52, 245));
+		DrawCenteredText(Mod.GetLocalization("Sect.UI.Rank").Format(sect.GetRankName()),
+			new Vector2(status.Center.X, status.Y + 21), Color.Gold, 0.74f);
+		string rankProgress = sect.Rank >= 3
+			? Mod.GetLocalization("AbilityTree.MaxLevel").Value
+			: $"{sect.LifetimeContribution}/{sect.NextRankRequirement}";
+		DrawCenteredText(Mod.GetLocalization("Sect.UI.Contribution").Format(
+				sect.CurrentContribution, rankProgress),
+			new Vector2(status.Center.X, status.Y + 49), Color.White, 0.62f);
+		DrawCenteredText(Mod.GetLocalization("Sect.UI.Mission").Format(sect.GetMissionDescription()),
+			new Vector2(status.Center.X, status.Y + 74),
+			sect.IsMissionComplete() ? Color.LightGreen : Color.LightCyan, 0.56f);
+
+		(int item, bool unlocked, int rank, string ability)[] techniques =
+		[
+			(ModContent.ItemType<SwordIntentManual>(), sect.SwordIntentUnlocked, 0, "SwordIntent"),
+			(ModContent.ItemType<SpiritSwordRainManual>(), sect.SpiritSwordRainUnlocked, 1, "SpiritSwordRain"),
+			(ModContent.ItemType<SectProtectionFormationManual>(),
+				sect.SectProtectionFormationUnlocked, 2, "SectProtectionFormation")
+		];
+		int cardWidth = (content.Width - 64) / techniques.Length;
+		for (int i = 0; i < techniques.Length; i++)
+		{
+			(int item, bool unlocked, int rank, string ability) = techniques[i];
+			Rectangle card = new(content.X + 16 + i * (cardWidth + 16), status.Bottom + 22,
+				cardWidth, 150);
+			bool hovered = card.Contains(mouse);
+			Main.spriteBatch.Draw(pixel, card, hovered ? Color.White : new Color(68, 211, 210));
+			Main.spriteBatch.Draw(pixel, new Rectangle(card.X + 3, card.Y + 3,
+				card.Width - 6, card.Height - 6), new Color(21, 52, 62));
+			DrawPathItemIcon(item, new Vector2(card.Center.X, card.Y + 45), 48f,
+				sect.Rank >= rank ? Color.White : Color.Gray);
+			DrawCenteredTextFitted(Mod.GetLocalization($"AbilityTree.Abilities.{ability}.Name").Value,
+				new Vector2(card.Center.X, card.Y + 82), card.Width - 12,
+				sect.Rank >= rank ? Color.LightCyan : Color.Gray, 0.64f);
+			string state = unlocked
+				? Mod.GetLocalization("Sect.UI.Learned").Value
+				: Mod.GetLocalization("Sect.UI.RequiredRank").Format(
+					Mod.GetLocalization($"Sect.Ranks.Rank{rank}").Value);
+			DrawCenteredTextFitted(state, new Vector2(card.Center.X, card.Y + 112),
+				card.Width - 12, unlocked ? Color.LightGreen : Color.LightGray, 0.53f);
+			DrawCenteredTextFitted(Mod.GetLocalization($"Sect.UI.Techniques.{ability}").Value,
+				new Vector2(card.Center.X, card.Y + 135), card.Width - 12,
+				Color.White, 0.48f);
+		}
+
+		DrawCenteredText(Mod.GetLocalization("Sect.UI.ElderHint").Value,
+			new Vector2(content.Center.X, content.Bottom - 34), Color.Gray, 0.58f);
 	}
 
 	private static void DrawAbilityMenuTab(
@@ -307,6 +404,7 @@ public class CultivationUISystem : ModSystem
 	private void DrawPathPage(Texture2D pixel, Rectangle panel, Point mouse)
 	{
 		AlchemyPlayer alchemy = Main.LocalPlayer.GetModPlayer<AlchemyPlayer>();
+		FormationPathPlayer formations = Main.LocalPlayer.GetModPlayer<FormationPathPlayer>();
 		Rectangle content = new(panel.X + 18, panel.Y + 90, panel.Width - 36, panel.Height - 112);
 		const int pathListWidth = 260;
 		Rectangle listPanel = new(content.X, content.Y, pathListWidth, content.Height);
@@ -317,10 +415,12 @@ public class CultivationUISystem : ModSystem
 
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Title").Value,
 			new Vector2(listPanel.Center.X, listPanel.Y + 25), Color.White, 0.82f);
-		Rectangle alchemyCard = new(listPanel.X + 12, listPanel.Y + 50, listPanel.Width - 24, 76);
+		Rectangle alchemyCard = new(listPanel.X + 12, listPanel.Y + 50, listPanel.Width - 24, 70);
 		bool hovered = alchemyCard.Contains(mouse);
 		Main.spriteBatch.Draw(pixel, alchemyCard,
-			hovered ? Color.White : new Color(76, 211, 173));
+			pathMenuPage == PathMenuPage.Alchemy
+				? new Color(76, 235, 205)
+				: hovered ? Color.White : new Color(76, 211, 173));
 		Main.spriteBatch.Draw(pixel,
 			new Rectangle(alchemyCard.X + 3, alchemyCard.Y + 3, alchemyCard.Width - 6, alchemyCard.Height - 6),
 			new Color(24, 75, 68, 245));
@@ -331,8 +431,48 @@ public class CultivationUISystem : ModSystem
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Alchemy.Tier").Format(
 			alchemy.Tier, alchemy.TierRealmName, alchemy.StageName),
 			new Vector2(alchemyCard.X + 145, alchemyCard.Y + 52), Color.LightGreen, 0.57f);
+
+		Rectangle formationCard = new(listPanel.X + 12, listPanel.Y + 132,
+			listPanel.Width - 24, 70);
+		bool formationHovered = formationCard.Contains(mouse);
+		Main.spriteBatch.Draw(pixel, formationCard,
+			pathMenuPage == PathMenuPage.Formations
+				? new Color(70, 205, 255)
+				: formationHovered ? Color.White : new Color(66, 150, 190));
+		Main.spriteBatch.Draw(pixel, new Rectangle(formationCard.X + 3,
+			formationCard.Y + 3, formationCard.Width - 6, formationCard.Height - 6),
+			new Color(20, 55, 75, 245));
+		DrawPathItemIcon(ModContent.ItemType<PermanentFormationCore>(),
+			new Vector2(formationCard.X + 38, formationCard.Center.Y), 44f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Formations.Name").Value,
+			new Vector2(formationCard.X + 145, formationCard.Y + 25),
+			Color.White, 0.7f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Formations.Tier").Format(
+			formations.Tier, formations.TierRealmName, formations.StageName),
+			new Vector2(formationCard.X + 145, formationCard.Y + 49),
+			Color.LightCyan, 0.54f);
+
+		if (Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			if (alchemyCard.Contains(mouse))
+			{
+				pathMenuPage = PathMenuPage.Alchemy;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+			else if (formationCard.Contains(mouse))
+			{
+				pathMenuPage = PathMenuPage.Formations;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+		}
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.FutureHint").Value,
 			new Vector2(listPanel.Center.X, listPanel.Bottom - 35), Color.Gray, 0.6f);
+
+		if (pathMenuPage == PathMenuPage.Formations)
+		{
+			DrawFormationPathPage(pixel, detailPanel, formations);
+			return;
+		}
 
 		const int headerHeight = 145;
 		Rectangle statsPanel = new(detailPanel.X + 10, detailPanel.Y + 8,
@@ -419,6 +559,129 @@ public class CultivationUISystem : ModSystem
 			Rectangle row = new(tiersArea.X, tiersArea.Y + tier * rowHeight,
 				tiersArea.Width, rowHeight - 3);
 			DrawAlchemyTierRow(pixel, row, alchemy, tier, pillGroups[tier], mouse);
+		}
+	}
+
+	private void DrawFormationPathPage(Texture2D pixel, Rectangle panel,
+		FormationPathPlayer formations)
+	{
+		Rectangle header = new(panel.X + 10, panel.Y + 8,
+			panel.Width - 20, 188);
+		Main.spriteBatch.Draw(pixel, header, new Color(17, 35, 52, 245));
+		DrawPathItemIcon(ModContent.ItemType<PermanentFormationCore>(),
+			new Vector2(header.X + 58, header.Y + 87), 70f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Formations.Name").Value,
+			new Vector2(header.Center.X + 35, header.Y + 24),
+			new Color(80, 225, 255), 0.9f);
+		int requiredExperience = formations.ExperienceRequired;
+		int displayedExperience = formations.IsMaximumRank ? 0
+			: Math.Min(formations.Experience, requiredExperience);
+		int storedExperience = formations.IsMaximumRank ? 0
+			: Math.Max(0, formations.Experience - requiredExperience);
+		string experience = formations.IsMaximumRank
+			? Mod.GetLocalization("AbilityTree.MaxLevel").Value
+			: storedExperience > 0
+				? Mod.GetLocalization(
+					"AbilityTree.Paths.Formations.ExperienceStored")
+					.Format(displayedExperience, requiredExperience,
+						storedExperience)
+				: $"EXP {displayedExperience}/{requiredExperience}";
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Formations.Progress").Format(
+			formations.StageName, experience),
+			new Vector2(header.Center.X + 35, header.Y + 53),
+			Color.White, 0.61f);
+		Rectangle progressBar = new(header.X + 135, header.Y + 68,
+			header.Width - 165, 11);
+		Main.spriteBatch.Draw(pixel, progressBar, new Color(39, 47, 67));
+		float ratio = formations.IsMaximumRank ? 1f
+			: MathHelper.Clamp(formations.Experience
+				/ (float)formations.ExperienceRequired, 0f, 1f);
+		Main.spriteBatch.Draw(pixel, new Rectangle(progressBar.X + 2,
+			progressBar.Y + 2, (int)((progressBar.Width - 4) * ratio),
+			progressBar.Height - 4), new Color(50, 195, 235));
+		int radius = 40 + formations.Tier * 15 + formations.Stage * 5;
+		int capacity = 10000 + formations.Tier * 10000 + formations.Stage * 2500;
+		int integrity = 5000 + formations.Tier * 4000 + formations.Stage * 1000;
+		int contentX = header.X + 126;
+		int contentWidth = header.Right - contentX - 14;
+		int statGap = 5;
+		int statWidth = (contentWidth - statGap * 2) / 3;
+		string[] statTexts =
+		[
+			Mod.GetLocalization("AbilityTree.Paths.Formations.StatRadius")
+				.Format(radius),
+			Mod.GetLocalization("AbilityTree.Paths.Formations.StatQi")
+				.Format(capacity),
+			Mod.GetLocalization("AbilityTree.Paths.Formations.StatIntegrity")
+				.Format(integrity)
+		];
+		for (int i = 0; i < statTexts.Length; i++)
+		{
+			Rectangle statBox = new(contentX + i * (statWidth + statGap),
+				header.Y + 88, statWidth, 27);
+			Main.spriteBatch.Draw(pixel, statBox, new Color(22, 58, 76, 245));
+			DrawCenteredTextFitted(statTexts[i], statBox.Center.ToVector2(),
+				statBox.Width - 8, Color.LightCyan, 0.61f);
+		}
+
+		string trial = formations.IsMaximumRank
+			? Mod.GetLocalization("AbilityTree.Paths.Formations.Trials.Mastered").Value
+			: Mod.GetLocalization(formations.CurrentTrialLocalizationKey)
+				.Format(formations.CurrentTrialProgress,
+					formations.CurrentTrialTarget);
+		Rectangle trialBox = new(contentX, header.Y + 120, contentWidth, 29);
+		Main.spriteBatch.Draw(pixel, trialBox, new Color(27, 43, 63, 245));
+		DrawCenteredTextFitted(trial, trialBox.Center.ToVector2(),
+			trialBox.Width - 12,
+			formations.CurrentTrialComplete ? Color.LightGreen : Color.Orange,
+			0.61f);
+
+		string trainingHint = formations.Stage == FormationPathPlayer.MaxStage
+			&& formations.Tier < FormationPathPlayer.MaxTier
+			? Mod.GetLocalization("AbilityTree.Paths.Formations.RealmGate").Format(
+				Main.LocalPlayer.GetModPlayer<AlchemyPlayer>()
+					.GetTierRealmName(formations.Tier + 1),
+				formations.RealmRequirementMet
+					? Mod.GetLocalization("AbilityTree.Paths.Formations.Ready").Value
+					: Mod.GetLocalization("AbilityTree.Paths.Formations.Locked").Value)
+			: Mod.GetLocalization("AbilityTree.Paths.Formations.ExpHint").Value;
+		Rectangle hintBox = new(contentX, header.Y + 154, contentWidth, 26);
+		Main.spriteBatch.Draw(pixel, hintBox, new Color(15, 29, 45, 235));
+		DrawCenteredTextFitted(trainingHint, hintBox.Center.ToVector2(),
+			hintBox.Width - 12,
+			formations.RealmRequirementMet ? Color.LightGreen : Color.IndianRed,
+			0.55f);
+
+		Rectangle rows = new(panel.X + 8, header.Bottom + 8,
+			panel.Width - 16, panel.Bottom - header.Bottom - 16);
+		int rowHeight = rows.Height / 5;
+		for (int tier = 0; tier <= FormationPathPlayer.MaxTier; tier++)
+		{
+			Rectangle row = new(rows.X, rows.Y + tier * rowHeight,
+				rows.Width, rowHeight - 3);
+			bool reached = formations.Tier >= tier;
+			bool current = formations.Tier == tier;
+			Main.spriteBatch.Draw(pixel, row, tier % 2 == 0
+				? new Color(18, 31, 48, 245)
+				: new Color(14, 26, 42, 245));
+			Rectangle tierBox = new(row.X + 3, row.Y + 3, 150, row.Height - 6);
+			Main.spriteBatch.Draw(pixel, tierBox, current
+				? new Color(29, 99, 120)
+				: reached ? new Color(25, 69, 79) : new Color(31, 34, 43));
+			DrawCenteredText($"Tier {tier}",
+				new Vector2(tierBox.Center.X, tierBox.Y + 18),
+				reached ? Color.White : Color.Gray, 0.65f);
+			DrawCenteredTextFitted(
+				Main.LocalPlayer.GetModPlayer<AlchemyPlayer>().GetTierRealmName(tier),
+				new Vector2(tierBox.Center.X, tierBox.Bottom - 18),
+				tierBox.Width - 10, reached ? Color.LightCyan : Color.Gray, 0.5f);
+			DrawPathItemIcon(ModContent.ItemType<PermanentFormationCore>(),
+				new Vector2(row.X + 190, row.Center.Y), 38f,
+				reached ? Color.White : new Color(80, 80, 90));
+			DrawCenteredTextFitted(
+				Mod.GetLocalization($"AbilityTree.Paths.Formations.Tier{tier}").Value,
+				new Vector2(row.X + 215 + (row.Width - 225) * 0.5f, row.Center.Y),
+				row.Width - 235, reached ? Color.White : Color.Gray, 0.53f);
 		}
 	}
 
@@ -552,6 +815,9 @@ public class CultivationUISystem : ModSystem
 			CultivationAbility.GoldenCoreCirculation => "GoldenCoreEffect",
 			CultivationAbility.NascentSoulRegeneration => "NascentSoulEffect",
 			CultivationAbility.NightVision => "NightVisionEffect",
+			CultivationAbility.SwordIntent => "SwordIntentEffect",
+			CultivationAbility.SpiritSwordRain => "SwordRainEffect",
+			CultivationAbility.SectProtectionFormation => "FormationEffect",
 			_ => "CombatEffect"
 		};
 		return Mod.GetLocalization($"AbilityTree.{effectKey}").Format(level, progress);
@@ -580,6 +846,10 @@ public class CultivationUISystem : ModSystem
 			CultivationAbility.GoldenCoreCirculation => (ItemID.CelestialMagnet, string.Empty),
 			CultivationAbility.NascentSoulRegeneration => (ItemID.LifeFruit, string.Empty),
 			CultivationAbility.NightVision => (ItemID.NightOwlPotion, string.Empty),
+			CultivationAbility.SwordIntent => (ModContent.ItemType<SwordIntentManual>(), string.Empty),
+			CultivationAbility.SpiritSwordRain => (ModContent.ItemType<SpiritSwordRainManual>(), string.Empty),
+			CultivationAbility.SectProtectionFormation =>
+				(ModContent.ItemType<SectProtectionFormationManual>(), string.Empty),
 			_ => (ItemID.SoulCake, string.Empty)
 		};
 		Texture2D icon;

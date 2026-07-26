@@ -12,7 +12,11 @@ Keybinds: {
 	NightVision.DisplayName: Night Vision
 	AbilityWheel.DisplayName: Ability Wheel
 	AbilityTree.DisplayName: Ability Tree
+	SpiritSwordRain.DisplayName: Spirit Sword Rain
+	SectFormation.DisplayName: Sect Protection Formation
 }
+
+Currencies.SectContribution: sect contribution tokens
 
 Buffs: {
 	QiResistanceBuff: {
@@ -98,6 +102,51 @@ Buffs: {
 	ConcealmentBuff: {
 		DisplayName: Spiritual Concealment
 		Description: Greatly reduces enemy attention and natural spawning
+	}
+
+	PermanentFormationProtectionBuff: {
+		DisplayName: Permanent Formation Protection
+		Description: Protected by a territorial array: +12 defense and 6% damage reduction
+	}
+
+	PermanentFormationGatheringBuff: {
+		DisplayName: Spirit Gathering Formation
+		Description: Meditation and passive Qi recovery are increased by 50%
+	}
+
+	PermanentFormationSuppressionBuff: {
+		DisplayName: Suppression Formation
+		Description: Hostile creatures within the territory are slowed and weakened
+	}
+
+	PermanentFormationRestorationBuff: {
+		DisplayName: Restoration Formation
+		Description: The territorial array continuously restores life
+	}
+
+	PermanentFormationRelayProtectionBuff: {
+		DisplayName: Focused Relay Protection
+		Description: Exclusive Relay mode grants +24 defense and 12% damage reduction
+	}
+
+	PermanentFormationRelayGatheringBuff: {
+		DisplayName: Focused Relay Gathering
+		Description: Relay specialization raises meditation and passive Qi recovery to 125% bonus
+	}
+
+	PermanentFormationRelaySuppressionBuff: {
+		DisplayName: Focused Relay Suppression
+		Description: Exclusive Relay mode strongly slows and weakens hostile creatures
+	}
+
+	PermanentFormationRelayRestorationBuff: {
+		DisplayName: Focused Relay Restoration
+		Description: Exclusive Relay mode grants +20 life regeneration
+	}
+
+	SectProtectionFormationBuff: {
+		DisplayName: Sect Protection Formation
+		Description: Repels enemies and absorbs damage with its own barrier before Qi Protection
 	}
 }
 
@@ -190,10 +239,14 @@ AbilityTree: {
 	GoldenCoreEffect: Level {0} | -5% ability costs, then -1% per level | {1}
 	NascentSoulEffect: Level {0} | +4 life regeneration, then +2 per level | {1}
 	NightVisionEffect: Level {0} | larger light radius; costs 3 Qi/s, 2 at level 8 and 1 at level 15 | {1}
+	SwordIntentEffect: Level {0} | Flying Sword damage increases by 10%, then 1.5% per level | {1}
+	SwordRainEffect: Level {0} | five swords, cursor-controlled range, higher damage and lower Qi cost/cooldown | {1}
+	FormationEffect: Level {0} | maintained with Qi; allies can meditate inside to reinforce and repair it | {1}
 
 	Tabs: {
 		Abilities: Abilities
 		Paths: Paths
+		Sect: Sect
 	}
 
 	Paths: {
@@ -217,6 +270,36 @@ AbilityTree: {
 			PillRequirement: "{0} Stage | {1}"
 			NoPills: No pills discovered for this Tier yet
 		}
+
+		Formations: {
+			Name: Array Formations
+			Tier: Tier {0} - {1} ({2})
+			Progress: "{0} Stage | {1}"
+			ExperienceStored: EXP {0}/{1} (+{2} stored)
+			Stats: Territory radius: {0} blocks | Qi capacity: {1} | Integrity: {2}
+			StatRadius: Radius: {0} blocks
+			StatQi: Qi capacity: {0}
+			StatIntegrity: Integrity: {0}
+			ExpHint: Train by defending territory, absorbing damage and intercepting Tribulations
+			RealmGate: Next Tier requires {0}: {1}
+			Ready: READY
+			Locked: LOCKED
+
+			Trials: {
+				Combat: Trial - maintain a Formation during combat: {0}/{1} cycles
+				Damage: Trial - absorb damage with a Formation: {0}/{1}
+				Vein: Trial - connect a Permanent Core to a Spirit Vein: {0}/{1}
+				Foundation: Trial - cumulative Formation damage absorbed: {0}/{1}
+				Tribulation: Trial - Tribulation lightning intercepted: {0}/{1}
+				Mastered: The Array Formation Path has been mastered
+			}
+
+			Tier0: Protection Formation | 1 simultaneous array slot
+			Tier1: Unlock Spirit Gathering | 2 simultaneous array slots
+			Tier2: Unlock Suppression | retain 2 simultaneous array slots
+			Tier3: Unlock Restoration | 3 simultaneous array slots
+			Tier4: Grand Formation | all 4 array types can operate together
+		}
 	}
 
 	Abilities: {
@@ -234,6 +317,9 @@ AbilityTree: {
 		GoldenCoreCirculation.Name: Golden Core Circulation
 		NascentSoulRegeneration.Name: Nascent Soul Regeneration
 		NightVision.Name: Night Vision
+		SwordIntent.Name: Sword Intent
+		SpiritSwordRain.Name: Spirit Sword Rain
+		SectProtectionFormation.Name: Sect Protection Formation
 	}
 }
 
@@ -371,6 +457,30 @@ Configs: {
 }
 
 Items: {
+	FormationRelayFlag: {
+		DisplayName: Formation Relay Flag
+		Tooltip:
+			'''
+			Extends a Permanent Formation with a 40-block relay territory
+			Must be placed within 80 blocks of its Core
+			Shares the Core's modes, Qi reserve and integrity
+			Adds 2 Qi/s to the Core's upkeep
+			'''
+	}
+
+	PermanentFormationCore: {
+		DisplayName: Permanent Formation Core
+		Tooltip:
+			'''
+			Places a persistent territorial protection array
+			Right-click with a Spirit Stone to store 250 Qi
+			Right-click to open the Formation control panel
+			Choose and combine unlocked arrays with one click
+			Shift/Alt shortcuts remain available for quick control
+			Nearby Spirit Stone veins power it automatically
+			'''
+	}
+
 	SpiritVeinCompass: {
 		DisplayName: Spirit Vein Compass
 		Tooltip:
@@ -718,6 +828,26 @@ Items: {
 		DisplayName: Concealment Pill
 		Tooltip: Greatly reduces enemy attention and natural spawning for 5 minutes
 	}
+
+	SectContributionToken: {
+		DisplayName: Sect Contribution Token
+		Tooltip: Currency awarded for completing Verdant Cloud Sect missions
+	}
+
+	SwordIntentManual: {
+		DisplayName: Sword Intent Manual
+		Tooltip: Teaches the passive Sword Intent technique | Requires Outer Disciple
+	}
+
+	SpiritSwordRainManual: {
+		DisplayName: Spirit Sword Rain Manual
+		Tooltip: Teaches Spirit Sword Rain | Requires Inner Disciple
+	}
+
+	SectProtectionFormationManual: {
+		DisplayName: Sect Protection Formation Manual
+		Tooltip: Teaches the Sect Protection Formation | Requires Core Disciple
+	}
 }
 
 AlchemyPills.RebirthTriggered: The Heavenly Rebirth Pill defied death!
@@ -729,6 +859,15 @@ Alchemy: {
 	TooSaturated: Your meridians are saturated. Wait before consuming another pill.
 	RequiresRank: Requires Alchemy Tier {0} ({1}), {2} Stage
 	PillMasteryTooltip: Alchemy Tier {0} ({1}) - {2} Stage | Grants {3} Alchemy EXP
+	PillQualityTooltip: Quality: {0} | Effect: {1}% | Saturation: {2}%
+
+	Quality: {
+		Impure: Impure
+		Common: Common
+		Refined: Refined
+		Earth: Earth Grade
+		Heaven: Heaven Grade
+	}
 
 	Stages: {
 		Low: Low
@@ -740,10 +879,92 @@ Alchemy: {
 }
 
 NPCs: {
+	SectElder: {
+		DisplayName: Sect Elder
+
+		TownNPCMood: {
+			Content: I am content.
+			NoHome: I hate not having a home.
+			FarFromHome: I am too far from home.
+			LoveSpace: I love having so much space.
+			DislikeCrowded: I dislike how crowded I am.
+			HateCrowded: I hate how crowded I am.
+			LikeNPC_Princess: I like {NPCName}.
+			Princess_LovesNPC: I like {NPCName}.
+		}
+	}
+
 	SpiritHare.DisplayName: Spirit Hare
 	JadeHornDeer.DisplayName: Jade Horn Deer
 	FlameTailedFox.DisplayName: Flame-Tailed Fox
 	ThunderclawTiger.DisplayName: Thunderclaw Tiger
+}
+
+Sect: {
+	ElderName: Elder Jian
+	TechniqueLearned: Technique learned: {0}
+	RankUp: Sect promotion: {0}!
+	RequiresManual: This technique must be learned from a Sect manual
+	FormationBlocked: Formation blocked {0} damage | Integrity: {1}/{2}
+	FormationShattered: Formation shattered after absorbing {0} damage!
+	FormationContribution: "{0} contributed {1} Qi | +{2} integrity"
+	FormationCollapsedNoQi: The formation collapsed because no Qi was available
+	FormationDismissed: Sect Protection Formation dismissed
+	FormationConsumedSpiritStone: The formation consumed 1 Spirit Stone and stored {0} Qi
+
+	Ranks: {
+		Rank0: Outer Disciple
+		Rank1: Inner Disciple
+		Rank2: Core Disciple
+		Rank3: Sect Elder
+	}
+
+	Buttons: {
+		Join: Join Sect
+		Mission: Request Mission
+		Claim: Claim Reward
+		Status: Mission Status
+		Shop: Sect Shop
+	}
+
+	Chat: {
+		Invitation: Your Qi has finally awakened. Will you enter the Verdant Cloud Sect?
+		TooWeak: Return after reaching the Qi Gathering Realm. The path of the sect is not yet open to you.
+		Joined: Welcome to the Verdant Cloud Sect. Accept these first Contribution Tokens and prove your worth.
+		Welcome: Welcome, {0}. The mission board and sect treasury await.
+		Assigned: Your new mission: {0}
+		Progress: Your mission is not complete: {0}
+		Complete: You have completed your assignment. Claim your contribution reward.
+		Reward: You earned {0} Contribution Tokens. Current rank: {1}.
+		Rest: The mission board is being renewed. Return in {0} seconds.
+	}
+
+	Missions: {
+		None: No active mission
+		SpiritBeastHunt: Hunt Spirit Beasts: {0}/{1}
+		SpiritStoneDelivery: Deliver Spirit Stones: {0}/{1}
+		PillRefinement: Refine Xianxia pills: {0}/{1}
+		SpiritVeinSurvey: Locate and enter a Spirit Stone vein: {0}/{1}
+		HeavenlyTribulation: Survive a Heavenly Tribulation: {0}/{1}
+	}
+
+	UI: {
+		Title: Verdant Cloud Sect
+		NotJoined: You have not joined a cultivation sect
+		FindElder: Reach Qi Gathering and speak with the Sect Elder
+		Rank: Rank: {0}
+		Contribution: Contribution Tokens: {0} | Rank progress: {1}
+		Mission: Current mission: {0}
+		Learned: LEARNED
+		RequiredRank: Requires: {0}
+		ElderHint: Complete missions and visit the Sect Elder to purchase manuals and spiritual supplies
+
+		Techniques: {
+			SwordIntent: Passive Flying Sword mastery
+			SpiritSwordRain: Active technique
+			SectProtectionFormation: Active formation
+		}
+	}
 }
 
 Bestiary: {
@@ -776,7 +997,7 @@ Cultivation: {
 	StageAdvanced: Advancement! {0} - Stage {1}
 	TribulationBegins: Heavenly Tribulation! To enter {0}, survive {1} lightning strikes
 	TribulationReady: A Heavenly Tribulation awaits your breakthrough to {0}
-	TribulationCancelled: Tribulation cancelled. Cultivate the breakthrough QiEXP again to retry
+	TribulationCancelled: Tribulation postponed. No QiEXP was lost; meditate again at full Qi to retry
 	TribulationSurvived: Tribulation overcome! The heavens acknowledge your {0} cultivation
 	TribulationFailed: Tribulation failed! The Realm breakthrough was lost
 	TribulationDeath: "{0} was reduced to ashes by the Heavenly Tribulation."
@@ -822,9 +1043,15 @@ Projectiles: {
 	SpiritVeinLocatorProjectile.DisplayName: Spirit Vein Locator Projectile
 	SpiritFlameProjectile.DisplayName: Spirit Flame
 	SpiritLightningProjectile.DisplayName: Spirit Lightning
+	SectProtectionFormationProjectile.DisplayName: Sect Protection Formation Projectile
+	PermanentFormationDomeProjectile.DisplayName: Permanent Formation Dome
+	PermanentFormationBarrierImpactProjectile.DisplayName: Permanent Formation Barrier Impact Projectile
+	PermanentFormationUpgradeEffectProjectile.DisplayName: Permanent Formation Upgrade Effect Projectile
 }
 
 Tiles: {
+	PermanentFormationCoreTile.MapEntry: Permanent Formation Core
+	FormationRelayFlagTile.MapEntry: Formation Relay Flag
 	AlchemyCauldronTile.MapEntry: Alchemy Cauldron
 	SpiritJadeCauldronTile.MapEntry: Spirit Jade Cauldron
 	ProfoundAlchemyCauldronTile.MapEntry: Profound Alchemy Cauldron
@@ -840,6 +1067,132 @@ Tiles: {
 
 WorldGeneration.SpiritualOres: Generating Xianxia spiritual veins
 
+PermanentFormation: {
+	Deposited: Spirit Stone inserted | Qi {0}/{1} | Integrity {2}/{3}
+	Activated: Permanent Formation activated | Qi {0}/{1} | Integrity {2}/{3}
+	Deactivated: Permanent Formation deactivated | Qi {0}/{1} | Integrity {2}/{3}
+	Status: "{0} | {1} | Qi {2}/{3} | Integrity {4}/{5} | Tier {6}, Stage {7} | Radius {8} blocks | Upkeep {9} Qi/s | {10}"
+	ModeSelected: Selected: {0} | {1}
+	ModeToggled: "{0}: {1} | Slots {2}/{3} | Total upkeep {4} Qi/s"
+	ModesStatus: Arrays | Protection {0} | Gathering {1} | Suppression {2} | Restoration {3} | Slots {4}/{5}
+	ModeOn: ON
+	ModeOff: OFF
+	LastModeRequired: At least one array type must remain enabled
+	NoFreeSlots: No free array slots | Maximum simultaneous modes: {0}
+	UpgradeOwnerOnly: Only the Core owner can upgrade this structure
+	UpgradeMaximum: This Formation Core has reached its maximum rank
+	UpgradePathRequired: Requires Array Formation Path Tier {0}, {1} Stage
+	UpgradeMissingMaterials: Missing materials for the Formation Core upgrade
+	UpgradeSuccess: Formation Core upgraded to Tier {0}, {1} Stage
+	OwnerControlRequired: Only the Core owner can change its configuration
+	ContributionDenied: This Core does not allow you to insert Spirit Stones
+	AccessChanged: Formation contribution access: {0}
+	RelaySpecializationOwnerOnly: Only the Core owner can specialize its Relay nodes
+	RelaySpecializationLocked: This Formation mode is not unlocked by the linked Core
+	RelaySpecializationChanged: Relay specialization selected: {0}
+	RelaySpecializationCleared: Relay returned to normal extension mode
+	StateActive: ACTIVE
+	StateInactive: INACTIVE
+	VeinConnected: Spirit Vein connected
+	VeinDisconnected: no Spirit Vein connection
+
+	UI: {
+		Title: Permanent Formation Core
+		CoreState: "{0} | Tier {1}, Stage {2}"
+		Active: ACTIVE
+		Inactive: INACTIVE
+		Slots: Arrays {0}/{1} | Relay Flags: {2}/{3}
+		Owner: Owner: {0}
+		Unclaimed: Unclaimed
+		Qi: Qi {0}/{1}
+		Integrity: Integrity {0}/{1}
+		Supply: Upkeep {0} Qi/s | Auto-repair up to {1} Qi/s | {2}
+		VeinSupply: Vein Lv.{0}: +{1} Qi/s max | Upkeep {2} | Repair {3} | {4} crystals
+		StoredSupply: Stored Qi | Upkeep {0} Qi/s | Auto-repair up to {1} Qi/s
+		VeinConnected: Spirit Vein supply
+		StoredQiSupply: Stored Qi supply
+		Enabled: ENABLED
+		Disabled: Click to enable
+		LockedTier: Locked — Tier {0}
+		ModeCost: Upkeep: {0} Qi/s
+		ProtectionDescription: Blocks incoming projectiles and Tribulations
+		SpiritGatheringDescription: Increases meditation and passive Qi recovery
+		SuppressionDescription: Slows enemies and weakens their armor
+		RestorationDescription: Continuously regenerates cultivators' health
+		TurnOn: Activate Core
+		TurnOff: Deactivate Core
+		FormationsTab: Formations
+		UpgradeTab: Core Upgrade
+		Rank: Tier {0}, {1} Stage
+		UpgradeTransition: "{0}  >  {1}"
+		UpgradeBenefits: After upgrade: Qi capacity {0} | Integrity {1} | Radius {2} blocks
+		UpgradeStatsPrimary: Qi capacity {0} > {1} | Integrity {2} > {3}
+		UpgradeStatsSecondary: Radius {0} > {1} blocks | Auto-repair {2} > {3} integrity/s
+		UpgradeStatsUnlocks: Array slots {0} > {1} | Relay Flags {2} > {3} | Tribulation absorption {4}% > {5}%
+		RequiredMaterials: Required construction materials
+		OwnerRequired: Only the Core owner can perform this upgrade
+		PathRequired: Requires Array Formation Path Tier {0}, {1} Stage
+		MaterialsMissing: Missing construction materials
+		Ready: Requirements fulfilled
+		UpgradeButton: Upgrade Formation Core
+		MaximumRank: Maximum structural rank reached
+		MaximumRankDescription: This Formation Core cannot be reinforced any further.
+		TierConfirmationTitle: Confirm upgrade to Tier {0}
+		TierConfirmationWarning: This is a major reinforcement. All displayed materials will be consumed permanently.
+		ConfirmUpgrade: Confirm Upgrade
+		CancelUpgrade: Cancel
+		AccessButton: Contribution: {0}
+	}
+
+	Access: {
+		OwnerOnly: Owner only
+		Team: Owner's team
+		Everyone: Everyone
+	}
+
+	RelayUI: {
+		Title: Formation Relay Node
+		Linked: LINKED TO FORMATION NETWORK
+		Unlinked: UNLINKED RELAY
+		CoreLink: Owner {0} | Core Tier {1}, Stage {2}
+		Distance: Distance {0}/{1} blocks
+		UnlinkedHint: Move the Relay within range of an eligible Core with a free Relay slot.
+		LocalVein: Local Spiritual Source
+		Concentration: Concentration Lv.{0} | {1} crystals
+		Production: Transfers up to +{0} Qi/s
+		ProductionLimit: Each node is capped by its own local concentration.
+		Network: Shared Formation Network
+		SharedQi: Qi {0}/{1}
+		SharedIntegrity: Integrity {0}/{1}
+		Upkeep: Upkeep {0} Qi/s | {1}
+		ActiveTerritory: active territory
+		IdleTerritory: idle territory
+		NoNetwork: No shared resources while the Relay is unlinked.
+		Benefit: A Relay extends an upgraded Core and can channel Qi from a distant Spirit Stone mine.
+		SpecializationTitle: Relay Specialization — selected mode is amplified in this territory
+		NormalMode: NORMAL EXTENSION — all enabled Core modes, no amplification
+		SelectNormal: Click to remove specialization
+		BoostProtection: Stronger shield and repulsion
+		BoostGathering: 2.25x Qi recovery
+		BoostSuppression: Stronger enemy suppression
+		BoostRestoration: +20 life regeneration
+		Selected: SELECTED
+		Select: Click to specialize
+		ModeLocked: Locked by Core Tier
+		CoreModeDisabled: Disabled at Core
+	}
+
+	Types: {
+		Protection: Protection Formation
+		SpiritGathering: Spirit Gathering Formation
+		Suppression: Suppression Formation
+		Restoration: Restoration Formation
+	}
+
+	TribulationBlocked: Formation absorbed {0} Tribulation damage | -{1} integrity | {2}/{3}
+	TribulationShattered: Formation shattered after absorbing {0} Tribulation damage | -{1} integrity | 0/{3}
+}
+
 DebugCommands: {
 	MultiplayerDisabled: Debug commands are disabled in multiplayer. Enable them explicitly in the server configuration for a private test session
 	HelpTitle: Xianxia debug commands (Realm numbers: 1-5)
@@ -854,6 +1207,7 @@ DebugCommands: {
 	Help9: /xiadebug beast <hare|deer|fox|tiger> - spawn a Spirit Beast
 	Help10: /xiadebug spawncheck - explain which Spirit Beasts can spawn here
 	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
+	Help12: /xiadebug sect max - set Verdant Cloud Sect rank to maximum
 	Unknown: Unknown debug action: {0}
 	SetUsage: Usage: /xiadebug set <realm 1-5|name> <stage 1-9>
 	QiUsage: Usage: /xiadebug qi <amount|fill|empty>
@@ -864,6 +1218,8 @@ DebugCommands: {
 	BeastSinglePlayer: Spirit Beast spawning is available only in single-player
 	BeastSpawned: Spawned: {0}
 	AlchemyUsage: Usage: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	SectUsage: Usage: /xiadebug sect max
+	SectRankMaxed: Sect rank set to {0} with {1} lifetime contribution
 	AlchemyRankSet: Alchemy debug rank set to Tier {0} - {1}, {2} Stage
 	AlchemySaturationSet: Pill Saturation set to {0}/100
 	SpawnCheckTitle: === Spirit Beast spawn check ===
@@ -898,6 +1254,8 @@ DebugCommands: {
 	Reset: Debug cultivation and ability levels reset
 }
 
+FormationPath.Advanced: Array Formations advanced to Tier {0} - {1} ({2})
+
 Manual: {
 	Title: Cultivator's Manual
 	Received: You received the Cultivator's Manual. Use it to learn about the Xianxia world
@@ -912,6 +1270,7 @@ Manual: {
 	RecipeSections: {
 		NoviceAttire: Novice Disciple Attire
 		MaterialsEquipment: Materials, Equipment and Weapons
+		FormationCores: Permanent Formation Cores
 		AccessoriesTechniques: Accessories, Techniques and Basic Pills
 		CauldronsBeastPills: Cauldrons, Compasses and Spirit Beast Pills
 		ProgressionPills: Cultivation Progression Pills
@@ -938,6 +1297,8 @@ Manual: {
 			AbilityProgression: Ability Tree and Levels
 			SpiritBeasts: Spirit Beasts
 			AlchemyPath: Alchemy Path
+			SectSystem: Sects and Missions
+			FormationPath: Permanent Formations
 			AdvancedPills: Advanced Pill Recipes
 		}
 	}
@@ -1035,7 +1396,7 @@ Manual: {
 			Title: Breakthroughs, Resources and Alchemy
 			Body:
 				'''
-				Reaching the QiEXP threshold causes a breakthrough. From Core Formation onward, you must confirm and survive a Heavenly Tribulation. The first contains 9 lightning strikes; failure prevents advancement.
+				Reaching the QiEXP threshold causes a breakthrough. From Core Formation onward, you must confirm and survive a Heavenly Tribulation. Cancelling only postpones the attempt and never removes QiEXP; meditate again with full Qi to reopen the confirmation. Failing the actual Tribulation still removes the failed breakthrough progress. The first contains 9 lightning strikes.
 
 				Heavenly lightning pierces ordinary defenses. At base mastery, Qi Protection consumes about 12% of maximum Qi per Core Formation strike and blocks 70% of its health damage; the rest penetrates the shield. Nascent Soul strikes consume about 15% and deal substantially more damage. Qi Protection mastery lowers the reserve cost. Arrive with full Qi, healing and suitable equipment.
 
@@ -1061,7 +1422,7 @@ Manual: {
 				Each player can move and scale the Qi bar, hide the Qi Concentration line and reduce Xianxia particles, spiritual lights, auras and trails. These client settings never alter damage or server gameplay.
 
 				DEBUG COMMANDS
-				Use /xiadebug help to list progression, Qi, ability, effect and Tribulation testing tools. They work immediately in single-player. In multiplayer they are disabled by default and must be enabled by the server; when enabled, every player can use them, so keep them off on public servers.
+				Use /xiadebug help to list progression, Qi, ability, effect, Tribulation and Sect testing tools. Use /xiadebug sect max to set the Verdant Cloud Sect rank to maximum. Debug commands work immediately in single-player. In multiplayer they are disabled by default and must be enabled by the server; when enabled, every player can use them, so keep them off on public servers.
 				'''
 		}
 
@@ -1256,10 +1617,76 @@ Manual: {
 				Profound Alchemy Cauldron - +10% bonus yield and -14% impurity chance.
 				Upgraded Cauldrons also satisfy recipes requiring the basic Alchemy Cauldron.
 
+				PILL QUALITY
+				Every refined pill receives a persistent quality: Impure, Common, Refined, Earth Grade or Heaven Grade. Quality is rolled when the recipe is completed and is shared by every pill in that crafted stack. Pills of different qualities cannot merge into the same stack.
+				Impure - 70% effect, 135% saturation.
+				Common - 100% effect, 100% saturation.
+				Refined - 115% effect, 90% saturation.
+				Earth Grade - 135% effect, 75% saturation.
+				Heaven Grade - 160% effect, 60% saturation.
+				Alchemy mastery above the recipe requirement and improved Cauldrons raise the quality roll. The impurity chance can instead force an Impure result and produce Pill Dregs. Quality scales instant restoration, cleansing power and buff duration; the tooltip displays the exact modified saturation cost.
+
 				PILL SATURATION
 				Every consumed pill adds saturation. As saturation rises, pill effectiveness falls gradually to 50%. A pill cannot be consumed if it would exceed 100 saturation. Saturation naturally decreases over time, preventing unlimited pill stacking while preserving their strategic use.
 
 				Open the cultivation menu and select Paths > Alchemy to inspect Tier, Stage, EXP, current saturation, pill effectiveness and refinement bonuses. The Alchemy page is divided into five Tier rows; every pill appears beside its Realm Tier with the Low, Middle or High Stage required to unlock it. For testing, use /xiadebug alchemy <tier 0-4> <low|middle|high> or /xiadebug alchemy saturation <0-100>.
+				'''
+		}
+
+		SectSystem: {
+			Title: Verdant Cloud Sect
+			Body:
+				'''
+				The Sect Elder can move into an available house, but accepts disciples only after they reach Qi Gathering. Speak with Elder Jian to enter the Verdant Cloud Sect and receive your first Contribution Tokens.
+
+				SECT RANKS
+				Outer Disciple - granted on joining.
+				Inner Disciple - 100 lifetime contribution.
+				Core Disciple - 300 lifetime contribution.
+				Sect Elder - 750 lifetime contribution.
+				Contribution Tokens are a separate currency spent in the Sect Shop. Lifetime contribution is never lost when tokens are spent.
+
+				MISSIONS
+				The Elder assigns Realm-scaled missions involving Spirit Beasts, Spirit Stones, pill refinement, Spirit Vein exploration and Heavenly Tribulations. Complete the objective, return to the Elder and claim Contribution Tokens. A short waiting period follows each completed assignment.
+
+				SECT TECHNIQUES
+				Sword Intent - Outer Disciple passive. Improves Flying Sword damage and gains mastery when a Flying Sword hits.
+				Spirit Sword Rain [{0}] - Inner Disciple active technique. Fires five spiritual swords directly from the cultivator toward the cursor. Their maximum range reaches the cursor, but never falls below the normal Flying Sword range. They home onto enemies inside that range; damage and efficiency rise with mastery.
+				Sect Protection Formation [{1}] - Core Disciple active technique. Deploys a rotating ritual array beneath a large three-dimensional turquoise protective dome. A nearby Spirit Stone vein powers and repairs it automatically. Otherwise it uses donated reserve, then 1-3 of the owner's Qi each second; if neither is available, it consumes one Spirit Stone from the owner's inventory and stores 250 Qi. It repels nearby enemies and uses its own integrity before Qi Protection. Other cultivators receive defensive bonuses while inside; if they meditate there, they voluntarily donate 1-4 Qi per second. Donated Qi repairs 30 integrity each, enters the upkeep reserve and temporarily increases maximum integrity and formation size by 25% per supporter, up to four supporters. Press the technique key again to dismiss it.
+
+				Open Cultivation Menu > Sect to inspect rank progress, current tokens, mission progress and learned techniques. Technique manuals and spiritual supplies are purchased from the Sect Elder.
+				'''
+		}
+
+		FormationPath: {
+			Title: Permanent Formations
+			Body:
+				'''
+				ARRAY FORMATIONS PATH
+				Open Cultivation Menu > Paths > Array Formations to inspect its Tier, Stage, EXP and current trial. Spirit Stones used as fuel never grant Path EXP. Formation mastery is earned by maintaining an array during real combat, absorbing damage, connecting a new Spirit Vein and intercepting Heavenly Tribulation lightning. Path mastery unlocks the structural ranks that a Core may reach, but no longer upgrades any structure automatically.
+
+				Each Stage requires both enough EXP and a practical trial. Low Stage tests sustained combat operation, Middle Stage tests cumulative damage absorption, and High Stage requires a special achievement. Tier 0 requires a Spirit Vein link, Tier 1 requires advanced defensive experience, and later Tiers require increasingly many Tribulation strikes. Advancing to the next Tier also requires reaching its corresponding cultivation Realm.
+
+				PERMANENT FORMATION CORE
+				Craft the Core at a Mythril Anvil using 12 Profound Iron Bars, 8 Spirit Jade Bars and 15 Spirit Stones. Place it on solid ground. The first cultivator who interacts with it becomes its Path owner and receives its training progress. Right-click while holding a Spirit Stone to insert it: each stone stores 250 Qi and repairs the Core, but grants no EXP. Right-click normally to open the Formation control panel. Its Formations tab controls active arrays; its Core Upgrade tab displays the next structural Stage and every changed statistic, including capacity, integrity, radius, repair speed, array slots, Relay limit and Tribulation absorption. Only the owner can change modes, power, contribution access or structural rank. Contribution access may allow only the owner, the owner's Terraria team, or everyone to insert Spirit Stones, while upgrades remain owner-only. The owner's Array Formation Path must already have reached the target rank, and every upgrade consumes Spirit Stones, Profound Iron Bars and Spirit Jade Bars. Tier breakthroughs additionally require a matching Beast Core; the final Tier consumes three Core Formation Beast Cores. Major Tier upgrades require confirmation before materials are consumed. Existing Cores retain their saved rank but never copy later Path advancements. Shift and Alt combinations remain optional shortcuts for experienced users. Two compact world bars appear above the Core and every linked Relay Flag: cyan represents shared Qi and green represents shared integrity. Empty dim bars identify an unlinked Flag.
+
+				FORMATION TYPES
+				Protection - Tier 0, 1 Qi/s. Grants +12 defense and 6% damage reduction, repels enemies and is the only type that intercepts Heavenly Tribulation lightning. Hostile creatures cannot naturally spawn anywhere inside the Core or Relay Flag territories, even when the boundary is outside the player's screen; harmless critters and friendly NPCs remain unaffected. Damaging projectiles and abilities created outside are destroyed when they strike its boundary and damage the Core's integrity. Projectiles created inside are marked as friendly to that territory and can leave without resistance.
+				Spirit Gathering - Tier 1, 2 Qi/s. Increases meditation and passive Qi recovery by 50% for every cultivator inside.
+				Suppression - Tier 2, 2 Qi/s. Slows ordinary enemies and applies Broken Armor throughout the territory; bosses resist most of the effect.
+				Restoration - Tier 3, 3 Qi/s. Grants continuous life regeneration to cultivators inside.
+				Array slots allow multiple types to operate from the same Core. Tier 0 has 1 slot, Tier 1 has 2, Tier 2 retains 2, Tier 3 has 3 and Tier 4 can run all 4 types together. Upkeep is additive: activating every type costs 8 Qi/s. At least one type must remain enabled. The Core seal and boundary particles show the currently selected type, while the status readout lists every active array. A Spirit Vein powers every enabled type without consuming stored Qi.
+
+				FORMATION RELAY FLAGS
+				A Core's own radius can never exceed 80 blocks. To expand farther, craft a Formation Relay Flag at a Mythril Anvil with 6 Profound Iron Bars, 4 Spirit Jade Bars and 5 Spirit Stones. A Relay can link with its center up to 40 blocks beyond the Core's current boundary, equal to the Core radius plus the Relay's 40-block territory. A maximum-radius Core can therefore reach a Relay 120 blocks away. This allows the new territory to begin outside the original Formation while remaining connected. Structural Tier controls the Relay limit: Tier 0 supports none, then Tier 1/2/3/4 support 1/2/4/6 Flags. Flags beyond the limit remain unpowered until the Core is upgraded or another eligible Core is available. A linked Flag consumes 1 Qi/s while its territory is empty and 2 Qi/s while a player or hostile creature is inside. It shares the Core's Qi and integrity. Right-click a Relay to open its status panel, showing its parent Core, connection distance, current upkeep, shared resources and local spiritual concentration. The Core owner selects one exclusive Relay specialization: the normal Core modes and the other specializations do not operate inside that Relay territory. Protection grants +24 defense and 12% damage reduction, stronger repulsion, 10% more Tribulation absorption and reduced barrier strain; Gathering raises meditation and passive recovery to 2.25x; Suppression applies a much stronger slow; Restoration grants +20 life regeneration. A specialization whose Core mode is disabled remains selected but provides no bonus. Projectiles created inside either the Core territory or one of its Flags can leave freely. If the Core deactivates, every linked Flag loses power.
+				Selecting Normal Extension removes the specialization and makes every Core-enabled mode operate in the Relay territory at its standard strength.
+
+				POWER AND TERRITORY
+				An active Core pays the combined upkeep of every enabled array and persists with the world. Damaged integrity is then repaired automatically at a rate determined by structural Tier and Stage: every 10 integrity repaired consumes 1 additional Qi. Repair Qi is charged only while integrity is missing and is separate from array upkeep. If the stored reserve cannot pay the complete repair, the Core repairs as much as it can after paying upkeep. A Spirit Stone mine near the Core or any authorized Relay links through the same configurable radius and concentration calculation used by cultivators. Every node calculates its own local concentration and provides at most 5 Qi/s per level, from 5 Qi/s at Level 1 to 50 Qi/s at Level 10. This lets a Relay channel a distant mine into the shared network; multiple linked nodes add their individually capped production. Network output pays array upkeep first, automatic repair second, and stores only the remaining Qi. If its output is insufficient, the deficit is taken from stored Qi. An inactive Core has no upkeep and therefore continues charging its reserve from connected sources, up to capacity.
+
+				During a Heavenly Tribulation, the Core directly intercepts lightning that hits a cultivator inside its territory. It initially absorbs 55% of each strike; Formation Tier and Stage can raise this to 80%. Tribulation lightning consumes much more integrity than ordinary attacks, with higher Realm Tribulations applying greater strain. A Core at zero integrity shatters, deactivates and leaves the remaining lightning damage to the cultivator. Qi Protection is applied afterward to whatever passes through the Formation.
+
+				Relay Flags are the first territorial network component. Future updates can expand this system with permissions, specialized nodes and links between multiple Cores.
 				'''
 		}
 	}

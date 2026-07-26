@@ -72,6 +72,10 @@ public class XianxiaDebugCommand : ModCommand
 			case "alchemy":
 				SetAlchemyDebug(caller, args);
 				break;
+			case "sect":
+			case "sectrank":
+				SetSectDebug(caller, args);
+				break;
 			case "reset":
 				cultivation.DebugResetProgression();
 				caller.Reply(Mod.GetLocalization("DebugCommands.Reset").Value);
@@ -86,10 +90,24 @@ public class XianxiaDebugCommand : ModCommand
 	private void ShowHelp(CommandCaller caller)
 	{
 		caller.Reply(Mod.GetLocalization("DebugCommands.HelpTitle").Value);
-		for (int i = 1; i <= 11; i++)
+		for (int i = 1; i <= 12; i++)
 		{
 			caller.Reply(Mod.GetLocalization($"DebugCommands.Help{i}").Value);
 		}
+	}
+
+	private void SetSectDebug(CommandCaller caller, string[] args)
+	{
+		if (args.Length < 2 || !args[1].Equals("max", StringComparison.OrdinalIgnoreCase))
+		{
+			caller.Reply(Mod.GetLocalization("DebugCommands.SectUsage").Value);
+			return;
+		}
+
+		SectPlayer sect = caller.Player.GetModPlayer<SectPlayer>();
+		sect.DebugMaxRank();
+		caller.Reply(Mod.GetLocalization("DebugCommands.SectRankMaxed").Format(
+			sect.GetRankName(), sect.LifetimeContribution));
 	}
 
 	private void SetAlchemyDebug(CommandCaller caller, string[] args)

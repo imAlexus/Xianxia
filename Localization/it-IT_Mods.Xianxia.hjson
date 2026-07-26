@@ -12,7 +12,11 @@ Keybinds: {
 	NightVision.DisplayName: Visione Notturna
 	AbilityWheel.DisplayName: Ruota delle Abilita
 	AbilityTree.DisplayName: Albero delle Abilita
+	SpiritSwordRain.DisplayName: Pioggia di Spade Spirituali
+	SectFormation.DisplayName: Formazione Protettiva della Setta
 }
+
+Currencies.SectContribution: gettoni contributo della setta
 
 Buffs: {
 	QiResistanceBuff: {
@@ -98,6 +102,51 @@ Buffs: {
 	ConcealmentBuff: {
 		DisplayName: Occultamento Spirituale
 		Description: Riduce notevolmente l'attenzione e la generazione dei nemici
+	}
+
+	PermanentFormationProtectionBuff: {
+		DisplayName: Protezione della Formazione Permanente
+		Description: Protetto da un array territoriale: +12 difesa e 6% riduzione del danno
+	}
+
+	PermanentFormationGatheringBuff: {
+		DisplayName: Formazione di Raccolta Spirituale
+		Description: Meditazione e recupero passivo del Qi aumentano del 50%
+	}
+
+	PermanentFormationSuppressionBuff: {
+		DisplayName: Formazione di Soppressione
+		Description: Le creature ostili nel territorio vengono rallentate e indebolite
+	}
+
+	PermanentFormationRestorationBuff: {
+		DisplayName: Formazione di Ristorazione
+		Description: L'array territoriale rigenera continuamente la vita
+	}
+
+	PermanentFormationRelayProtectionBuff: {
+		DisplayName: Protezione Relay Concentrata
+		Description: La modalita Relay esclusiva fornisce +24 difesa e 12% riduzione del danno
+	}
+
+	PermanentFormationRelayGatheringBuff: {
+		DisplayName: Raccolta Relay Concentrata
+		Description: La specializzazione Relay porta il bonus al recupero Qi al 125%
+	}
+
+	PermanentFormationRelaySuppressionBuff: {
+		DisplayName: Soppressione Relay Concentrata
+		Description: La modalita Relay esclusiva rallenta e indebolisce fortemente le creature ostili
+	}
+
+	PermanentFormationRelayRestorationBuff: {
+		DisplayName: Ristorazione Relay Concentrata
+		Description: La modalita Relay esclusiva fornisce +20 rigenerazione vitale
+	}
+
+	SectProtectionFormationBuff: {
+		DisplayName: Formazione Protettiva della Setta
+		Description: Respinge i nemici e assorbe danni con una barriera propria prima della Protezione Qi
 	}
 }
 
@@ -190,10 +239,14 @@ AbilityTree: {
 	GoldenCoreEffect: Livello {0} | -5% costo delle abilita, poi -1% per livello | {1}
 	NascentSoulEffect: Livello {0} | +4 rigenerazione vita, poi +2 per livello | {1}
 	NightVisionEffect: Livello {0} | raggio luminoso maggiore; costa 3 Qi/s, 2 dal livello 8 e 1 dal livello 15 | {1}
+	SwordIntentEffect: Livello {0} | danno Flying Sword +10%, poi +1.5% per livello | {1}
+	SwordRainEffect: Livello {0} | cinque spade, raggio controllato dal cursore, piu danno e minori costo Qi/cooldown | {1}
+	FormationEffect: Livello {0} | mantenuta con il Qi; gli alleati possono meditare dentro per potenziarla e ripararla | {1}
 
 	Tabs: {
 		Abilities: Abilita
 		Paths: Path
+		Sect: Setta
 	}
 
 	Paths: {
@@ -217,6 +270,36 @@ AbilityTree: {
 			PillRequirement: Stadio {0} | {1}
 			NoPills: Nessuna pillola scoperta per questo Tier
 		}
+
+		Formations: {
+			Name: Formazioni Array
+			Tier: Tier {0} - {1} ({2})
+			Progress: Stadio {0} | {1}
+			ExperienceStored: EXP {0}/{1} (+{2} accumulata)
+			Stats: Raggio territorio: {0} blocchi | Capacita Qi: {1} | Integrita: {2}
+			StatRadius: Raggio: {0} blocchi
+			StatQi: Capacita Qi: {0}
+			StatIntegrity: Integrita: {0}
+			ExpHint: Allenati difendendo il territorio, assorbendo danni e intercettando Tribolazioni
+			RealmGate: Il prossimo Tier richiede {0}: {1}
+			Ready: PRONTO
+			Locked: BLOCCATO
+
+			Trials: {
+				Combat: Prova - mantieni una Formazione durante il combattimento: {0}/{1} cicli
+				Damage: Prova - assorbi danni con una Formazione: {0}/{1}
+				Vein: Prova - collega un Core Permanente a una Vena Spirituale: {0}/{1}
+				Foundation: Prova - danni cumulativi assorbiti dalla Formazione: {0}/{1}
+				Tribulation: Prova - fulmini della Tribolazione intercettati: {0}/{1}
+				Mastered: Il Path delle Formazioni Array e stato padroneggiato
+			}
+
+			Tier0: Formazione Protettiva | 1 slot array simultaneo
+			Tier1: Sblocca Raccolta Spirituale | 2 slot array simultanei
+			Tier2: Sblocca Soppressione | mantiene 2 slot array simultanei
+			Tier3: Sblocca Ristorazione | 3 slot array simultanei
+			Tier4: Grande Formazione | tutti i 4 tipi possono funzionare insieme
+		}
 	}
 
 	Abilities: {
@@ -234,6 +317,9 @@ AbilityTree: {
 		GoldenCoreCirculation.Name: Circolazione del Nucleo
 		NascentSoulRegeneration.Name: Rigenerazione dell'Anima
 		NightVision.Name: Visione Notturna
+		SwordIntent.Name: Intento della Spada
+		SpiritSwordRain.Name: Pioggia di Spade Spirituali
+		SectProtectionFormation.Name: Formazione Protettiva della Setta
 	}
 }
 
@@ -371,6 +457,30 @@ Configs: {
 }
 
 Items: {
+	FormationRelayFlag: {
+		DisplayName: Bandiera Relay della Formazione
+		Tooltip:
+			'''
+			Estende una Formazione Permanente con un territorio relay di 40 blocchi
+			Deve essere piazzata entro 80 blocchi dal suo Core
+			Condivide modalita, riserva di Qi e integrita del Core
+			Aggiunge 2 Qi/s al mantenimento del Core
+			'''
+	}
+
+	PermanentFormationCore: {
+		DisplayName: Formation Core Permanente
+		Tooltip:
+			'''
+			Piazza un array di protezione territoriale persistente
+			Clic destro con una Spirit Stone per conservare 250 Qi
+			Clic destro per aprire il pannello di controllo della Formazione
+			Scegli e combina gli array sbloccati con un solo clic
+			Le scorciatoie Shift/Alt restano disponibili per il controllo rapido
+			Le vene di Spirit Stone vicine lo alimentano automaticamente
+			'''
+	}
+
 	SpiritVeinCompass: {
 		DisplayName: Bussola Cercavene Spirituali
 		Tooltip:
@@ -718,6 +828,26 @@ Items: {
 		DisplayName: Pillola dell'Occultamento
 		Tooltip: Riduce notevolmente l'attenzione e la generazione dei nemici per 5 minuti
 	}
+
+	SectContributionToken: {
+		DisplayName: Gettone Contributo della Setta
+		Tooltip: Valuta ottenuta completando missioni della Setta della Nuvola Verde
+	}
+
+	SwordIntentManual: {
+		DisplayName: Manuale dell'Intento della Spada
+		Tooltip: Insegna la passiva Intento della Spada | Richiede Discepolo Esterno
+	}
+
+	SpiritSwordRainManual: {
+		DisplayName: Manuale della Pioggia di Spade Spirituali
+		Tooltip: Insegna Pioggia di Spade Spirituali | Richiede Discepolo Interno
+	}
+
+	SectProtectionFormationManual: {
+		DisplayName: Manuale della Formazione Protettiva
+		Tooltip: Insegna la Formazione Protettiva della Setta | Richiede Discepolo Principale
+	}
 }
 
 AlchemyPills.RebirthTriggered: La Pillola della Rinascita Celeste ha sfidato la morte!
@@ -729,6 +859,15 @@ Alchemy: {
 	TooSaturated: I tuoi meridiani sono saturi. Attendi prima di consumare un'altra pillola.
 	RequiresRank: Richiede Alchimia Tier {0} ({1}), Stadio {2}
 	PillMasteryTooltip: Alchimia Tier {0} ({1}) - Stadio {2} | Conferisce {3} EXP
+	PillQualityTooltip: Qualita: {0} | Effetto: {1}% | Saturazione: {2}%
+
+	Quality: {
+		Impure: Impura
+		Common: Comune
+		Refined: Raffinata
+		Earth: Grado Terra
+		Heaven: Grado Celeste
+	}
 
 	Stages: {
 		Low: Basso
@@ -740,10 +879,92 @@ Alchemy: {
 }
 
 NPCs: {
+	SectElder: {
+		DisplayName: Anziano della Setta
+
+		TownNPCMood: {
+			// Content: I am content.
+			// NoHome: I hate not having a home.
+			// FarFromHome: I am too far from home.
+			// LoveSpace: I love having so much space.
+			// DislikeCrowded: I dislike how crowded I am.
+			// HateCrowded: I hate how crowded I am.
+			// LikeNPC_Princess: I like {NPCName}.
+			// Princess_LovesNPC: I like {NPCName}.
+		}
+	}
+
 	SpiritHare.DisplayName: Lepre Spirituale
 	JadeHornDeer.DisplayName: Cervo dalle Corna di Giada
 	FlameTailedFox.DisplayName: Volpe dalla Coda Fiammeggiante
 	ThunderclawTiger.DisplayName: Tigre dagli Artigli Tonanti
+}
+
+Sect: {
+	ElderName: Anziano Jian
+	TechniqueLearned: Tecnica appresa: {0}
+	RankUp: Promozione nella Setta: {0}!
+	RequiresManual: Questa tecnica deve essere appresa da un manuale della Setta
+	FormationBlocked: La formazione ha bloccato {0} danni | Integrita: {1}/{2}
+	FormationShattered: Formazione distrutta dopo aver assorbito {0} danni!
+	FormationContribution: "{0} ha contribuito {1} Qi | +{2} integrita"
+	FormationCollapsedNoQi: La formazione e crollata per mancanza di Qi
+	FormationDismissed: Formazione Protettiva della Setta disattivata
+	FormationConsumedSpiritStone: La formazione ha consumato 1 Spirit Stone e conservato {0} Qi
+
+	Ranks: {
+		Rank0: Discepolo Esterno
+		Rank1: Discepolo Interno
+		Rank2: Discepolo Principale
+		Rank3: Anziano della Setta
+	}
+
+	Buttons: {
+		Join: Entra nella Setta
+		Mission: Richiedi Missione
+		Claim: Ritira Ricompensa
+		Status: Stato Missione
+		Shop: Negozio della Setta
+	}
+
+	Chat: {
+		Invitation: Il tuo Qi si e finalmente risvegliato. Vuoi entrare nella Setta della Nuvola Verde?
+		TooWeak: Torna dopo aver raggiunto il Realm Qi Gathering. La via della setta non e ancora aperta per te.
+		Joined: Benvenuto nella Setta della Nuvola Verde. Accetta questi primi Gettoni Contributo e dimostra il tuo valore.
+		Welcome: Benvenuto, {0}. La bacheca delle missioni e il tesoro della setta ti attendono.
+		Assigned: La tua nuova missione: {0}
+		Progress: La missione non e completa: {0}
+		Complete: Hai completato l'incarico. Ritira la ricompensa contributo.
+		Reward: Hai ottenuto {0} Gettoni Contributo. Grado attuale: {1}.
+		Rest: La bacheca si sta aggiornando. Torna tra {0} secondi.
+	}
+
+	Missions: {
+		None: Nessuna missione attiva
+		SpiritBeastHunt: Caccia Spirit Beast: {0}/{1}
+		SpiritStoneDelivery: Consegna Spirit Stone: {0}/{1}
+		PillRefinement: Raffina pillole Xianxia: {0}/{1}
+		SpiritVeinSurvey: Trova ed entra in una vena di Spirit Stone: {0}/{1}
+		HeavenlyTribulation: Sopravvivi a una Tribolazione Celeste: {0}/{1}
+	}
+
+	UI: {
+		Title: Setta della Nuvola Verde
+		NotJoined: Non appartieni ancora a una setta di coltivazione
+		FindElder: Raggiungi Qi Gathering e parla con l'Anziano della Setta
+		Rank: Grado: {0}
+		Contribution: Gettoni Contributo: {0} | Progresso grado: {1}
+		Mission: Missione attuale: {0}
+		Learned: APPRESA
+		RequiredRank: Richiede: {0}
+		ElderHint: Completa missioni e visita l'Anziano per acquistare manuali e risorse spirituali
+
+		Techniques: {
+			SwordIntent: Passiva per Flying Sword
+			SpiritSwordRain: Tecnica attiva
+			SectProtectionFormation: Formazione attiva
+		}
+	}
 }
 
 Bestiary: {
@@ -776,7 +997,7 @@ Cultivation: {
 	StageAdvanced: Avanzamento! {0} - Stadio {1}
 	TribulationBegins: Tribolazione Celeste! Per entrare in {0}, sopravvivi a {1} fulmini
 	TribulationReady: Una Tribolazione Celeste attende il tuo breakthrough verso {0}
-	TribulationCancelled: Tribolazione annullata. Ricoltiva il QiEXP del breakthrough per riprovare
+	TribulationCancelled: Tribolazione rimandata. Nessun QiEXP perso; medita di nuovo con Qi pieno per riprovare
 	TribulationSurvived: Tribolazione superata! I cieli riconoscono la tua coltivazione: {0}
 	TribulationFailed: Tribolazione fallita! Il breakthrough di Realm e stato perso
 	TribulationDeath: "{0} e stato ridotto in cenere dalla Tribolazione Celeste."
@@ -822,9 +1043,15 @@ Projectiles: {
 	// SpiritVeinLocatorProjectile.DisplayName: Spirit Vein Locator Projectile
 	SpiritFlameProjectile.DisplayName: Fiamma Spirituale
 	SpiritLightningProjectile.DisplayName: Fulmine Spirituale
+	// SectProtectionFormationProjectile.DisplayName: Sect Protection Formation Projectile
+	PermanentFormationDomeProjectile.DisplayName: Cupola della Formazione Permanente
+	// PermanentFormationBarrierImpactProjectile.DisplayName: Permanent Formation Barrier Impact Projectile
+	// PermanentFormationUpgradeEffectProjectile.DisplayName: Permanent Formation Upgrade Effect Projectile
 }
 
 Tiles: {
+	PermanentFormationCoreTile.MapEntry: Formation Core Permanente
+	FormationRelayFlagTile.MapEntry: Bandiera Relay della Formazione
 	AlchemyCauldronTile.MapEntry: Calderone Alchemico
 	SpiritJadeCauldronTile.MapEntry: Calderone di Giada Spirituale
 	ProfoundAlchemyCauldronTile.MapEntry: Calderone Alchemico Profondo
@@ -840,6 +1067,132 @@ Tiles: {
 
 WorldGeneration.SpiritualOres: Generazione delle vene spirituali Xianxia
 
+PermanentFormation: {
+	Deposited: Spirit Stone inserita | Qi {0}/{1} | Integrita {2}/{3}
+	Activated: Formazione Permanente attivata | Qi {0}/{1} | Integrita {2}/{3}
+	Deactivated: Formazione Permanente disattivata | Qi {0}/{1} | Integrita {2}/{3}
+	Status: "{0} | {1} | Qi {2}/{3} | Integrita {4}/{5} | Tier {6}, Stadio {7} | Raggio {8} blocchi | Consumo {9} Qi/s | {10}"
+	ModeSelected: Selezionata: {0} | {1}
+	ModeToggled: "{0}: {1} | Slot {2}/{3} | Consumo totale {4} Qi/s"
+	ModesStatus: Array | Protezione {0} | Raccolta {1} | Soppressione {2} | Ristorazione {3} | Slot {4}/{5}
+	ModeOn: ATTIVA
+	ModeOff: INATTIVA
+	LastModeRequired: Almeno un tipo di array deve rimanere attivo
+	NoFreeSlots: Nessuno slot array libero | Massimo modalita simultanee: {0}
+	UpgradeOwnerOnly: Solo il proprietario del Core puo potenziare questa struttura
+	UpgradeMaximum: Questo Formation Core ha raggiunto il rango massimo
+	UpgradePathRequired: Richiede Array Formation Path Tier {0}, Stadio {1}
+	UpgradeMissingMaterials: Materiali insufficienti per potenziare il Formation Core
+	UpgradeSuccess: Formation Core potenziato a Tier {0}, Stadio {1}
+	OwnerControlRequired: Solo il proprietario del Core puo modificarne la configurazione
+	ContributionDenied: Questo Core non ti permette di inserire Spirit Stone
+	AccessChanged: Accesso ai contributi della Formazione: {0}
+	RelaySpecializationOwnerOnly: Solo il proprietario del Core puo specializzare i suoi Relay
+	RelaySpecializationLocked: Questa modalita non e sbloccata dal Core collegato
+	RelaySpecializationChanged: Specializzazione Relay selezionata: {0}
+	RelaySpecializationCleared: Il Relay e tornato alla modalita di estensione normale
+	StateActive: ATTIVA
+	StateInactive: INATTIVA
+	VeinConnected: Vena Spirituale collegata
+	VeinDisconnected: nessuna Vena Spirituale collegata
+
+	UI: {
+		Title: Core di Formazione Permanente
+		CoreState: "{0} | Tier {1}, Stadio {2}"
+		Active: ATTIVO
+		Inactive: INATTIVO
+		Slots: Array {0}/{1} | Bandiere Relay: {2}/{3}
+		Owner: Proprietario: {0}
+		Unclaimed: Senza proprietario
+		Qi: Qi {0}/{1}
+		Integrity: Integrita {0}/{1}
+		Supply: Mantenimento {0} Qi/s | Riparazione fino a {1} Qi/s | {2}
+		VeinSupply: Vena Lv.{0}: massimo +{1} Qi/s | Consumo {2} | Riparazione {3} | {4} cristalli
+		StoredSupply: Qi conservato | Consumo {0} Qi/s | Riparazione fino a {1} Qi/s
+		VeinConnected: Alimentazione dalla Vena Spirituale
+		StoredQiSupply: Alimentazione dal Qi conservato
+		Enabled: ATTIVA
+		Disabled: Clicca per attivare
+		LockedTier: Bloccata — Tier {0}
+		ModeCost: Consumo: {0} Qi/s
+		ProtectionDescription: Blocca proiettili in entrata e Tribolazioni
+		SpiritGatheringDescription: Aumenta meditazione e recupero passivo del Qi
+		SuppressionDescription: Rallenta i nemici e ne indebolisce l'armatura
+		RestorationDescription: Rigenera continuamente la salute dei coltivatori
+		TurnOn: Attiva Core
+		TurnOff: Disattiva Core
+		FormationsTab: Formazioni
+		UpgradeTab: Potenziamento Core
+		Rank: Tier {0}, Stadio {1}
+		UpgradeTransition: "{0}  >  {1}"
+		UpgradeBenefits: Dopo l'upgrade: capacita Qi {0} | Integrita {1} | Raggio {2} blocchi
+		UpgradeStatsPrimary: Capacita Qi {0} > {1} | Integrita {2} > {3}
+		UpgradeStatsSecondary: Raggio {0} > {1} blocchi | Riparazione {2} > {3} integrita/s
+		UpgradeStatsUnlocks: Slot array {0} > {1} | Bandiere Relay {2} > {3} | Assorbimento Tribolazione {4}% > {5}%
+		RequiredMaterials: Materiali di costruzione richiesti
+		OwnerRequired: Solo il proprietario del Core puo eseguire questo upgrade
+		PathRequired: Richiede Array Formation Path Tier {0}, Stadio {1}
+		MaterialsMissing: Materiali di costruzione insufficienti
+		Ready: Requisiti soddisfatti
+		UpgradeButton: Potenzia Formation Core
+		MaximumRank: Rango strutturale massimo raggiunto
+		MaximumRankDescription: Questo Formation Core non puo essere rinforzato ulteriormente.
+		TierConfirmationTitle: Conferma potenziamento al Tier {0}
+		TierConfirmationWarning: Questo e un rinforzo maggiore. Tutti i materiali mostrati verranno consumati definitivamente.
+		ConfirmUpgrade: Conferma Upgrade
+		CancelUpgrade: Annulla
+		AccessButton: Contributi: {0}
+	}
+
+	Access: {
+		OwnerOnly: Solo proprietario
+		Team: Squadra proprietario
+		Everyone: Tutti
+	}
+
+	RelayUI: {
+		Title: Nodo Relay della Formazione
+		Linked: COLLEGATO ALLA RETE
+		Unlinked: RELAY SCOLLEGATO
+		CoreLink: Proprietario {0} | Core Tier {1}, Stadio {2}
+		Distance: Distanza {0}/{1} blocchi
+		UnlinkedHint: Sposta il Relay entro la portata di un Core valido con uno slot Relay libero.
+		LocalVein: Fonte Spirituale Locale
+		Concentration: Concentrazione Lv.{0} | {1} cristalli
+		Production: Trasferisce fino a +{0} Qi/s
+		ProductionLimit: Ogni nodo e limitato dalla propria concentrazione locale.
+		Network: Rete della Formazione
+		SharedQi: Qi {0}/{1}
+		SharedIntegrity: Integrita {0}/{1}
+		Upkeep: Consumo {0} Qi/s | {1}
+		ActiveTerritory: territorio attivo
+		IdleTerritory: territorio inattivo
+		NoNetwork: Nessuna risorsa condivisa mentre il Relay e scollegato.
+		Benefit: Un Relay estende un Core potenziato e puo incanalare Qi da una miniera di Spirit Stone distante.
+		SpecializationTitle: Specializzazione Relay — la modalita selezionata viene amplificata nel territorio
+		NormalMode: ESTENSIONE NORMALE — tutte le modalita del Core, nessun potenziamento
+		SelectNormal: Clicca per rimuovere la specializzazione
+		BoostProtection: Scudo e repulsione maggiori
+		BoostGathering: Recupero Qi x2.25
+		BoostSuppression: Soppressione nemici maggiore
+		BoostRestoration: +20 rigenerazione vitale
+		Selected: SELEZIONATA
+		Select: Clicca per specializzare
+		ModeLocked: Bloccata dal Tier Core
+		CoreModeDisabled: Disattivata nel Core
+	}
+
+	Types: {
+		Protection: Formazione Protettiva
+		SpiritGathering: Formazione di Raccolta Spirituale
+		Suppression: Formazione di Soppressione
+		Restoration: Formazione di Ristorazione
+	}
+
+	TribulationBlocked: La Formazione ha assorbito {0} danni della Tribolazione | -{1} integrita | {2}/{3}
+	TribulationShattered: La Formazione si e spezzata assorbendo {0} danni della Tribolazione | -{1} integrita | 0/{3}
+}
+
 DebugCommands: {
 	MultiplayerDisabled: I comandi debug sono disabilitati in multiplayer. Abilitali esplicitamente nella configurazione server per una sessione di test privata
 	HelpTitle: Comandi debug Xianxia (numeri dei Realm da 1 a 5)
@@ -854,6 +1207,7 @@ DebugCommands: {
 	Help9: /xiadebug beast <hare|deer|fox|tiger> - genera una Bestia Spirituale
 	Help10: /xiadebug spawncheck - spiega quali Bestie Spirituali possono comparire qui
 	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
+	Help12: /xiadebug sect max - imposta al massimo il rank della Setta Nuvola Verde
 	Unknown: Azione debug sconosciuta: {0}
 	SetUsage: Uso: /xiadebug set <realm 1-5|nome> <stadio 1-9>
 	QiUsage: Uso: /xiadebug qi <quantita|fill|empty>
@@ -864,6 +1218,8 @@ DebugCommands: {
 	BeastSinglePlayer: La generazione debug delle Bestie Spirituali e disponibile solo in single-player
 	BeastSpawned: Generata: {0}
 	AlchemyUsage: Uso: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	SectUsage: Uso: /xiadebug sect max
+	SectRankMaxed: Rank della setta impostato a {0} con {1} contributi vitalizi
 	AlchemyRankSet: Rango debug Alchimia impostato a Tier {0} - {1}, Stadio {2}
 	AlchemySaturationSet: Saturazione da Pillole impostata a {0}/100
 	SpawnCheckTitle: === Controllo spawn Bestie Spirituali ===
@@ -898,6 +1254,8 @@ DebugCommands: {
 	Reset: Coltivazione e livelli delle abilita ripristinati per il debug
 }
 
+FormationPath.Advanced: Formazioni Array avanzate al Tier {0} - {1} ({2})
+
 Manual: {
 	Title: Manuale del Coltivatore
 	Received: Hai ricevuto il Manuale del Coltivatore. Usalo per conoscere il mondo Xianxia
@@ -912,6 +1270,7 @@ Manual: {
 	RecipeSections: {
 		NoviceAttire: Abiti del Discepolo Novizio
 		MaterialsEquipment: Materiali, Equipaggiamento e Armi
+		FormationCores: Formation Core Permanenti
 		AccessoriesTechniques: Accessori, Tecniche e Pillole Base
 		CauldronsBeastPills: Calderoni, Bussole e Pillole delle Bestie
 		ProgressionPills: Pillole di Progressione
@@ -938,6 +1297,8 @@ Manual: {
 			AbilityProgression: Albero e Livelli delle Abilita
 			SpiritBeasts: Bestie Spirituali
 			AlchemyPath: Path dell'Alchimia
+			SectSystem: Sette e Missioni
+			FormationPath: Formazioni Permanenti
 			AdvancedPills: Ricette delle Pillole Avanzate
 		}
 	}
@@ -1035,7 +1396,7 @@ Manual: {
 			Title: Breakthrough, Risorse e Alchimia
 			Body:
 				'''
-				Raggiunta la soglia di QiEXP avviene un breakthrough. Da Formazione del Nucleo in poi devi confermare e sopravvivere a una Tribolazione Celeste. La prima contiene 9 fulmini; fallire impedisce l'avanzamento.
+				Raggiunta la soglia di QiEXP avviene un breakthrough. Da Formazione del Nucleo in poi devi confermare e sopravvivere a una Tribolazione Celeste. Annullare rimanda soltanto il tentativo e non rimuove QiEXP; medita nuovamente con Qi pieno per riaprire la conferma. Fallire la vera Tribolazione rimuove ancora il progresso del breakthrough fallito. La prima contiene 9 fulmini.
 
 				I fulmini celesti penetrano le difese comuni. Con maestria base, Protezione Qi consuma circa il 12% del Qi massimo per ogni fulmine di Formazione del Nucleo e blocca il 70% del danno alla salute; il resto attraversa lo scudo. I fulmini di Anima Nascente consumano circa il 15% e infliggono molto piu danno. La maestria di Protezione Qi riduce il costo sulla riserva. Presentati con Qi pieno, cure ed equipaggiamento adeguato.
 
@@ -1061,7 +1422,7 @@ Manual: {
 				Ogni giocatore puo spostare e ridimensionare la barra Qi, nascondere la riga della Concentrazione Qi e ridurre particelle, luci spirituali, aure e scie di Xianxia. Queste impostazioni client non modificano mai danni o gameplay del server.
 
 				COMANDI DEBUG
-				Usa /xiadebug help per vedere gli strumenti di test per progressione, Qi, abilita, effetti e Tribolazioni. Funzionano subito in single-player. In multiplayer sono disabilitati di default e devono essere attivati dal server; quando attivi, ogni giocatore puo usarli, quindi tienili spenti sui server pubblici.
+				Usa /xiadebug help per vedere gli strumenti di test per progressione, Qi, abilita, effetti, Tribolazioni e Setta. Usa /xiadebug sect max per impostare al massimo il rank della Setta Nuvola Verde. I comandi funzionano subito in single-player. In multiplayer sono disabilitati di default e devono essere attivati dal server; quando attivi, ogni giocatore puo usarli, quindi tienili spenti sui server pubblici.
 				'''
 		}
 
@@ -1256,10 +1617,76 @@ Manual: {
 				Calderone Alchemico Profondo - +10% resa extra e -14% probabilita impurita.
 				I Calderoni migliorati soddisfano anche le ricette che richiedono quello base.
 
+				QUALITA DELLE PILLOLE
+				Ogni pillola raffinata riceve una qualita persistente: Impura, Comune, Raffinata, Grado Terra o Grado Celeste. La qualita viene determinata al completamento della ricetta ed e condivisa da tutte le pillole dello stack creato. Pillole con qualita diverse non possono unirsi nello stesso stack.
+				Impura - 70% effetto, 135% saturazione.
+				Comune - 100% effetto, 100% saturazione.
+				Raffinata - 115% effetto, 90% saturazione.
+				Grado Terra - 135% effetto, 75% saturazione.
+				Grado Celeste - 160% effetto, 60% saturazione.
+				La maestria alchemica superiore al requisito della ricetta e i Calderoni migliorati aumentano il tiro della qualita. La probabilita d'impurita puo invece forzare un risultato Impuro e produrre Scarti di Pillola. La qualita modifica recupero istantaneo, potere purificante e durata dei buff; il tooltip mostra il costo di saturazione esatto dopo la modifica.
+
 				SATURAZIONE DELLE PILLOLE
 				Ogni pillola consumata aggiunge saturazione. Aumentando la saturazione, l'efficacia delle pillole scende gradualmente fino al 50%. Non puoi assumere una pillola se supererebbe 100 saturazione. La saturazione diminuisce naturalmente nel tempo, impedendo di accumulare pillole senza limiti ma conservandone l'uso strategico.
 
 				Apri il menu di coltivazione e seleziona Path > Alchimia per vedere Tier, Stadio, EXP, saturazione corrente, efficacia e bonus di raffinazione. La pagina Alchimia e divisa in cinque righe Tier; ogni pillola appare accanto al proprio Tier di Regno con lo Stadio Basso, Medio o Alto necessario per sbloccarla. Per i test usa /xiadebug alchemy <tier 0-4> <low|middle|high> oppure /xiadebug alchemy saturation <0-100>.
+				'''
+		}
+
+		SectSystem: {
+			Title: Setta della Nuvola Verde
+			Body:
+				'''
+				L'Anziano della Setta puo trasferirsi in una casa disponibile, ma accetta discepoli solo dopo Qi Gathering. Parla con l'Anziano Jian per entrare nella Setta della Nuvola Verde e ricevere i primi Gettoni Contributo.
+
+				GRADI DELLA SETTA
+				Discepolo Esterno - ottenuto entrando nella setta.
+				Discepolo Interno - 100 contributi totali.
+				Discepolo Principale - 300 contributi totali.
+				Anziano della Setta - 750 contributi totali.
+				I Gettoni Contributo sono una valuta separata utilizzata nel Negozio della Setta. Il contributo totale non diminuisce quando spendi i gettoni.
+
+				MISSIONI
+				L'Anziano assegna missioni scalate con il Realm riguardanti Spirit Beast, Spirit Stone, raffinazione di pillole, esplorazione delle vene spirituali e Tribolazioni Celesti. Completa l'obiettivo, torna dall'Anziano e ritira i Gettoni Contributo. Dopo ogni incarico completato c'e una breve attesa.
+
+				TECNICHE DELLA SETTA
+				Intento della Spada - passiva da Discepolo Esterno. Migliora il danno delle Flying Sword e guadagna maestria quando una spada colpisce.
+				Pioggia di Spade Spirituali [{0}] - tecnica attiva da Discepolo Interno. Spara cinque spade spirituali direttamente dal coltivatore verso il cursore. Il raggio massimo raggiunge il cursore, ma non scende mai sotto il normale raggio della Spada Volante. Le spade cercano i nemici entro quel limite; danno ed efficienza aumentano con la maestria.
+				Formazione Protettiva della Setta [{1}] - tecnica attiva da Discepolo Principale. Dispiega un rituale rotante sotto una grande cupola protettiva tridimensionale verde-acqua. Una vena di Spirit Stone vicina la alimenta e ripara automaticamente. Altrimenti usa la riserva donata, poi 1-3 Qi del proprietario al secondo; se non sono disponibili, consuma una Spirit Stone dall'inventario del proprietario e conserva 250 Qi. Respinge i nemici vicini e usa la propria integrita prima di Protezione Qi. Gli altri coltivatori ricevono bonus difensivi mentre sono all'interno; se meditano dentro, donano volontariamente 1-4 Qi al secondo. Ogni Qi donato ripara 30 integrita, entra nella riserva e aumenta temporaneamente integrita massima e dimensione del 25% per sostenitore, fino a quattro sostenitori. Premi nuovamente il tasto della tecnica per disattivarla.
+
+				Apri Menu di Coltivazione > Setta per controllare grado, gettoni, missione e tecniche apprese. Manuali e risorse spirituali si acquistano dall'Anziano della Setta.
+				'''
+		}
+
+		FormationPath: {
+			Title: Formazioni Permanenti
+			Body:
+				'''
+				PATH DELLE FORMAZIONI ARRAY
+				Apri Menu di Coltivazione > Path > Formazioni Array per controllare Tier, Stadio, EXP e prova attuale. Le Spirit Stone usate come carburante non conferiscono mai EXP al Path. La maestria si ottiene mantenendo un array durante combattimenti reali, assorbendo danni, collegando una nuova Vena Spirituale e intercettando fulmini delle Tribolazioni Celesti. La maestria del Path sblocca i ranghi strutturali che un Core puo raggiungere, ma non potenzia piu automaticamente le strutture.
+
+				Ogni Stadio richiede sia abbastanza EXP sia una prova pratica. Lo Stadio Low verifica il mantenimento in combattimento, Middle i danni cumulativi assorbiti e High richiede un'impresa speciale. Il Tier 0 richiede il collegamento a una Vena Spirituale, il Tier 1 esperienza difensiva avanzata e i Tier successivi un numero crescente di fulmini della Tribolazione. Per passare al Tier seguente bisogna anche aver raggiunto il Realm di coltivazione corrispondente.
+
+				FORMATION CORE PERMANENTE
+				Crea il Core presso un'Incudine di Mythril usando 12 Lingotti di Ferro Profondo, 8 Lingotti di Giada Spirituale e 15 Spirit Stone. Piazzalo su terreno solido. Il primo coltivatore che interagisce con esso diventa il proprietario del Path e riceve i suoi progressi. Clic destro tenendo una Spirit Stone per inserirla: ogni pietra conserva 250 Qi e ripara il Core, ma non conferisce EXP. Clic destro normale apre il pannello della Formazione. La scheda Formazioni controlla gli array attivi; Potenziamento Core mostra il prossimo Stadio strutturale e ogni statistica modificata, comprese capacita, integrita, raggio, velocita di riparazione, slot array, limite Relay e assorbimento delle Tribolazioni. Solo il proprietario puo cambiare modalita, alimentazione, accesso ai contributi o rango strutturale. L'accesso ai contributi puo permettere soltanto al proprietario, alla sua squadra di Terraria oppure a tutti di inserire Spirit Stone, mentre gli upgrade restano riservati al proprietario. Il suo Path delle Formazioni Array deve aver gia raggiunto il rango desiderato e ogni passaggio consuma Spirit Stone, Lingotti di Ferro Profondo e Lingotti di Giada Spirituale. I passaggi di Tier richiedono inoltre un Beast Core corrispondente; il Tier finale consuma tre Core Formation Beast Core. Gli upgrade maggiori richiedono una conferma prima di consumare i materiali. I Core esistenti conservano il rango salvato ma non copiano i futuri avanzamenti del Path. Le combinazioni Shift e Alt restano scorciatoie opzionali per gli utenti esperti. Due barre compatte appaiono sopra il Core e ogni Bandiera Relay collegata: il ciano rappresenta il Qi condiviso e il verde l'integrita condivisa. Barre vuote e attenuate indicano una Bandiera scollegata.
+
+				TIPI DI FORMAZIONE
+				Protettiva - Tier 0, 1 Qi/s. Fornisce +12 difesa e 6% riduzione del danno, respinge i nemici ed e l'unico tipo che intercetta i fulmini delle Tribolazioni Celesti. Le creature ostili non possono generarsi naturalmente nel territorio del Core o delle Bandiere Relay, anche quando il confine e fuori dallo schermo del giocatore; animali innocui e NPC amichevoli non vengono modificati. I proiettili e le abilita offensive generati all'esterno vengono distrutti quando colpiscono il confine e danneggiano l'integrita del Core. I proiettili generati all'interno vengono riconosciuti dalla Formazione e possono uscire liberamente.
+				Raccolta Spirituale - Tier 1, 2 Qi/s. Aumenta del 50% meditazione e recupero passivo del Qi per ogni coltivatore all'interno.
+				Soppressione - Tier 2, 2 Qi/s. Rallenta i nemici normali e applica Armatura Rotta nel territorio; i boss resistono alla maggior parte dell'effetto.
+				Ristorazione - Tier 3, 3 Qi/s. Fornisce rigenerazione continua della vita ai coltivatori all'interno.
+				Gli slot array permettono a piu tipi di funzionare dallo stesso Core. Il Tier 0 ha 1 slot, il Tier 1 ne ha 2, il Tier 2 mantiene 2 slot, il Tier 3 ne ha 3 e il Tier 4 puo utilizzare insieme tutti i 4 tipi. I consumi si sommano: attivarli tutti costa 8 Qi/s. Almeno un tipo deve rimanere attivo. Il sigillo e le particelle indicano il tipo attualmente selezionato, mentre lo stato elenca tutti gli array attivi. Una Vena Spirituale alimenta ogni tipo abilitato senza consumare il Qi conservato.
+
+				BANDIERE RELAY DELLA FORMAZIONE
+				Il raggio proprio di un Core non puo mai superare 80 blocchi. Per espanderti oltre, crea una Bandiera Relay della Formazione presso un'Incudine di Mythril con 6 Lingotti di Ferro Profondo, 4 Lingotti di Giada Spirituale e 5 Spirit Stone. Il centro di un Relay puo collegarsi fino a 40 blocchi oltre il confine attuale del Core, cioe raggio del Core piu i 40 blocchi del territorio Relay. Un Core con raggio massimo puo quindi raggiungere un Relay distante 120 blocchi. In questo modo il nuovo territorio puo iniziare fuori dalla Formation originale pur rimanendo collegato. Il Tier strutturale controlla il limite Relay: il Tier 0 non ne supporta, mentre i Tier 1/2/3/4 supportano 1/2/4/6 Bandiere. Quelle oltre il limite restano prive di energia finche il Core non viene potenziato o diventa disponibile un altro Core valido. Una Bandiera collegata consuma 1 Qi/s quando il suo territorio e vuoto e 2 Qi/s quando contiene un giocatore o una creatura ostile. Condivide Qi e integrita del Core. Clic destro sul Relay apre il pannello del nodo, che mostra Core principale, distanza di collegamento, consumo, risorse condivise e concentrazione spirituale locale. Il proprietario del Core seleziona una sola specializzazione Relay esclusiva: nel territorio del Relay non funzionano le modalita normali del Core ne le altre specializzazioni. Protezione fornisce +24 difesa e 12% riduzione del danno, repulsione maggiore, 10% di assorbimento Tribolazione aggiuntivo e minore stress della barriera; Raccolta porta meditazione e recupero passivo a x2.25; Soppressione applica un rallentamento molto maggiore; Ristorazione fornisce +20 rigenerazione vitale. Una specializzazione la cui modalita e disattivata nel Core resta selezionata ma non fornisce bonus. I proiettili creati nel territorio del Core o di una sua Bandiera possono uscire liberamente. Se il Core si disattiva, tutte le Bandiere collegate perdono energia.
+				Selezionando Estensione Normale la specializzazione viene rimossa e nel territorio Relay funzionano tutte le modalita abilitate dal Core con la loro potenza standard.
+
+				ALIMENTAZIONE E TERRITORIO
+				Un Core attivo paga il mantenimento combinato di tutti gli array abilitati e rimane salvato nel mondo. L'integrita danneggiata viene riparata automaticamente a una velocita determinata dal Tier e Stadio strutturale: ogni 10 punti di integrita riparati consumano 1 Qi aggiuntivo. Il Qi di riparazione viene speso soltanto quando manca integrita ed e separato dal mantenimento. Se la riserva non puo pagare tutta la riparazione, il Core ripara quanto possibile dopo aver pagato il mantenimento. Una miniera di Spirit Stone vicina al Core o a qualsiasi Relay autorizzato si collega usando lo stesso raggio configurabile e lo stesso calcolo della concentrazione dei coltivatori. Ogni nodo calcola la propria concentrazione locale e fornisce al massimo 5 Qi/s per livello, da 5 Qi/s al Livello 1 fino a 50 Qi/s al Livello 10. Un Relay puo quindi incanalare nella rete condivisa una miniera distante; piu nodi collegati sommano la loro produzione, ciascuno con il proprio limite. La produzione della rete paga prima il mantenimento, poi la riparazione automatica e conserva soltanto il Qi rimanente. Se non basta, la differenza viene sottratta dalla riserva. Un Core inattivo non ha mantenimento e continua quindi a caricare la riserva dalle fonti collegate fino alla capacita massima.
+
+				Durante una Tribolazione Celeste, il Core intercetta direttamente i fulmini che colpiscono un coltivatore nel suo territorio. Inizialmente assorbe il 55% di ogni colpo; Tier e Stadio delle Formazioni possono portare la protezione fino all'80%. I fulmini della Tribolazione consumano molta piu integrita degli attacchi normali, e le Tribolazioni dei Realm superiori esercitano uno sforzo maggiore. A zero integrita il Core si spezza, si disattiva e lascia al coltivatore il danno rimanente. Protezione Qi si applica successivamente a cio che supera la Formazione.
+
+				Le Bandiere Relay sono il primo componente della rete territoriale. Gli aggiornamenti futuri potranno ampliare il sistema con permessi, nodi specializzati e collegamenti tra piu Core.
 				'''
 		}
 	}

@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Xianxia.Common.Players;
+using Xianxia.Common.Items;
 using Xianxia.Content.Items.Materials;
 using Xianxia.Content.Items.Materials.SpiritBeasts;
 using Xianxia.Content.Tiles;
@@ -36,7 +37,8 @@ public class MeridianCleansingPill : ModItem, IAlchemyPill
 
 	public override bool? UseItem(Player player)
 	{
-		player.GetModPlayer<AlchemyPlayer>().ReduceSaturation(40f);
+		player.GetModPlayer<AlchemyPlayer>().ReduceSaturation(
+			40f * AlchemyGlobalItem.GetCombinedEffectiveness(Item, player));
 		return true;
 	}
 
@@ -81,7 +83,7 @@ public class GreaterQiRecoveryPill : ModItem, IAlchemyPill
 	public override bool? UseItem(Player player)
 	{
 		CultivationPlayer cultivation = player.GetModPlayer<CultivationPlayer>();
-		float effectiveness = player.GetModPlayer<AlchemyPlayer>().PillEffectiveness;
+		float effectiveness = AlchemyGlobalItem.GetCombinedEffectiveness(Item, player);
 		int restored = Math.Max(500, cultivation.QiExp / 10);
 		cultivation.RestoreQi((int)(restored * effectiveness));
 		return true;

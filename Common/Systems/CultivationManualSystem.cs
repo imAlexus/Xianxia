@@ -16,6 +16,7 @@ using Xianxia.Content.Items;
 using Xianxia.Content.Items.Accessories;
 using Xianxia.Content.Items.Alchemy;
 using Xianxia.Content.Items.Armor;
+using Xianxia.Content.Items.Formations;
 using Xianxia.Content.Items.Guides;
 using Xianxia.Content.Items.Materials;
 using Xianxia.Content.Items.Materials.SpiritBeasts;
@@ -25,7 +26,7 @@ namespace Xianxia.Common.Systems;
 
 public class CultivationManualSystem : ModSystem
 {
-	private const int PageCount = 16;
+	private const int PageCount = 18;
 
 	private readonly record struct ManualIndexEntry(string LocalizationKey, int TargetPage);
 	private readonly record struct ManualTextLine(string Text, float Y);
@@ -57,7 +58,9 @@ public class CultivationManualSystem : ModSystem
 		new("SpiritMines", 12),
 		new("AbilityProgression", 13),
 		new("SpiritBeasts", 14),
-		new("AlchemyPath", 15)
+		new("AlchemyPath", 15),
+		new("SectSystem", 16),
+		new("FormationPath", 17)
 	];
 
 	private static bool isOpen;
@@ -307,6 +310,8 @@ public class CultivationManualSystem : ModSystem
 		13 => "AbilityProgression",
 		14 => "SpiritBeasts",
 		15 => "AlchemyPath",
+		16 => "SectSystem",
+		17 => "FormationPath",
 		_ => "Page0"
 	};
 
@@ -495,6 +500,21 @@ public class CultivationManualSystem : ModSystem
 					[new(ItemID.Silk, 6)])
 			]),
 			new("MaterialsEquipment", BuildRecipeSection(8)),
+			new("FormationCores",
+			[
+				new(ModContent.ItemType<PermanentFormationCore>(), 1, ItemID.MythrilAnvil,
+				[
+					new(ModContent.ItemType<ProfoundIronBar>(), 12),
+					new(ModContent.ItemType<SpiritJadeBar>(), 8),
+					new(ModContent.ItemType<SpiritStone>(), 15)
+				]),
+				new(ModContent.ItemType<FormationRelayFlag>(), 1, ItemID.MythrilAnvil,
+				[
+					new(ModContent.ItemType<ProfoundIronBar>(), 6),
+					new(ModContent.ItemType<SpiritJadeBar>(), 4),
+					new(ModContent.ItemType<SpiritStone>(), 5)
+				])
+			]),
 			new("AccessoriesTechniques", BuildRecipeSection(9)),
 			new("CauldronsBeastPills", BuildRecipeSection(14)),
 			new("ProgressionPills", BuildRecipeSection(18)),
@@ -679,6 +699,9 @@ public class CultivationManualSystem : ModSystem
 			FormatKeybind(Xianxia.AbilityWheelKeybind)),
 		13 => Mod.GetLocalization("Manual.Pages.AbilityProgression.Body").Format(
 			FormatKeybind(Xianxia.AbilityTreeKeybind)),
+		16 => Mod.GetLocalization("Manual.Pages.SectSystem.Body").Format(
+			FormatKeybind(Xianxia.SpiritSwordRainKeybind),
+			FormatKeybind(Xianxia.SectFormationKeybind)),
 		_ => Mod.GetLocalization($"Manual.Pages.{GetContentPageKey(page)}.Body").Value
 	};
 

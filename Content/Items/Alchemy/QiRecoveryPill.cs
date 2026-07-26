@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Xianxia.Common.Players;
+using Xianxia.Common.Items;
 using Xianxia.Content.Tiles;
 
 namespace Xianxia.Content.Items.Alchemy;
@@ -37,7 +38,7 @@ public class QiRecoveryPill : ModItem, IAlchemyPill
 
 	public override bool? UseItem(Player player)
 	{
-		float effectiveness = player.GetModPlayer<AlchemyPlayer>().PillEffectiveness;
+		float effectiveness = AlchemyGlobalItem.GetCombinedEffectiveness(Item, player);
 		player.GetModPlayer<CultivationPlayer>().RestoreQi((int)(QiRestored * effectiveness));
 		return true;
 	}

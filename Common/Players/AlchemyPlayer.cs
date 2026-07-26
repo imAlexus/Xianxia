@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Xianxia.Content.Items.Alchemy;
 using Xianxia.Content.Tiles;
+using Xianxia.Common.Items;
 
 namespace Xianxia.Common.Players;
 
@@ -152,11 +153,15 @@ public class AlchemyPlayer : ModPlayer
 		}
 	}
 
-	public void HandleCraftedPill(Item result, int experience)
+	public void HandleCraftedPill(Item result, IAlchemyPill pill)
 	{
-		GainExperience(experience);
 		int cauldronTier = GetNearbyCauldronTier();
 		int bonusChance = Math.Min(45, RankIndex * 2 + cauldronTier * 5);
+		int impurityChance = Math.Max(5, 35 - RankIndex * 2 - cauldronTier * 7);
+		bool impure = Main.rand.Next(100) < impurityChance;
+		result.GetGlobalItem<AlchemyGlobalItem>()
+			.AssignCraftedQuality(this, pill, impure);
+		GainExperience(pill.AlchemyExperience);
 		if (Main.rand.Next(100) < bonusChance)
 		{
 			result.stack++;
@@ -164,8 +169,7 @@ public class AlchemyPlayer : ModPlayer
 				new Color(115, 240, 205));
 		}
 
-		int impurityChance = Math.Max(5, 35 - RankIndex * 2 - cauldronTier * 7);
-		if (Main.rand.Next(100) < impurityChance)
+		if (impure)
 		{
 			Player.QuickSpawnItem(Player.GetSource_Misc("XianxiaAlchemyImpurity"),
 				ModContent.ItemType<PillDregs>());

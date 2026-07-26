@@ -10,7 +10,9 @@ using Terraria.ModLoader.IO;
 using Xianxia.Content.Buffs;
 using Xianxia.Content.Items.Guides;
 using Xianxia.Content.Projectiles;
+using Xianxia.Content.TileEntities;
 using Xianxia.Content.Tiles;
+using Xianxia.Common.Utilities;
 using Xianxia.Common.Config;
 using Xianxia.Common.Abilities;
 
@@ -123,6 +125,7 @@ public class CultivationPlayer : ModPlayer
 	private int tribulationTimer;
 	private int tribulationStrikesRemaining;
 	private int pendingTribulationRealm = -1;
+	private int deferredTribulationRealm = -1;
 	private bool awaitingTribulationConfirmation;
 	private bool resolvingTribulationLightning;
 	private bool flightMaintainedDuringChat;
@@ -149,18 +152,21 @@ public class CultivationPlayer : ModPlayer
 	public int EquipmentMeditationQiBonus { get; set; }
 	public int NearbySpiritCrystalCount { get; private set; }
 	public int SpiritualQiZoneTier => Math.Clamp(
-		(NearbySpiritCrystalCount + 49) / 50,
-		0,
-		10);
+		SpiritualQiConcentration.GetLevel(NearbySpiritCrystalCount),
+		0, SpiritualQiConcentration.MaximumLevel);
 	public int SpiritualQiZoneBonusPercent => SpiritualQiZoneTier * 100;
 	public bool IsInSpiritualQiZone => SpiritualQiZoneTier > 0;
 	public float SpiritualQiZoneMultiplier => 1f + SpiritualQiZoneBonusPercent / 100f;
+	public float PermanentFormationQiMultiplier =>
+		Player.HasBuff<PermanentFormationRelayGatheringBuff>() ? 2.25f
+		: Player.HasBuff<PermanentFormationGatheringBuff>() ? 1.5f : 1f;
 	public float MeditationQiPerSecond =>
 		(MeditationQiGainByRealm[RealmIndex] + EquipmentMeditationQiBonus)
-		* SpiritualQiZoneMultiplier * GetAbilityPowerMultiplier(CultivationAbility.Meditation, 0.05f);
+		* SpiritualQiZoneMultiplier * PermanentFormationQiMultiplier
+		* GetAbilityPowerMultiplier(CultivationAbility.Meditation, 0.05f);
 	public float PassiveQiRecoveryPerSecond =>
 		(PassiveQiRecoveryByRealm[RealmIndex] + EquipmentPassiveQiBonus)
-		* SpiritualQiZoneMultiplier
+		* SpiritualQiZoneMultiplier * PermanentFormationQiMultiplier
 		* (1.10f + (GetAbilityLevel(CultivationAbility.SpiritBreathing) - 1) * 0.03f);
 	public int CurrentRealmThreshold => RealmThresholds[RealmIndex];
 	public bool IsAtMaxRealm => RealmIndex >= RealmThresholds.Length - 1;
@@ -191,7 +197,8 @@ public class CultivationPlayer : ModPlayer
 		? 9 + (NextBreakthroughTargetRealm - TribulationStartingRealm) * 2
 		: 0;
 	public bool IsAbilityUnlocked(CultivationAbility ability) =>
-		RealmIndex >= CultivationAbilityInfo.RequiredRealm(ability);
+		RealmIndex >= CultivationAbilityInfo.RequiredRealm(ability)
+		&& Player.GetModPlayer<SectPlayer>().HasUnlockedTechnique(ability);
 	public int GetAbilityLevel(CultivationAbility ability) => abilityLevels[(int)ability];
 	public int GetAbilityExperience(CultivationAbility ability) => abilityExperience[(int)ability];
 	public int GetAbilityExperienceRequired(CultivationAbility ability) =>
@@ -250,6 +257,7 @@ public class CultivationPlayer : ModPlayer
 		tribulationTimer = 0;
 		tribulationStrikesRemaining = 0;
 		pendingTribulationRealm = -1;
+		deferredTribulationRealm = -1;
 		awaitingTribulationConfirmation = false;
 		IsMeditating = false;
 		meditationToggleRequested = false;
@@ -285,6 +293,8 @@ public class CultivationPlayer : ModPlayer
 			tag["pendingTribulationRealm"] = pendingTribulationRealm;
 			tag["awaitingTribulationConfirmation"] = awaitingTribulationConfirmation;
 		}
+		if (deferredTribulationRealm >= TribulationStartingRealm)
+			tag["deferredTribulationRealm"] = deferredTribulationRealm;
 	}
 
 	public override void LoadData(TagCompound tag)
@@ -319,12 +329,25 @@ public class CultivationPlayer : ModPlayer
 			: -1;
 		awaitingTribulationConfirmation = pendingTribulationRealm >= TribulationStartingRealm
 			&& tag.GetBool("awaitingTribulationConfirmation");
+		deferredTribulationRealm = tag.ContainsKey("deferredTribulationRealm")
+			? Math.Clamp(tag.GetInt("deferredTribulationRealm"),
+				TribulationStartingRealm, TotalRealms - 1)
+			: -1;
 
 		if (pendingTribulationRealm >= TribulationStartingRealm)
 		{
 			RealmIndex = pendingTribulationRealm - 1;
 			Stage = StagesPerRealm;
 			QiExp = Math.Min(QiExp, GetGlobalStageThreshold(pendingTribulationRealm * StagesPerRealm));
+			Qi = Math.Min(Qi, QiExp);
+		}
+		else if (deferredTribulationRealm >= TribulationStartingRealm)
+		{
+			RealmIndex = deferredTribulationRealm - 1;
+			Stage = StagesPerRealm;
+			int threshold = GetGlobalStageThreshold(
+				deferredTribulationRealm * StagesPerRealm);
+			QiExp = Math.Min(QiExp, threshold);
 			Qi = Math.Min(Qi, QiExp);
 		}
 		else
@@ -478,6 +501,18 @@ public class CultivationPlayer : ModPlayer
 
 		modifiers.ModifyHurtInfo += (ref Player.HurtInfo info) =>
 		{
+			SectPlayer sect = Player.GetModPlayer<SectPlayer>();
+			if (sect.CanFormationAbsorb(info.Damage))
+			{
+				return;
+			}
+
+			info.Damage -= sect.AbsorbAndBreakFormation(info.Damage);
+			if (info.Damage <= 0)
+			{
+				return;
+			}
+
 			// A fully covered hit is handled by ConsumableDodge so it can deal zero
 			// damage. This callback only handles hits larger than the remaining Qi.
 			int qiPerDamage = GetQiProtectionCostPerDamage();
@@ -507,6 +542,11 @@ public class CultivationPlayer : ModPlayer
 	public override bool ConsumableDodge(Player.HurtInfo info)
 	{
 		if (resolvingTribulationLightning)
+		{
+			return false;
+		}
+
+		if (Player.GetModPlayer<SectPlayer>().CanFormationAbsorb(info.Damage))
 		{
 			return false;
 		}
@@ -614,6 +654,14 @@ public class CultivationPlayer : ModPlayer
 
 	private void ProcessMeditationQiGain()
 	{
+		if (deferredTribulationRealm >= TribulationStartingRealm && Qi >= QiExp)
+		{
+			int targetRealm = deferredTribulationRealm;
+			deferredTribulationRealm = -1;
+			RequestTribulationConfirmation(targetRealm);
+			return;
+		}
+
 		float cultivationPerSecond = MeditationQiPerSecond;
 		int missingQi = Math.Max(0, QiExp - Qi);
 		int totalGained = 0;
@@ -768,6 +816,7 @@ public class CultivationPlayer : ModPlayer
 	private void ClearDebugTribulationState()
 	{
 		pendingTribulationRealm = -1;
+		deferredTribulationRealm = -1;
 		awaitingTribulationConfirmation = false;
 		tribulationRealm = -1;
 		tribulationTimer = 0;
@@ -1757,6 +1806,7 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		pendingTribulationRealm = targetRealm;
+		deferredTribulationRealm = -1;
 		awaitingTribulationConfirmation = true;
 		tribulationRealm = -1;
 		tribulationTimer = 0;
@@ -1786,12 +1836,10 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		int cancelledRealm = pendingTribulationRealm;
-		int previousGlobalStage = cancelledRealm * StagesPerRealm - 1;
-		QiExp = Math.Min(QiExp, GetGlobalStageThreshold(previousGlobalStage));
-		Qi = Math.Min(Qi, QiExp);
 		RealmIndex = cancelledRealm - 1;
 		Stage = StagesPerRealm;
 		pendingTribulationRealm = -1;
+		deferredTribulationRealm = cancelledRealm;
 		awaitingTribulationConfirmation = false;
 		tribulationRealm = -1;
 		tribulationTimer = 0;
@@ -1903,6 +1951,8 @@ public class CultivationPlayer : ModPlayer
 		int damage = 220 + realmOffset * 300;
 		damage = Math.Max(damage,
 			(int)MathF.Ceiling(Player.statLifeMax2 * (0.45f + realmOffset * 0.1f)));
+		PermanentFormationCoreEntity.TryProtectFromTribulation(
+			Player, damage, realmOffset, out damage);
 		damage = ApplyTribulationQiShield(damage, realmOffset);
 		damage = Math.Max(1, (int)MathF.Ceiling(damage
 			* Player.GetModPlayer<AlchemyPillEffectPlayer>().TribulationDamageMultiplier));
@@ -1958,12 +2008,14 @@ public class CultivationPlayer : ModPlayer
 	{
 		int reachedRealm = pendingTribulationRealm;
 		pendingTribulationRealm = -1;
+		deferredTribulationRealm = -1;
 		awaitingTribulationConfirmation = false;
 		tribulationRealm = -1;
 		tribulationTimer = 0;
 		tribulationStrikesRemaining = 0;
 		RealmIndex = reachedRealm;
 		Stage = 1;
+		Player.GetModPlayer<SectPlayer>().RecordTribulationSurvived();
 
 		Main.NewText(Mod.GetLocalization("Cultivation.TribulationSurvived").Format(
 			GetRealmName()), Color.Gold);
@@ -1988,6 +2040,7 @@ public class CultivationPlayer : ModPlayer
 		RealmIndex = failedRealm - 1;
 		Stage = StagesPerRealm;
 		pendingTribulationRealm = -1;
+		deferredTribulationRealm = -1;
 		awaitingTribulationConfirmation = false;
 		tribulationRealm = -1;
 		tribulationTimer = 0;
@@ -2055,36 +2108,9 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		spiritualQiScanTimer = 0;
-		Point playerTile = Player.Center.ToTileCoordinates();
 		int radius = config.SpiritualQiZoneRadiusBlocks;
-		int radiusSquared = radius * radius;
-		int minX = Math.Max(1, playerTile.X - radius);
-		int maxX = Math.Min(Main.maxTilesX - 2, playerTile.X + radius);
-		int minY = Math.Max(1, playerTile.Y - radius);
-		int maxY = Math.Min(Main.maxTilesY - 2, playerTile.Y + radius);
-		int spiritCrystalType = ModContent.TileType<SpiritCrystalOreTile>();
-		int crystalCount = 0;
-
-		for (int x = minX; x <= maxX; x++)
-		{
-			int offsetX = x - playerTile.X;
-			for (int y = minY; y <= maxY; y++)
-			{
-				int offsetY = y - playerTile.Y;
-				if (offsetX * offsetX + offsetY * offsetY > radiusSquared)
-				{
-					continue;
-				}
-
-				Tile tile = Main.tile[x, y];
-				if (tile.HasTile && tile.TileType == spiritCrystalType)
-				{
-					crystalCount++;
-				}
-			}
-		}
-
-		NearbySpiritCrystalCount = crystalCount;
+		NearbySpiritCrystalCount =
+			SpiritualQiConcentration.CountCrystals(Player.Center, radius);
 	}
 
 	private static int TakeWholeQiGain(float exactGain, ref float remainder)
@@ -2452,6 +2478,12 @@ public class CultivationPlayer : ModPlayer
 	{
 		if (pendingTribulationRealm >= TribulationStartingRealm)
 		{
+			return;
+		}
+		if (deferredTribulationRealm >= TribulationStartingRealm)
+		{
+			RealmIndex = deferredTribulationRealm - 1;
+			Stage = StagesPerRealm;
 			return;
 		}
 
