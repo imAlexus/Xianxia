@@ -12,7 +12,7 @@ public class SpiritualHerbGlobalTile : GlobalTile
 	public override void Drop(int i, int j, int type)
 	{
 		if (WorldGen.gen || Main.netMode == NetmodeID.MultiplayerClient
-			|| !IsNaturalPlant(type) || !Main.rand.NextBool(16))
+			|| !IsNaturalPlant(type) || !Main.rand.NextBool(40))
 			return;
 
 		int playerIndex = Player.FindClosest(new Vector2(i * 16f, j * 16f), 16, 16);

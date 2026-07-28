@@ -21,7 +21,8 @@ internal enum XianxiaMessageType : byte
 	PermanentFormationAction,
 	PermanentFormationTribulationHit,
 	FormationPathState,
-	PermanentFormationRelayAction
+	PermanentFormationRelayAction,
+	ArtifactForgingState
 }
 
 public class Xianxia : Mod
@@ -134,6 +135,12 @@ public class Xianxia : Mod
 		if (messageType == XianxiaMessageType.PermanentFormationRelayAction)
 		{
 			HandlePermanentFormationRelayAction(reader, whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.ArtifactForgingState)
+		{
+			HandleArtifactForgingState(reader, whoAmI);
 			return;
 		}
 
@@ -349,6 +356,25 @@ public class Xianxia : Mod
 			relay.TrySetSpecializedMode(Main.player[whoAmI], mode);
 	}
 
+	private static void HandleArtifactForgingState(BinaryReader reader, int whoAmI)
+	{
+		int playerIndex = reader.ReadByte();
+		int tier = reader.ReadByte();
+		int stage = reader.ReadByte();
+		int experience = reader.ReadInt32();
+		if (Main.netMode == NetmodeID.Server)
+			playerIndex = whoAmI;
+		if (playerIndex < 0 || playerIndex >= Main.maxPlayers
+			|| !Main.player[playerIndex].active)
+			return;
+
+		Main.player[playerIndex].GetModPlayer<ArtifactForgingPlayer>()
+			.SetStateFromNetwork(tier, stage, experience);
+		if (Main.netMode == NetmodeID.Server)
+			SendArtifactForgingState(playerIndex, tier, stage, experience,
+				ignoreClient: whoAmI);
+	}
+
 	internal static void SendMeditationState(int playerIndex, bool isMeditating, int toClient = -1, int ignoreClient = -1)
 	{
 		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
@@ -472,5 +498,17 @@ public class Xianxia : Mod
 		packet.Write((short)y);
 		packet.Write((byte)Math.Clamp(mode, 0, 3));
 		packet.Send();
+	}
+
+	internal static void SendArtifactForgingState(int playerIndex, int tier,
+		int stage, int experience, int toClient = -1, int ignoreClient = -1)
+	{
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.ArtifactForgingState);
+		packet.Write((byte)playerIndex);
+		packet.Write((byte)Math.Clamp(tier, 0, ArtifactForgingPlayer.MaxTier));
+		packet.Write((byte)Math.Clamp(stage, 0, ArtifactForgingPlayer.MaxStage));
+		packet.Write(Math.Max(0, experience));
+		packet.Send(toClient, ignoreClient);
 	}
 }

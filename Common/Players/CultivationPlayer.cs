@@ -66,22 +66,6 @@ public class CultivationPlayer : ModPlayer
 	private static readonly int[] MeditationQiGainByRealm = [1, 4, 16, 64, 256];
 	private static readonly int[] PassiveQiRecoveryByRealm = [1, 2, 4, 8, 16];
 
-	private static readonly int[] RealmThresholds =
-	[
-		GetGlobalStageThreshold(0),
-		GetGlobalStageThreshold(9),
-		GetGlobalStageThreshold(18),
-		GetGlobalStageThreshold(27),
-		GetGlobalStageThreshold(36)
-	];
-	private static readonly int[] RealmEndThresholds =
-	[
-		GetGlobalStageThreshold(9),
-		GetGlobalStageThreshold(18),
-		GetGlobalStageThreshold(27),
-		GetGlobalStageThreshold(36),
-		GetGlobalStageThreshold(MaxGlobalStageIndex)
-	];
 	private static readonly string[] RealmKeys =
 	[
 		"Mortal",
@@ -113,6 +97,7 @@ public class CultivationPlayer : ModPlayer
 	private int nascentTeleportCooldown;
 	private int spiritualPressureQiTimer;
 	private int nightVisionQiTimer;
+	private int spiritualRainCooldown;
 	private int nascentSoulRegenerationTrainingTimer;
 	private float qiProtectionDotQiAccumulator;
 	private int qiProtectionDotVisualCooldown;
@@ -130,6 +115,7 @@ public class CultivationPlayer : ModPlayer
 	private bool resolvingTribulationLightning;
 	private bool flightMaintainedDuringChat;
 	private bool meditationToggleRequested;
+	private int appliedCultivationRequirementMultiplier;
 	private readonly int[] abilityExperience = new int[(int)CultivationAbility.Count];
 	private readonly int[] abilityLevels = new int[(int)CultivationAbility.Count];
 
@@ -145,6 +131,7 @@ public class CultivationPlayer : ModPlayer
 	public bool QiSenseEnabled { get; private set; }
 	public bool SpiritualPressureEnabled { get; private set; }
 	public bool NightVisionEnabled { get; private set; }
+	public int SpiritualRainCooldown => spiritualRainCooldown;
 	public bool IsAbilityWheelOpen { get; private set; }
 	public bool IsAbilityTreeOpen { get; private set; }
 	public bool HasReceivedCultivatorManual { get; private set; }
@@ -168,10 +155,12 @@ public class CultivationPlayer : ModPlayer
 		(PassiveQiRecoveryByRealm[RealmIndex] + EquipmentPassiveQiBonus)
 		* SpiritualQiZoneMultiplier * PermanentFormationQiMultiplier
 		* (1.10f + (GetAbilityLevel(CultivationAbility.SpiritBreathing) - 1) * 0.03f);
-	public int CurrentRealmThreshold => RealmThresholds[RealmIndex];
-	public bool IsAtMaxRealm => RealmIndex >= RealmThresholds.Length - 1;
+	public int CurrentRealmThreshold =>
+		GetGlobalStageThreshold(RealmIndex * StagesPerRealm);
+	public bool IsAtMaxRealm => RealmIndex >= TotalRealms - 1;
 	public bool IsCultivationMaxed => GlobalStageIndex >= MaxGlobalStageIndex;
-	public int NextRealmThreshold => RealmEndThresholds[RealmIndex];
+	public int NextRealmThreshold => GetGlobalStageThreshold(
+		Math.Min((RealmIndex + 1) * StagesPerRealm, MaxGlobalStageIndex));
 	public int CurrentStageThreshold => GetGlobalStageThreshold(GlobalStageIndex);
 	public int NextStageThreshold => GetGlobalStageThreshold(Math.Min(GlobalStageIndex + 1, MaxGlobalStageIndex));
 	public int QiRequiredForNextStage => NextStageThreshold - CurrentStageThreshold;
@@ -245,6 +234,7 @@ public class CultivationPlayer : ModPlayer
 		nascentTeleportCooldown = 0;
 		spiritualPressureQiTimer = 0;
 		nightVisionQiTimer = 0;
+		spiritualRainCooldown = 0;
 		nascentSoulRegenerationTrainingTimer = 0;
 		qiProtectionDotQiAccumulator = 0f;
 		qiProtectionDotVisualCooldown = 0;
@@ -261,6 +251,8 @@ public class CultivationPlayer : ModPlayer
 		awaitingTribulationConfirmation = false;
 		IsMeditating = false;
 		meditationToggleRequested = false;
+		appliedCultivationRequirementMultiplier =
+			GetConfiguredCultivationRequirementMultiplier();
 		IsFlyingWithQi = false;
 		QiFlightEnabled = false;
 		QiProtectionEnabled = false;
@@ -283,6 +275,8 @@ public class CultivationPlayer : ModPlayer
 		tag["qi"] = Qi;
 		tag["qiExp"] = QiExp;
 		tag["progressionVersion"] = ProgressionVersion;
+		tag["cultivationRequirementMultiplier"] =
+			appliedCultivationRequirementMultiplier;
 		tag["qiProtectionEnabled"] = QiProtectionEnabled;
 		tag["qiSenseEnabled"] = QiSenseEnabled;
 		tag["hasReceivedCultivatorManual"] = HasReceivedCultivatorManual;
@@ -304,10 +298,23 @@ public class CultivationPlayer : ModPlayer
 		int savedProgressionVersion = tag.ContainsKey("progressionVersion")
 			? tag.GetInt("progressionVersion")
 			: 1;
+		int configuredRequirementMultiplier =
+			GetConfiguredCultivationRequirementMultiplier();
+		int savedRequirementMultiplier =
+			tag.ContainsKey("cultivationRequirementMultiplier")
+				? Math.Clamp(tag.GetInt("cultivationRequirementMultiplier"), 1, 10)
+				: 1;
 		if (savedProgressionVersion < ProgressionVersion)
 		{
 			MigrateLegacyProgression(savedQiExp, savedQi, out savedQiExp, out savedQi);
+			savedRequirementMultiplier = configuredRequirementMultiplier;
 		}
+		else if (savedRequirementMultiplier != configuredRequirementMultiplier)
+		{
+			RebaseProgressionForRequirementMultiplier(ref savedQiExp, ref savedQi,
+				savedRequirementMultiplier, configuredRequirementMultiplier);
+		}
+		appliedCultivationRequirementMultiplier = configuredRequirementMultiplier;
 
 		QiExp = savedQiExp;
 		QiExp = Math.Clamp(QiExp, 0, GetGlobalStageThreshold(MaxGlobalStageIndex));
@@ -1507,6 +1514,10 @@ public class CultivationPlayer : ModPlayer
 
 	public override void PostUpdate()
 	{
+		UpdateCultivationRequirementMultiplier();
+		if (spiritualRainCooldown > 0)
+			spiritualRainCooldown--;
+
 		if (Player.whoAmI == Main.myPlayer && !Player.dead)
 		{
 			UpdateSpiritualQiZone();
@@ -2317,15 +2328,7 @@ public class CultivationPlayer : ModPlayer
 			return true;
 		}
 
-		int actualAmount = Math.Max(1, (int)MathF.Ceiling(amount
-			* Player.GetModPlayer<AlchemyPillEffectPlayer>().QiCostMultiplier));
-		if (IsAbilityUnlocked(CultivationAbility.GoldenCoreCirculation))
-		{
-			float reduction = 0.05f
-				+ (GetAbilityLevel(CultivationAbility.GoldenCoreCirculation) - 1) * 0.01f;
-			actualAmount = Math.Max(1, (int)MathF.Ceiling(amount * (1f - reduction)));
-		}
-
+		int actualAmount = GetFinalQiCost(amount);
 		if (Qi < actualAmount)
 		{
 			return false;
@@ -2339,6 +2342,26 @@ public class CultivationPlayer : ModPlayer
 		}
 		return true;
 	}
+
+	public int GetFinalQiCost(int amount)
+	{
+		if (amount <= 0)
+			return 0;
+
+		int actualAmount = Math.Max(1, (int)MathF.Ceiling(amount
+			* Player.GetModPlayer<AlchemyPillEffectPlayer>().QiCostMultiplier));
+		if (IsAbilityUnlocked(CultivationAbility.GoldenCoreCirculation))
+		{
+			float reduction = 0.05f
+				+ (GetAbilityLevel(CultivationAbility.GoldenCoreCirculation) - 1) * 0.01f;
+			actualAmount = Math.Max(1, (int)MathF.Ceiling(amount * (1f - reduction)));
+		}
+
+		return actualAmount;
+	}
+
+	public void StartSpiritualRainCooldown(int ticks) =>
+		spiritualRainCooldown = Math.Max(spiritualRainCooldown, ticks);
 
 	public bool SetQiProtectionEnabled(bool enabled)
 	{
@@ -2545,6 +2568,13 @@ public class CultivationPlayer : ModPlayer
 
 	private static int GetGlobalStageThreshold(int globalStageIndex)
 	{
+		return GetGlobalStageThreshold(globalStageIndex,
+			GetConfiguredCultivationRequirementMultiplier());
+	}
+
+	private static int GetGlobalStageThreshold(int globalStageIndex,
+		int requirementMultiplier)
+	{
 		int clampedIndex = Math.Clamp(globalStageIndex, 0, MaxGlobalStageIndex);
 		int totalQi = 0;
 		for (int destinationGlobalStage = 1;
@@ -2557,7 +2587,67 @@ public class CultivationPlayer : ModPlayer
 				+ StageQiCostIncreaseByRealm[destinationRealm] * stageIndexInRealm;
 		}
 
-		return totalQi;
+		long scaledQi = (long)totalQi * Math.Clamp(requirementMultiplier, 1, 10);
+		return (int)Math.Min(int.MaxValue, scaledQi);
+	}
+
+	private static int GetConfiguredCultivationRequirementMultiplier() =>
+		Math.Clamp(
+			CultivationServerConfig.Instance?.CultivationRequirementMultiplier ?? 1,
+			1, 10);
+
+	private void UpdateCultivationRequirementMultiplier()
+	{
+		int configuredMultiplier = GetConfiguredCultivationRequirementMultiplier();
+		if (configuredMultiplier == appliedCultivationRequirementMultiplier)
+			return;
+
+		int rebasedQiExp = QiExp;
+		int rebasedQi = Qi;
+		RebaseProgressionForRequirementMultiplier(ref rebasedQiExp, ref rebasedQi,
+			appliedCultivationRequirementMultiplier, configuredMultiplier);
+		QiExp = rebasedQiExp;
+		Qi = rebasedQi;
+		appliedCultivationRequirementMultiplier = configuredMultiplier;
+		UpdateRealm(showMessage: false);
+	}
+
+	private static void RebaseProgressionForRequirementMultiplier(
+		ref int qiExp, ref int qi, int oldMultiplier, int newMultiplier)
+	{
+		oldMultiplier = Math.Clamp(oldMultiplier, 1, 10);
+		newMultiplier = Math.Clamp(newMultiplier, 1, 10);
+		qiExp = Math.Max(0, qiExp);
+		qi = Math.Clamp(qi, 0, qiExp);
+
+		int globalStageIndex = 0;
+		for (int i = 1; i <= MaxGlobalStageIndex; i++)
+		{
+			if (qiExp < GetGlobalStageThreshold(i, oldMultiplier))
+				break;
+			globalStageIndex = i;
+		}
+
+		float storedQiRatio = qiExp > 0 ? qi / (float)qiExp : 0f;
+		if (globalStageIndex >= MaxGlobalStageIndex)
+		{
+			qiExp = GetGlobalStageThreshold(MaxGlobalStageIndex, newMultiplier);
+		}
+		else
+		{
+			int oldCurrent = GetGlobalStageThreshold(globalStageIndex, oldMultiplier);
+			int oldNext = GetGlobalStageThreshold(globalStageIndex + 1, oldMultiplier);
+			float stageProgress = oldNext > oldCurrent
+				? MathHelper.Clamp((qiExp - oldCurrent) / (float)(oldNext - oldCurrent),
+					0f, 1f)
+				: 0f;
+			int newCurrent = GetGlobalStageThreshold(globalStageIndex, newMultiplier);
+			int newNext = GetGlobalStageThreshold(globalStageIndex + 1, newMultiplier);
+			qiExp = newCurrent
+				+ (int)MathF.Round((newNext - newCurrent) * stageProgress);
+		}
+
+		qi = Math.Clamp((int)MathF.Round(qiExp * storedQiRatio), 0, qiExp);
 	}
 
 	private static int GetLegacyGlobalStageThreshold(int globalStageIndex)

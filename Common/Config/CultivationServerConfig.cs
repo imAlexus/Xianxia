@@ -18,6 +18,13 @@ public class CultivationServerConfig : ModConfig
 	[Slider]
 	public int TimeMultiplier;
 
+	[Header("Progression")]
+	[DefaultValue(1)]
+	[Range(1, 10)]
+	[Increment(1)]
+	[Slider]
+	public int CultivationRequirementMultiplier;
+
 	[Header("SpiritualQiZones")]
 	[DefaultValue(true)]
 	public bool EnableSpiritualQiZones;

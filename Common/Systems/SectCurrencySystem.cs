@@ -3,20 +3,27 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.ModLoader;
+using Xianxia.Content.Items;
 using Xianxia.Content.Items.Sect;
 
 namespace Xianxia.Common.Systems;
 
-public sealed class SectContributionCurrency : CustomCurrencySingleCoin
+public class SectContributionCurrency : CustomCurrencySingleCoin
 {
 	private readonly int tokenType;
 
 	public SectContributionCurrency(int tokenType)
-		: base(tokenType, 999999L)
+		: this(tokenType, "Mods.Xianxia.Currencies.SectContribution",
+			new Color(100, 235, 160))
+	{
+	}
+
+	protected SectContributionCurrency(int tokenType, string textKey,
+		Color textColor) : base(tokenType, 999999L)
 	{
 		this.tokenType = tokenType;
-		CurrencyTextKey = "Mods.Xianxia.Currencies.SectContribution";
-		CurrencyTextColor = new Color(100, 235, 160);
+		CurrencyTextKey = textKey;
+		CurrencyTextColor = textColor;
 		CurrencyDrawScale = 1f;
 	}
 
@@ -72,18 +79,31 @@ public sealed class SectContributionCurrency : CustomCurrencySingleCoin
 	}
 }
 
+public sealed class SpiritStoneCurrency : SectContributionCurrency
+{
+	public SpiritStoneCurrency(int itemType)
+		: base(itemType, "Mods.Xianxia.Currencies.SpiritStone",
+			new Color(85, 225, 255))
+	{
+	}
+}
+
 public static class SectCurrencySystem
 {
 	public static int ContributionCurrencyId { get; private set; } = -1;
+	public static int SpiritStoneCurrencyId { get; private set; } = -1;
 
 	public static void Register()
 	{
 		ContributionCurrencyId = CustomCurrencyManager.RegisterCurrency(
 			new SectContributionCurrency(ModContent.ItemType<SectContributionToken>()));
+		SpiritStoneCurrencyId = CustomCurrencyManager.RegisterCurrency(
+			new SpiritStoneCurrency(ModContent.ItemType<SpiritStone>()));
 	}
 
 	public static void Reset()
 	{
 		ContributionCurrencyId = -1;
+		SpiritStoneCurrencyId = -1;
 	}
 }

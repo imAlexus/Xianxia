@@ -15,6 +15,7 @@ using Xianxia.Common.Players;
 using Xianxia.Content.Items;
 using Xianxia.Content.Items.Accessories;
 using Xianxia.Content.Items.Alchemy;
+using Xianxia.Content.Items.Artifacts;
 using Xianxia.Content.Items.Armor;
 using Xianxia.Content.Items.Formations;
 using Xianxia.Content.Items.Guides;
@@ -26,7 +27,7 @@ namespace Xianxia.Common.Systems;
 
 public class CultivationManualSystem : ModSystem
 {
-	private const int PageCount = 18;
+	private const int PageCount = 19;
 
 	private readonly record struct ManualIndexEntry(string LocalizationKey, int TargetPage);
 	private readonly record struct ManualTextLine(string Text, float Y);
@@ -60,7 +61,8 @@ public class CultivationManualSystem : ModSystem
 		new("SpiritBeasts", 14),
 		new("AlchemyPath", 15),
 		new("SectSystem", 16),
-		new("FormationPath", 17)
+		new("FormationPath", 17),
+		new("ArtifactForging", 18)
 	];
 
 	private static bool isOpen;
@@ -312,6 +314,7 @@ public class CultivationManualSystem : ModSystem
 		15 => "AlchemyPath",
 		16 => "SectSystem",
 		17 => "FormationPath",
+		18 => "ArtifactForging",
 		_ => "Page0"
 	};
 
@@ -515,6 +518,48 @@ public class CultivationManualSystem : ModSystem
 					new(ModContent.ItemType<SpiritStone>(), 5)
 				])
 			]),
+			new("ArtifactForging",
+			[
+				new(ModContent.ItemType<ArtifactForge>(), 1, ItemID.IronAnvil,
+					[new(ModContent.ItemType<ProfoundIronBar>(), 10),
+						new(ModContent.ItemType<SpiritStone>(), 5)]),
+				new(ModContent.ItemType<SpiritJadeArtifactForge>(), 1,
+					ItemID.MythrilAnvil,
+					[new(ModContent.ItemType<ArtifactForge>()),
+						new(ModContent.ItemType<SpiritJadeBar>(), 15),
+						new(ModContent.ItemType<QiGatheringBeastCore>(), 3)]),
+				new(ModContent.ItemType<ProfoundArtifactForge>(), 1,
+					ItemID.MythrilAnvil,
+					[new(ModContent.ItemType<SpiritJadeArtifactForge>()),
+						new(ModContent.ItemType<ProfoundIronBar>(), 20),
+						new(ModContent.ItemType<FoundationBeastCore>(), 3)]),
+				new(ModContent.ItemType<VerdantAntlerStaff>(), 1,
+					ModContent.ItemType<ArtifactForge>(),
+					[new(ModContent.ItemType<JadeAntler>(), 2),
+						new(ModContent.ItemType<SpiritJadeBar>(), 4),
+						new(ModContent.ItemType<MortalBeastCore>())]),
+				new(ModContent.ItemType<JadeAntlerTalisman>(), 1,
+					ModContent.ItemType<SpiritJadeArtifactForge>(),
+					[new(ModContent.ItemType<JadeAntler>(), 3),
+						new(ModContent.ItemType<SpiritJadeBar>(), 8),
+						new(ModContent.ItemType<QiGatheringBeastCore>(), 2)]),
+				new(ModContent.ItemType<FlameSpiritFan>(), 1,
+					ModContent.ItemType<SpiritJadeArtifactForge>(),
+					[new(ModContent.ItemType<FlameEssence>(), 3),
+						new(ModContent.ItemType<FoundationBeastCore>(), 2),
+						new(ModContent.ItemType<SpiritJadeBar>(), 10)]),
+				new(ModContent.ItemType<ThunderclapSeal>(), 1,
+					ModContent.ItemType<ProfoundArtifactForge>(),
+					[new(ModContent.ItemType<ThunderEssence>(), 4),
+						new(ModContent.ItemType<CoreFormationBeastCore>(), 2),
+						new(ModContent.ItemType<ProfoundIronBar>(), 12)]),
+				new(ModContent.ItemType<BeastSoulBanner>(), 1,
+					ModContent.ItemType<ProfoundArtifactForge>(),
+					[new(ModContent.ItemType<CoreFormationBeastCore>(), 4),
+						new(ModContent.ItemType<ThunderEssence>(), 2),
+						new(ModContent.ItemType<FlameEssence>(), 2),
+						new(ModContent.ItemType<ProfoundIronBar>(), 15)])
+			]),
 			new("AccessoriesTechniques", BuildRecipeSection(9)),
 			new("CauldronsBeastPills", BuildRecipeSection(14)),
 			new("ProgressionPills", BuildRecipeSection(18)),
@@ -659,6 +704,9 @@ public class CultivationManualSystem : ModSystem
 				[new(ItemID.Book), new(ModContent.ItemType<SpiritStone>()), new(ItemID.FallenStar, 5)]),
 			new(ModContent.ItemType<QiPalmTechnique>(), 1, ItemID.Bookcase,
 				[new(ItemID.Book), new(ModContent.ItemType<SpiritStone>(), 2), new(ItemID.FallenStar, 5)]),
+			new(ModContent.ItemType<SpiritualRainTechnique>(), 1, ItemID.Bookcase,
+				[new(ItemID.Book), new(ItemID.Waterleaf, 3), new(ItemID.Moonglow, 3),
+					new(ModContent.ItemType<SpiritStone>(), 2)]),
 			new(ModContent.ItemType<SpiritVeinCompass>(), 1, ItemID.IronAnvil,
 				[new(ItemID.Compass), new(ItemID.GoldBar, 8), new(ItemID.FallenStar, 5), new(ItemID.Amethyst, 3)]),
 			new(ModContent.ItemType<SpiritVeinCompass>(), 1, ItemID.IronAnvil,

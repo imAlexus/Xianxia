@@ -13,7 +13,9 @@ using Xianxia.Common.Players;
 using Xianxia.Common.Config;
 using Xianxia.Content.Buffs;
 using Xianxia.Common.Abilities;
+using Xianxia.Content.Items;
 using Xianxia.Content.Items.Alchemy;
+using Xianxia.Content.Items.Artifacts;
 using Xianxia.Content.Items.Formations;
 using Xianxia.Content.Items.Sect;
 
@@ -32,7 +34,8 @@ public class CultivationUISystem : ModSystem
 	private enum PathMenuPage
 	{
 		Alchemy,
-		Formations
+		Formations,
+		Forging
 	}
 	private static PathMenuPage pathMenuPage;
 	private const int BarWidth = 300;
@@ -201,7 +204,8 @@ public class CultivationUISystem : ModSystem
 		[
 			[CultivationAbility.SpiritBreathing, CultivationAbility.Meditation],
 			[CultivationAbility.QiSense, CultivationAbility.SwordIntent,
-				CultivationAbility.QiResistance, CultivationAbility.Fireball, CultivationAbility.QiPalm],
+				CultivationAbility.QiResistance, CultivationAbility.Fireball,
+				CultivationAbility.QiPalm, CultivationAbility.SpiritualRain],
 			[CultivationAbility.QiProtection, CultivationAbility.FlameStep,
 				CultivationAbility.NightVision, CultivationAbility.SpiritSwordRain],
 			[CultivationAbility.GoldenCoreCirculation, CultivationAbility.QiFlight,
@@ -405,6 +409,8 @@ public class CultivationUISystem : ModSystem
 	{
 		AlchemyPlayer alchemy = Main.LocalPlayer.GetModPlayer<AlchemyPlayer>();
 		FormationPathPlayer formations = Main.LocalPlayer.GetModPlayer<FormationPathPlayer>();
+		ArtifactForgingPlayer forging =
+			Main.LocalPlayer.GetModPlayer<ArtifactForgingPlayer>();
 		Rectangle content = new(panel.X + 18, panel.Y + 90, panel.Width - 36, panel.Height - 112);
 		const int pathListWidth = 260;
 		Rectangle listPanel = new(content.X, content.Y, pathListWidth, content.Height);
@@ -452,6 +458,26 @@ public class CultivationUISystem : ModSystem
 			new Vector2(formationCard.X + 145, formationCard.Y + 49),
 			Color.LightCyan, 0.54f);
 
+		Rectangle forgingCard = new(listPanel.X + 12, listPanel.Y + 214,
+			listPanel.Width - 24, 70);
+		bool forgingHovered = forgingCard.Contains(mouse);
+		Main.spriteBatch.Draw(pixel, forgingCard,
+			pathMenuPage == PathMenuPage.Forging
+				? new Color(255, 185, 70)
+				: forgingHovered ? Color.White : new Color(188, 123, 55));
+		Main.spriteBatch.Draw(pixel, new Rectangle(forgingCard.X + 3,
+			forgingCard.Y + 3, forgingCard.Width - 6, forgingCard.Height - 6),
+			new Color(73, 48, 29, 245));
+		DrawPathItemIcon(ModContent.ItemType<ArtifactForge>(),
+			new Vector2(forgingCard.X + 38, forgingCard.Center.Y), 44f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Forging.Name").Value,
+			new Vector2(forgingCard.X + 145, forgingCard.Y + 25),
+			Color.White, 0.7f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Forging.Tier").Format(
+			forging.Tier, forging.TierRealmName, forging.StageName),
+			new Vector2(forgingCard.X + 145, forgingCard.Y + 49),
+			new Color(255, 205, 105), 0.54f);
+
 		if (Main.mouseLeft && Main.mouseLeftRelease)
 		{
 			if (alchemyCard.Contains(mouse))
@@ -464,6 +490,11 @@ public class CultivationUISystem : ModSystem
 				pathMenuPage = PathMenuPage.Formations;
 				SoundEngine.PlaySound(SoundID.MenuTick);
 			}
+			else if (forgingCard.Contains(mouse))
+			{
+				pathMenuPage = PathMenuPage.Forging;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
 		}
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.FutureHint").Value,
 			new Vector2(listPanel.Center.X, listPanel.Bottom - 35), Color.Gray, 0.6f);
@@ -471,6 +502,11 @@ public class CultivationUISystem : ModSystem
 		if (pathMenuPage == PathMenuPage.Formations)
 		{
 			DrawFormationPathPage(pixel, detailPanel, formations);
+			return;
+		}
+		if (pathMenuPage == PathMenuPage.Forging)
+		{
+			DrawForgingPathPage(pixel, detailPanel, forging, mouse);
 			return;
 		}
 
@@ -559,6 +595,98 @@ public class CultivationUISystem : ModSystem
 			Rectangle row = new(tiersArea.X, tiersArea.Y + tier * rowHeight,
 				tiersArea.Width, rowHeight - 3);
 			DrawAlchemyTierRow(pixel, row, alchemy, tier, pillGroups[tier], mouse);
+		}
+	}
+
+	private void DrawForgingPathPage(Texture2D pixel, Rectangle panel,
+		ArtifactForgingPlayer forging, Point mouse)
+	{
+		Rectangle header = new(panel.X + 10, panel.Y + 8,
+			panel.Width - 20, 128);
+		Main.spriteBatch.Draw(pixel, header, new Color(53, 36, 29, 245));
+		DrawPathItemIcon(ModContent.ItemType<ArtifactForge>(),
+			new Vector2(header.X + 62, header.Center.Y), 68f);
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Forging.Name").Value,
+			new Vector2(header.Center.X + 30, header.Y + 23),
+			new Color(255, 190, 75), 0.9f);
+		string exp = forging.IsMaximumRank
+			? Mod.GetLocalization("AbilityTree.MaxLevel").Value
+			: $"EXP {forging.Experience}/{forging.ExperienceRequired}";
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Forging.Progress")
+			.Format(forging.StageName, exp),
+			new Vector2(header.Center.X + 30, header.Y + 52), Color.White, 0.62f);
+		Rectangle bar = new(header.X + 125, header.Y + 68,
+			header.Width - 155, 12);
+		Main.spriteBatch.Draw(pixel, bar, new Color(50, 42, 45));
+		float ratio = forging.IsMaximumRank ? 1f
+			: forging.Experience / (float)forging.ExperienceRequired;
+		Main.spriteBatch.Draw(pixel, new Rectangle(bar.X + 2, bar.Y + 2,
+			(int)((bar.Width - 4) * ratio), bar.Height - 4),
+			new Color(255, 165, 55));
+		DrawCenteredText(Mod.GetLocalization("AbilityTree.Paths.Forging.Hint").Value,
+			new Vector2(header.Center.X + 30, header.Bottom - 22),
+			new Color(255, 220, 150), 0.52f);
+
+		int[][] artifacts =
+		[
+			[ModContent.ItemType<VerdantAntlerStaff>()],
+			[ModContent.ItemType<JadeAntlerTalisman>()],
+			[ModContent.ItemType<FlameSpiritFan>()],
+			[ModContent.ItemType<ThunderclapSeal>()],
+			[ModContent.ItemType<BeastSoulBanner>()]
+		];
+		Rectangle rows = new(panel.X + 8, header.Bottom + 8,
+			panel.Width - 16, panel.Bottom - header.Bottom - 16);
+		int rowHeight = rows.Height / 5;
+		for (int tier = 0; tier <= ArtifactForgingPlayer.MaxTier; tier++)
+		{
+			Rectangle row = new(rows.X, rows.Y + tier * rowHeight,
+				rows.Width, rowHeight - 3);
+			bool reached = forging.Tier >= tier;
+			bool current = forging.Tier == tier;
+			Main.spriteBatch.Draw(pixel, row, tier % 2 == 0
+				? new Color(25, 31, 44, 245)
+				: new Color(18, 26, 39, 245));
+			Rectangle tierBox = new(row.X + 3, row.Y + 3, 150, row.Height - 6);
+			Main.spriteBatch.Draw(pixel, tierBox, current
+				? new Color(112, 69, 31, 235)
+				: reached ? new Color(67, 53, 35, 235)
+				: new Color(31, 34, 43, 235));
+			DrawCenteredText($"Tier {tier}",
+				new Vector2(tierBox.Center.X, tierBox.Y + 18),
+				reached ? Color.White : Color.Gray, 0.63f);
+			DrawCenteredTextFitted(
+				Main.LocalPlayer.GetModPlayer<AlchemyPlayer>()
+					.GetTierRealmName(tier),
+				new Vector2(tierBox.Center.X, tierBox.Bottom - 17),
+				tierBox.Width - 10, reached ? Color.LightGoldenrodYellow : Color.Gray,
+				0.5f);
+
+			int itemType = artifacts[tier][0];
+			Rectangle artifactCard = new(tierBox.Right + 10, row.Y + 7,
+				Math.Min(280, row.Width - tierBox.Width - 25), row.Height - 14);
+			bool hovered = artifactCard.Contains(mouse);
+			Main.spriteBatch.Draw(pixel, artifactCard, reached
+				? hovered ? Color.White : new Color(238, 162, 65)
+				: new Color(65, 67, 75));
+			Main.spriteBatch.Draw(pixel, new Rectangle(artifactCard.X + 3,
+				artifactCard.Y + 3, artifactCard.Width - 6, artifactCard.Height - 6),
+				reached ? new Color(69, 48, 31) : new Color(25, 27, 34));
+			DrawPathItemIcon(itemType,
+				new Vector2(artifactCard.X + 35, artifactCard.Center.Y), 42f,
+				reached ? Color.White : new Color(90, 90, 100));
+			DrawCenteredTextFitted(ContentSamples.ItemsByType[itemType].Name,
+				new Vector2(artifactCard.X + 65
+					+ (artifactCard.Width - 70) * 0.5f, artifactCard.Center.Y),
+				artifactCard.Width - 78, reached ? new Color(255, 220, 145) : Color.Gray,
+				0.58f);
+
+			DrawCenteredTextFitted(
+				Mod.GetLocalization($"AbilityTree.Paths.Forging.Tier{tier}").Value,
+				new Vector2(artifactCard.Right
+					+ (row.Right - artifactCard.Right) * 0.5f, row.Center.Y),
+				row.Right - artifactCard.Right - 15,
+				reached ? Color.White : Color.Gray, 0.5f);
 		}
 	}
 
@@ -818,6 +946,7 @@ public class CultivationUISystem : ModSystem
 			CultivationAbility.SwordIntent => "SwordIntentEffect",
 			CultivationAbility.SpiritSwordRain => "SwordRainEffect",
 			CultivationAbility.SectProtectionFormation => "FormationEffect",
+			CultivationAbility.SpiritualRain => "SpiritualRainEffect",
 			_ => "CombatEffect"
 		};
 		return Mod.GetLocalization($"AbilityTree.{effectKey}").Format(level, progress);
@@ -850,6 +979,8 @@ public class CultivationUISystem : ModSystem
 			CultivationAbility.SpiritSwordRain => (ModContent.ItemType<SpiritSwordRainManual>(), string.Empty),
 			CultivationAbility.SectProtectionFormation =>
 				(ModContent.ItemType<SectProtectionFormationManual>(), string.Empty),
+			CultivationAbility.SpiritualRain =>
+				(ModContent.ItemType<SpiritualRainTechnique>(), string.Empty),
 			_ => (ItemID.SoulCake, string.Empty)
 		};
 		Texture2D icon;

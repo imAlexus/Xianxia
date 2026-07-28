@@ -16,7 +16,10 @@ Keybinds: {
 	// SectFormation.DisplayName: Sect Protection Formation
 }
 
-// Currencies.SectContribution: sect contribution tokens
+Currencies: {
+	SectContribution: 宗门贡献令
+	SpiritStone: 灵石
+}
 
 Buffs: {
 	QiResistanceBuff: {
@@ -153,6 +156,7 @@ Buffs: {
 Abilities: {
 	RequiresRealm: 所需境界：{0}
 	NotEnoughQi: 真气不足。需要：{0}
+	SpiritualRainCooldown: 灵雨术冷却中：{0}秒
 	AlreadyActive: 真气护体已生效
 	QiResistanceActivated: 真气护体已激活，持续 1 分钟
 	QiFlightEnabled: 御气飞行已开启
@@ -242,6 +246,7 @@ AbilityTree: {
 	// SwordIntentEffect: Level {0} | Flying Sword damage increases by 10%, then 1.5% per level | {1}
 	// SwordRainEffect: Level {0} | five swords, cursor-controlled range, higher damage and lower Qi cost/cooldown | {1}
 	// FormationEffect: Level {0} | maintained with Qi; allies can meditate inside to reinforce and repair it | {1}
+	SpiritualRainEffect: 等级 {0} | 等级越高，真气消耗越低，催生范围越大 | {1}
 
 	Tabs: {
 		Abilities: 功法
@@ -300,6 +305,18 @@ AbilityTree: {
 			// Tier3: Unlock Restoration | 3 simultaneous array slots
 			// Tier4: Grand Formation | all 4 array types can operate together
 		}
+
+		Forging: {
+			// Name: Artifact Forging
+			// Tier: Tier {0} - {1} ({2})
+			// Progress: "{0} Stage | {1}"
+			// Hint: Craft spiritual artifacts to gain Path EXP and improve their quality
+			// Tier0: Mortal forging | learn basic beast-material artifacts
+			// Tier1: Qi Gathering forging | unlock Spirit Jade artifact refinement
+			// Tier2: Foundation forging | bind elemental essences into artifacts
+			// Tier3: Core forging | unlock Profound artifacts and thunder seals
+			// Tier4: Nascent Soul forging | create soul-bound supreme artifacts
+		}
 	}
 
 	Abilities: {
@@ -320,6 +337,7 @@ AbilityTree: {
 		// SwordIntent.Name: Sword Intent
 		// SpiritSwordRain.Name: Spirit Sword Rain
 		// SectProtectionFormation.Name: Sect Protection Formation
+		SpiritualRain.Name: 灵雨
 	}
 }
 
@@ -346,7 +364,13 @@ Configs: {
 			Tooltip: 控制冥想时昼夜流逝速度
 		}
 
+		CultivationRequirementMultiplier: {
+			Label: 修炼需求倍率
+			Tooltip: 倍增每个阶段和境界所需的真气经验。1倍为正常需求，2倍则需求翻倍
+		}
+
 		Headers: {
+			Progression: 修炼难度
 			SpiritualQiZones: 高灵气区域
 			SpiritBeasts: 灵兽
 			Debug: 调试工具
@@ -719,6 +743,19 @@ Items: {
 			'''
 	}
 
+	SpiritualRainTechnique: {
+		DisplayName: 灵雨术
+		Tooltip:
+			'''
+			在光标附近召唤灵雨
+			使范围内所有未成熟的灵植成长一个阶段
+			需要炼气境，初始消耗40真气
+			熟练度会降低真气消耗并扩大影响范围
+			冷却时间15秒
+			同一时间只能维持一场灵雨
+			'''
+	}
+
 	SpiritFur: {
 		DisplayName: 灵兽皮毛
 		Tooltip: 带有一丝天然灵气的皮毛
@@ -732,6 +769,62 @@ Items: {
 	JadeAntler: {
 		DisplayName: 玉角
 		Tooltip: 凝聚森林木属性真气的结晶鹿角
+	}
+
+	ArtifactForge: {
+		DisplayName: 炼器炉
+		Tooltip: 将灵兽材料锻造成法器的基础炼器炉
+	}
+
+	SpiritJadeArtifactForge: {
+		DisplayName: 灵玉炼器炉
+		Tooltip: 以稳定的灵玉之火提升法器品质
+	}
+
+	ProfoundArtifactForge: {
+		DisplayName: 玄阶炼器炉
+		Tooltip: 可炼制金丹境与元婴境法器的高阶炼器炉
+	}
+
+	VerdantAntlerStaff: {
+		// DisplayName: Verdant Antler Staff
+		/* Tooltip:
+			'''
+			Fires a seeking verdant antler bolt that poisons enemies
+			Consumes Qi when used
+			''' */
+	}
+
+	JadeAntlerTalisman: {
+		// DisplayName: Jade Antler Talisman
+		// Tooltip: Increases defense, life regeneration and magic damage
+	}
+
+	FlameSpiritFan: {
+		// DisplayName: Flame Spirit Fan
+		/* Tooltip:
+			'''
+			Releases three spreading Qi fireballs that do not break terrain
+			Consumes Qi when used
+			''' */
+	}
+
+	ThunderclapSeal: {
+		// DisplayName: Thunderclap Seal
+		/* Tooltip:
+			'''
+			Unleashes a long-range condensed bolt of heavenly thunder
+			Consumes Qi when used
+			''' */
+	}
+
+	BeastSoulBanner: {
+		// DisplayName: Beast Soul Banner
+		/* Tooltip:
+			'''
+			Summons a visible Beast Soul guardian that fires seeking soul cores
+			Also strengthens summon and magic damage, defense and minion capacity
+			''' */
 	}
 
 	FlameEssence: {
@@ -835,18 +928,18 @@ Items: {
 	}
 
 	SwordIntentManual: {
-		// DisplayName: Sword Intent Manual
-		// Tooltip: Teaches the passive Sword Intent technique | Requires Outer Disciple
+		DisplayName: 剑意秘籍
+		Tooltip: 习得被动剑意 | 外门弟子可用，散修则需达到炼气境
 	}
 
 	SpiritSwordRainManual: {
-		// DisplayName: Spirit Sword Rain Manual
-		// Tooltip: Teaches Spirit Sword Rain | Requires Inner Disciple
+		DisplayName: 灵剑雨秘籍
+		Tooltip: 习得灵剑雨 | 内门弟子可用，散修则需达到筑基境
 	}
 
 	SectProtectionFormationManual: {
-		// DisplayName: Sect Protection Formation Manual
-		// Tooltip: Teaches the Sect Protection Formation | Requires Core Disciple
+		DisplayName: 护宗阵秘籍
+		Tooltip: 习得守护阵法 | 核心弟子可用，散修则需达到金丹境
 	}
 }
 
@@ -894,6 +987,21 @@ NPCs: {
 		}
 	}
 
+	IndependentCultivatorMerchant: {
+		DisplayName: 散修商人
+
+		TownNPCMood: {
+			Content: 今日路上很安静。
+			NoHome: 即使是旅人，偶尔也需要屋檐。
+			FarFromHome: 我的货物离得太远了。
+			LoveSpace: 开阔之地能使心境清明。
+			DislikeCrowded: 人太多会扰乱真气流动。
+			HateCrowded: 这里太拥挤，无法交易。
+			LikeNPC_Princess: "{NPCName}善待每一位旅人。"
+			Princess_LovesNPC: 我带来了远方的故事。
+		}
+	}
+
 	SpiritHare.DisplayName: 灵兔
 	JadeHornDeer.DisplayName: 玉角鹿
 	FlameTailedFox.DisplayName: 炎尾狐
@@ -904,7 +1012,7 @@ Sect: {
 	// ElderName: Elder Jian
 	// TechniqueLearned: Technique learned: {0}
 	// RankUp: Sect promotion: {0}!
-	// RequiresManual: This technique must be learned from a Sect manual
+	RequiresManual: 此功法必须通过秘籍习得
 	// FormationBlocked: Formation blocked {0} damage | Integrity: {1}/{2}
 	// FormationShattered: Formation shattered after absorbing {0} damage!
 	// FormationContribution: "{0} contributed {1} Qi | +{2} integrity"
@@ -964,6 +1072,18 @@ Sect: {
 			// SpiritSwordRain: Active technique
 			// SectProtectionFormation: Active formation
 		}
+	}
+}
+
+IndependentMerchant: {
+	Name: 沈游侠
+	Trade: 交易功法
+	Bestiary: 一名云游散修，以灵石交换稀有独门功法，不要求加入任何宗门。
+
+	Chat: {
+		TooWeak: 你的经脉尚未开启。达到炼气境后再来吧。
+		Independent: 我不要求誓言，也不提供庇护。带来灵石，功法便归你。
+		SectMember: 你已身在宗门旗下，应向宗门长老求取功法与指点。
 	}
 }
 
@@ -1047,6 +1167,13 @@ Projectiles: {
 	// PermanentFormationDomeProjectile.DisplayName: Permanent Formation Dome
 	// PermanentFormationBarrierImpactProjectile.DisplayName: Permanent Formation Barrier Impact Projectile
 	// PermanentFormationUpgradeEffectProjectile.DisplayName: Permanent Formation Upgrade Effect Projectile
+	// BeastSoulBoltProjectile.DisplayName: Beast Soul Bolt Projectile
+	// BeastSoulGuardianProjectile.DisplayName: Beast Soul Guardian Projectile
+	// FlameSpiritFanProjectile.DisplayName: Flame Spirit Fan Projectile
+	// ThunderclapBoltProjectile.DisplayName: Thunderclap Bolt Projectile
+	// VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
+	// ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
+	SpiritualRainProjectile.DisplayName: 灵雨
 }
 
 Tiles: {
@@ -1055,6 +1182,9 @@ Tiles: {
 	AlchemyCauldronTile.MapEntry: 炼丹炉
 	SpiritJadeCauldronTile.MapEntry: 灵玉丹炉
 	ProfoundAlchemyCauldronTile.MapEntry: 玄阶丹炉
+	ArtifactForgeTile.MapEntry: 炼器炉
+	SpiritJadeArtifactForgeTile.MapEntry: 灵玉炼器炉
+	ProfoundArtifactForgeTile.MapEntry: 玄阶炼器炉
 	SpiritGrassTile.MapEntry: 灵草
 	FireLotusTile.MapEntry: 火莲
 	MoonDewFlowerTile.MapEntry: 月露花
@@ -1208,6 +1338,7 @@ DebugCommands: {
 	Help10: /xiadebug spawncheck - 说明此处可生成哪些灵兽
 	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
 	// Help12: /xiadebug sect max - set Verdant Cloud Sect rank to maximum
+	// Help13: /xiadebug forging <tier 0-4> <low|middle|high>
 	Unknown: 未知调试操作：{0}
 	SetUsage: 用法：/xiadebug set <realm 1-5|name> <stage 1-9>
 	QiUsage: 用法：/xiadebug qi <amount|fill|empty>
@@ -1218,6 +1349,8 @@ DebugCommands: {
 	BeastSinglePlayer: 仅单人模式可生成灵兽
 	BeastSpawned: 已生成：{0}
 	AlchemyUsage: 用法：/xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	// ForgingUsage: Usage: /xiadebug forging <tier 0-4> <low|middle|high>
+	// ForgingRankSet: Artifact Forging debug rank set to Tier {0} - {1}, {2} Stage
 	// SectUsage: Usage: /xiadebug sect max
 	// SectRankMaxed: Sect rank set to {0} with {1} lifetime contribution
 	AlchemyRankSet: 炼丹调试等级设为品阶 {0} - {1}，{2}阶段
@@ -1256,6 +1389,24 @@ DebugCommands: {
 
 // FormationPath.Advanced: Array Formations advanced to Tier {0} - {1} ({2})
 
+Forging: {
+	// Advanced: Artifact Forging advanced to Tier {0} - {1} ({2})
+	// RecipeRequirement: Requires Artifact Forging Tier {0}, {1} Stage
+	QualityTooltip: "{0}品质 | 威力：{1}% | 真气消耗：{2}% | 炼器经验：{3}%"
+	MasteryTooltip: 炼器：品阶 {0}（{1}），{2}阶段 | 基础经验：{3} | 当前奖励：{4}经验
+	ArtifactQiCost: 当前每次使用消耗真气：{0}
+	JadeAntlerStats: +{0}防御 | +{1}生命恢复 | +{2}%魔法伤害
+	BeastSoulStats: +{0}%召唤伤害 | +{1}%魔法伤害 | +{2}防御 | +1召唤栏 | 守护兽基础伤害：{3}
+
+	Quality: {
+		// Crude: Crude
+		// Common: Common
+		// Refined: Refined
+		// Earth: Earth Grade
+		// Heaven: Heaven Grade
+	}
+}
+
 Manual: {
 	Title: 修士手册
 	Received: 你获得了《修士手册》。使用它了解仙侠世界
@@ -1271,6 +1422,7 @@ Manual: {
 		NoviceAttire: 初入门弟子服饰
 		MaterialsEquipment: 材料、装备与武器
 		// FormationCores: Permanent Formation Cores
+		// ArtifactForging: Artifact Forges and Spiritual Artifacts
 		AccessoriesTechniques: 饰品、功法与基础丹药
 		CauldronsBeastPills: 丹炉、罗盘与灵兽丹药
 		ProgressionPills: 修炼进阶丹药
@@ -1299,6 +1451,7 @@ Manual: {
 			AlchemyPath: 炼丹之道
 			// SectSystem: Sects and Missions
 			// FormationPath: Permanent Formations
+			// ArtifactForging: Artifact Forging Path
 			AdvancedPills: 高级丹药配方
 		}
 	}
@@ -1687,6 +1840,38 @@ Manual: {
 				During a Heavenly Tribulation, the Core directly intercepts lightning that hits a cultivator inside its territory. It initially absorbs 55% of each strike; Formation Tier and Stage can raise this to 80%. Tribulation lightning consumes much more integrity than ordinary attacks, with higher Realm Tribulations applying greater strain. A Core at zero integrity shatters, deactivates and leaves the remaining lightning damage to the cultivator. Qi Protection is applied afterward to whatever passes through the Formation.
 
 				Relay Flags are the first territorial network component. Future updates can expand this system with permissions, specialized nodes and links between multiple Cores.
+				''' */
+		}
+
+		ArtifactForging: {
+			// Title: Artifact Forging
+			/* Body:
+				'''
+				THE ARTIFACT FORGING PATH
+				Artifact Forging is an independent profession with five Tiers. Every Tier contains Low, Middle and High Stages. Crafting a spiritual artifact grants Path EXP; merely collecting materials or advancing your cultivation Realm does not improve this Path.
+
+				Forge mastery above a recipe requirement and a better forge both improve the finished artifact's quality. Quality is saved on the individual item and remains synchronized in multiplayer. Artifacts below your current Forging Tier grant sharply reduced EXP.
+
+				ARTIFACT QUALITY
+				Crude - 82% power, 120% Qi cost and 50% Forging EXP.
+				Common - 100% power, 100% Qi cost and 100% Forging EXP.
+				Refined - 112% power, 92% Qi cost and 200% Forging EXP.
+				Earth Grade - 127% power, 82% Qi cost and 500% Forging EXP.
+				Heaven Grade - 148% power, 70% Qi cost and 1000% Forging EXP.
+
+				SPIRITUAL FORGES
+				Artifact Forge - basic Mortal refinement.
+				Spirit Jade Artifact Forge - improves the quality roll and supports Qi Gathering and Foundation artifacts.
+				Profound Artifact Forge - the strongest current forge, required for Core Formation and Nascent Soul artifacts.
+
+				CURRENT ARTIFACTS
+				Verdant Antler Staff - the first practical use for Jade Antlers; fires a seeking verdant antler bolt that poisons enemies.
+				Jade Antler Talisman - a defensive accessory that improves regeneration and magic damage.
+				Flame Spirit Fan - releases three spreading Qi fireballs without destroying terrain.
+				Thunderclap Seal - releases a long-range stream of electric particles that shocks enemies on contact.
+				Beast Soul Banner - summons a visible orbiting Beast Soul that attacks enemies with seeking soul cores while strengthening summon and magic cultivation.
+
+				Open Cultivation Menu > Paths > Artifact Forging to inspect Tier, Stage, EXP and the artifact unlocked by each Tier. Every artifact tooltip displays its Path requirement, EXP reward, quality, power multiplier and Qi-cost multiplier.
 				''' */
 		}
 	}

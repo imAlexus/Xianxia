@@ -44,7 +44,11 @@ public abstract class SectTechniqueManual : ModItem
 	public override bool CanUseItem(Player player)
 	{
 		SectPlayer sect = player.GetModPlayer<SectPlayer>();
-		return sect.JoinedSect && sect.Rank >= RequiredRank && !IsUnlocked(sect);
+		if (IsUnlocked(sect))
+			return false;
+		return sect.JoinedSect
+			? sect.Rank >= RequiredRank
+			: player.GetModPlayer<CultivationPlayer>().RealmIndex >= RequiredRank + 1;
 	}
 
 	public override bool? UseItem(Player player)

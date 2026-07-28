@@ -16,7 +16,10 @@ Keybinds: {
 	SectFormation.DisplayName: Formazione Protettiva della Setta
 }
 
-Currencies.SectContribution: gettoni contributo della setta
+Currencies: {
+	SectContribution: gettoni contributo della setta
+	SpiritStone: Spirit Stone
+}
 
 Buffs: {
 	QiResistanceBuff: {
@@ -153,6 +156,7 @@ Buffs: {
 Abilities: {
 	RequiresRealm: Realm richiesto: {0}
 	NotEnoughQi: Qi insufficiente. Richiesto: {0}
+	SpiritualRainCooldown: Pioggia Spirituale in ricarica: {0}s
 	AlreadyActive: Resistenza Qi e gia attiva
 	QiResistanceActivated: Resistenza Qi attivata per 1 minuto
 	QiFlightEnabled: Volo Qi attivato
@@ -242,6 +246,7 @@ AbilityTree: {
 	SwordIntentEffect: Livello {0} | danno Flying Sword +10%, poi +1.5% per livello | {1}
 	SwordRainEffect: Livello {0} | cinque spade, raggio controllato dal cursore, piu danno e minori costo Qi/cooldown | {1}
 	FormationEffect: Livello {0} | mantenuta con il Qi; gli alleati possono meditare dentro per potenziarla e ripararla | {1}
+	SpiritualRainEffect: Livello {0} | il costo in Qi diminuisce e l'area di crescita aumenta con i livelli | {1}
 
 	Tabs: {
 		Abilities: Abilita
@@ -300,6 +305,18 @@ AbilityTree: {
 			Tier3: Sblocca Ristorazione | 3 slot array simultanei
 			Tier4: Grande Formazione | tutti i 4 tipi possono funzionare insieme
 		}
+
+		Forging: {
+			Name: Forgiatura Artefatti
+			Tier: Tier {0} - {1} ({2})
+			Progress: Stadio {0} | {1}
+			Hint: Crea artefatti spirituali per ottenere EXP del Path e migliorarne la qualita
+			Tier0: Forgiatura Mortale | apprendi artefatti base con materiali delle bestie
+			Tier1: Forgiatura Qi Gathering | sblocca la raffinazione con Giada Spirituale
+			Tier2: Forgiatura Foundation | lega essenze elementali negli artefatti
+			Tier3: Forgiatura Core | sblocca artefatti Profondi e sigilli del tuono
+			Tier4: Forgiatura Nascent Soul | crea artefatti supremi legati all'anima
+		}
 	}
 
 	Abilities: {
@@ -320,6 +337,7 @@ AbilityTree: {
 		SwordIntent.Name: Intento della Spada
 		SpiritSwordRain.Name: Pioggia di Spade Spirituali
 		SectProtectionFormation.Name: Formazione Protettiva della Setta
+		SpiritualRain.Name: Pioggia Spirituale
 	}
 }
 
@@ -346,7 +364,13 @@ Configs: {
 			Tooltip: Determina quanto velocemente trascorrono giorno e notte durante la meditazione
 		}
 
+		CultivationRequirementMultiplier: {
+			Label: Moltiplicatore requisiti di coltivazione
+			Tooltip: Moltiplica il QiEXP richiesto per ogni Stadio e Realm. 1x mantiene i requisiti normali; 2x li raddoppia
+		}
+
 		Headers: {
+			Progression: Difficolta della coltivazione
 			SpiritualQiZones: Zone ad alta concentrazione di Qi
 			SpiritBeasts: Bestie Spirituali
 			Debug: Strumenti di debug
@@ -719,6 +743,19 @@ Items: {
 			'''
 	}
 
+	SpiritualRainTechnique: {
+		DisplayName: Tecnica della Pioggia Spirituale
+		Tooltip:
+			'''
+			Evoca una pioggia spirituale vicino al cursore
+			Fa avanzare di una fase tutte le piante spirituali immature nell'area
+			Richiede Raccolta del Qi e inizialmente consuma 40 Qi
+			La maestria riduce il costo in Qi e amplia l'area interessata
+			15 secondi di cooldown
+			Puo essere attiva una sola pioggia spirituale alla volta
+			'''
+	}
+
 	SpiritFur: {
 		DisplayName: Pelliccia Spirituale
 		Tooltip: Pelliccia che conserva una debole traccia di Qi naturale
@@ -732,6 +769,62 @@ Items: {
 	JadeAntler: {
 		DisplayName: Corno di Giada
 		Tooltip: Un corno cristallizzato colmo di Qi dell'elemento legno
+	}
+
+	ArtifactForge: {
+		DisplayName: Forgia per Artefatti
+		Tooltip: Una forgia base per plasmare materiali delle bestie in artefatti spirituali
+	}
+
+	SpiritJadeArtifactForge: {
+		DisplayName: Forgia di Giada Spirituale
+		Tooltip: Migliora la qualita degli artefatti con una fiamma stabile di Giada Spirituale
+	}
+
+	ProfoundArtifactForge: {
+		DisplayName: Forgia Profonda
+		Tooltip: Una forgia avanzata per artefatti del Core e dell'anima
+	}
+
+	VerdantAntlerStaff: {
+		DisplayName: Bastone del Corno Verdeggiante
+		Tooltip:
+			'''
+			Lancia un corno verdeggiante a ricerca che avvelena i nemici
+			Consuma Qi quando usato
+			'''
+	}
+
+	JadeAntlerTalisman: {
+		DisplayName: Talismano del Corno di Giada
+		Tooltip: Aumenta difesa, rigenerazione vitale e danno magico
+	}
+
+	FlameSpiritFan: {
+		DisplayName: Ventaglio dello Spirito di Fiamma
+		Tooltip:
+			'''
+			Libera tre palle di fuoco Qi che non rompono il terreno
+			Consuma Qi quando usato
+			'''
+	}
+
+	ThunderclapSeal: {
+		DisplayName: Sigillo del Tuono
+		Tooltip:
+			'''
+			Scatena un fulmine celeste condensato a lunga portata
+			Consuma Qi quando usato
+			'''
+	}
+
+	BeastSoulBanner: {
+		DisplayName: Stendardo delle Anime Bestiali
+		Tooltip:
+			'''
+			Evoca un'Anima Bestiale visibile che lancia nuclei a ricerca
+			Potenzia anche danno summon e magico, difesa e capacita dei servitori
+			'''
 	}
 
 	FlameEssence: {
@@ -836,17 +929,17 @@ Items: {
 
 	SwordIntentManual: {
 		DisplayName: Manuale dell'Intento della Spada
-		Tooltip: Insegna la passiva Intento della Spada | Richiede Discepolo Esterno
+		Tooltip: Insegna Intento della Spada | Richiede Discepolo Esterno oppure Raccolta del Qi se indipendente
 	}
 
 	SpiritSwordRainManual: {
 		DisplayName: Manuale della Pioggia di Spade Spirituali
-		Tooltip: Insegna Pioggia di Spade Spirituali | Richiede Discepolo Interno
+		Tooltip: Insegna Pioggia di Spade Spirituali | Richiede Discepolo Interno oppure Fondazione Spirituale se indipendente
 	}
 
 	SectProtectionFormationManual: {
 		DisplayName: Manuale della Formazione Protettiva
-		Tooltip: Insegna la Formazione Protettiva della Setta | Richiede Discepolo Principale
+		Tooltip: Insegna la Formazione Protettiva | Richiede Discepolo Principale oppure Formazione del Nucleo se indipendente
 	}
 }
 
@@ -894,6 +987,21 @@ NPCs: {
 		}
 	}
 
+	IndependentCultivatorMerchant: {
+		DisplayName: Mercante Coltivatore Indipendente
+
+		TownNPCMood: {
+			Content: Oggi la strada e tranquilla.
+			NoHome: Anche un viandante a volte ha bisogno di un tetto.
+			FarFromHome: Le mie merci sono troppo lontane.
+			LoveSpace: Gli spazi aperti mantengono limpida la mente.
+			DislikeCrowded: Troppe persone disturbano il flusso del Qi.
+			HateCrowded: Non riesco a commerciare in questa folla.
+			LikeNPC_Princess: "{NPCName} tratta ogni viaggiatore con gentilezza."
+			Princess_LovesNPC: Porto storie da terre lontane.
+		}
+	}
+
 	SpiritHare.DisplayName: Lepre Spirituale
 	JadeHornDeer.DisplayName: Cervo dalle Corna di Giada
 	FlameTailedFox.DisplayName: Volpe dalla Coda Fiammeggiante
@@ -904,7 +1012,7 @@ Sect: {
 	ElderName: Anziano Jian
 	TechniqueLearned: Tecnica appresa: {0}
 	RankUp: Promozione nella Setta: {0}!
-	RequiresManual: Questa tecnica deve essere appresa da un manuale della Setta
+	RequiresManual: Questa tecnica deve essere appresa da un manuale
 	FormationBlocked: La formazione ha bloccato {0} danni | Integrita: {1}/{2}
 	FormationShattered: Formazione distrutta dopo aver assorbito {0} danni!
 	FormationContribution: "{0} ha contribuito {1} Qi | +{2} integrita"
@@ -964,6 +1072,18 @@ Sect: {
 			SpiritSwordRain: Tecnica attiva
 			SectProtectionFormation: Formazione attiva
 		}
+	}
+}
+
+IndependentMerchant: {
+	Name: Viandante Shen
+	Trade: Commercia tecniche
+	Bestiary: Un coltivatore errante che scambia rare tecniche indipendenti per Spirit Stone senza esigere fedelta a una Setta.
+
+	Chat: {
+		TooWeak: I tuoi meridiani non si sono ancora aperti. Torna dopo aver raggiunto Raccolta del Qi.
+		Independent: Non chiedo giuramenti e non offro protezione. Porta delle Spirit Stone e la tecnica sara tua.
+		SectMember: Cammini gia sotto lo stendardo di una Setta. Rivolgiti al suo Anziano per tecniche e guida.
 	}
 }
 
@@ -1047,6 +1167,13 @@ Projectiles: {
 	PermanentFormationDomeProjectile.DisplayName: Cupola della Formazione Permanente
 	// PermanentFormationBarrierImpactProjectile.DisplayName: Permanent Formation Barrier Impact Projectile
 	// PermanentFormationUpgradeEffectProjectile.DisplayName: Permanent Formation Upgrade Effect Projectile
+	// BeastSoulBoltProjectile.DisplayName: Beast Soul Bolt Projectile
+	// BeastSoulGuardianProjectile.DisplayName: Beast Soul Guardian Projectile
+	// FlameSpiritFanProjectile.DisplayName: Flame Spirit Fan Projectile
+	// ThunderclapBoltProjectile.DisplayName: Thunderclap Bolt Projectile
+	// VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
+	// ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
+	SpiritualRainProjectile.DisplayName: Pioggia Spirituale
 }
 
 Tiles: {
@@ -1055,6 +1182,9 @@ Tiles: {
 	AlchemyCauldronTile.MapEntry: Calderone Alchemico
 	SpiritJadeCauldronTile.MapEntry: Calderone di Giada Spirituale
 	ProfoundAlchemyCauldronTile.MapEntry: Calderone Alchemico Profondo
+	ArtifactForgeTile.MapEntry: Forgia per Artefatti
+	SpiritJadeArtifactForgeTile.MapEntry: Forgia di Giada Spirituale
+	ProfoundArtifactForgeTile.MapEntry: Forgia Profonda
 	SpiritGrassTile.MapEntry: Erba Spirituale
 	FireLotusTile.MapEntry: Loto di Fuoco
 	MoonDewFlowerTile.MapEntry: Fiore della Rugiada Lunare
@@ -1208,6 +1338,7 @@ DebugCommands: {
 	Help10: /xiadebug spawncheck - spiega quali Bestie Spirituali possono comparire qui
 	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
 	Help12: /xiadebug sect max - imposta al massimo il rank della Setta Nuvola Verde
+	Help13: /xiadebug forging <tier 0-4> <low|middle|high>
 	Unknown: Azione debug sconosciuta: {0}
 	SetUsage: Uso: /xiadebug set <realm 1-5|nome> <stadio 1-9>
 	QiUsage: Uso: /xiadebug qi <quantita|fill|empty>
@@ -1218,6 +1349,8 @@ DebugCommands: {
 	BeastSinglePlayer: La generazione debug delle Bestie Spirituali e disponibile solo in single-player
 	BeastSpawned: Generata: {0}
 	AlchemyUsage: Uso: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	ForgingUsage: Uso: /xiadebug forging <tier 0-4> <low|middle|high>
+	ForgingRankSet: Rango debug Forgiatura impostato a Tier {0} - {1}, Stadio {2}
 	SectUsage: Uso: /xiadebug sect max
 	SectRankMaxed: Rank della setta impostato a {0} con {1} contributi vitalizi
 	AlchemyRankSet: Rango debug Alchimia impostato a Tier {0} - {1}, Stadio {2}
@@ -1256,6 +1389,24 @@ DebugCommands: {
 
 FormationPath.Advanced: Formazioni Array avanzate al Tier {0} - {1} ({2})
 
+Forging: {
+	Advanced: Forgiatura Artefatti avanzata al Tier {0} - {1} ({2})
+	RecipeRequirement: Richiede Forgiatura Artefatti Tier {0}, Stadio {1}
+	QualityTooltip: Qualita {0} | Potenza: {1}% | Costo Qi: {2}% | EXP Forgiatura: {3}%
+	MasteryTooltip: Forgiatura: Tier {0} ({1}), Stadio {2} | EXP base: {3} | Ricompensa attuale: {4} EXP
+	ArtifactQiCost: Costo Qi attuale per utilizzo: {0}
+	JadeAntlerStats: +{0} difesa | +{1} rigenerazione vitale | +{2}% danno magico
+	BeastSoulStats: +{0}% danno summon | +{1}% danno magico | +{2} difesa | +1 servitore | Danno base guardiano: {3}
+
+	Quality: {
+		Crude: Grezza
+		Common: Comune
+		Refined: Raffinata
+		Earth: Grado Terra
+		Heaven: Grado Cielo
+	}
+}
+
 Manual: {
 	Title: Manuale del Coltivatore
 	Received: Hai ricevuto il Manuale del Coltivatore. Usalo per conoscere il mondo Xianxia
@@ -1271,6 +1422,7 @@ Manual: {
 		NoviceAttire: Abiti del Discepolo Novizio
 		MaterialsEquipment: Materiali, Equipaggiamento e Armi
 		FormationCores: Formation Core Permanenti
+		ArtifactForging: Forge e Artefatti Spirituali
 		AccessoriesTechniques: Accessori, Tecniche e Pillole Base
 		CauldronsBeastPills: Calderoni, Bussole e Pillole delle Bestie
 		ProgressionPills: Pillole di Progressione
@@ -1299,6 +1451,7 @@ Manual: {
 			AlchemyPath: Path dell'Alchimia
 			SectSystem: Sette e Missioni
 			FormationPath: Formazioni Permanenti
+			ArtifactForging: Path della Forgiatura
 			AdvancedPills: Ricette delle Pillole Avanzate
 		}
 	}
@@ -1687,6 +1840,38 @@ Manual: {
 				Durante una Tribolazione Celeste, il Core intercetta direttamente i fulmini che colpiscono un coltivatore nel suo territorio. Inizialmente assorbe il 55% di ogni colpo; Tier e Stadio delle Formazioni possono portare la protezione fino all'80%. I fulmini della Tribolazione consumano molta piu integrita degli attacchi normali, e le Tribolazioni dei Realm superiori esercitano uno sforzo maggiore. A zero integrita il Core si spezza, si disattiva e lascia al coltivatore il danno rimanente. Protezione Qi si applica successivamente a cio che supera la Formazione.
 
 				Le Bandiere Relay sono il primo componente della rete territoriale. Gli aggiornamenti futuri potranno ampliare il sistema con permessi, nodi specializzati e collegamenti tra piu Core.
+				'''
+		}
+
+		ArtifactForging: {
+			Title: Forgiatura degli Artefatti
+			Body:
+				'''
+				IL PATH DELLA FORGIATURA
+				La Forgiatura degli Artefatti e una professione indipendente con cinque Tier. Ogni Tier contiene gli Stadi Basso, Medio e Alto. Creare un artefatto spirituale fornisce EXP del Path; raccogliere materiali o avanzare il Realm del giocatore non migliora automaticamente questa professione.
+
+				Una maestria superiore al requisito della ricetta e una forgia migliore aumentano la qualita dell'artefatto completato. La qualita viene salvata sul singolo oggetto e sincronizzata in multiplayer. Gli artefatti di Tier inferiore al tuo Tier di Forgiatura conferiscono EXP fortemente ridotta.
+
+				QUALITA DEGLI ARTEFATTI
+				Grezza - 82% potenza, 120% costo Qi e 50% EXP Forgiatura.
+				Comune - 100% potenza, 100% costo Qi e 100% EXP Forgiatura.
+				Raffinata - 112% potenza, 92% costo Qi e 200% EXP Forgiatura.
+				Grado Terra - 127% potenza, 82% costo Qi e 500% EXP Forgiatura.
+				Grado Cielo - 148% potenza, 70% costo Qi e 1000% EXP Forgiatura.
+
+				FORGE SPIRITUALI
+				Forgia per Artefatti - raffinazione Mortale di base.
+				Forgia di Giada Spirituale - migliora la qualita e supporta artefatti Qi Gathering e Foundation.
+				Forgia Profonda - la forgia attuale piu potente, necessaria per artefatti Core Formation e Nascent Soul.
+
+				ARTEFATTI ATTUALI
+				Bastone del Corno Verdeggiante - il primo utilizzo pratico dei Corni di Giada; lancia un corno verdeggiante a ricerca che avvelena.
+				Talismano del Corno di Giada - accessorio difensivo che migliora rigenerazione e danno magico.
+				Ventaglio dello Spirito di Fiamma - libera tre palle di fuoco Qi senza distruggere il terreno.
+				Sigillo del Tuono - libera un flusso di particelle elettriche a lunga portata che folgora i nemici al contatto.
+				Stendardo delle Anime Bestiali - evoca un'Anima Bestiale orbitante che attacca con nuclei a ricerca e rafforza summon e magia.
+
+				Apri Menu Coltivazione > Path > Forgiatura Artefatti per controllare Tier, Stadio, EXP e gli artefatti sbloccati. Il tooltip di ogni artefatto mostra requisito, ricompensa EXP, qualita, potenza e costo Qi.
 				'''
 		}
 	}

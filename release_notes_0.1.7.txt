@@ -1,0 +1,122 @@
+[h1]Xianxia 0.1.7 - Artifact Forging, Cultivation, and New Techniques[/h1]
+
+Version 0.1.7 introduces the new Artifact Forging Path, new crafting stations, spiritual artifacts, crops, techniques, and numerous fixes.
+
+[h2]Artifact Forging[/h2]
+
+[list]
+[*]Added a new independent Path with 5 Tiers.
+[*]Each Tier contains Low, Middle, and High Stages.
+[*]Progress by crafting spiritual artifacts.
+[*]Tier, Stage, and EXP are saved and synchronized in multiplayer.
+[*]Added a dedicated page to the Cultivation > Paths menu.
+[/list]
+
+[h2]Artifact Quality and EXP[/h2]
+
+Every artifact receives an individual quality grade that modifies its power, Qi consumption, and Artifact Forging EXP:
+
+[list]
+[*]Crude: 82% power, 120% Qi cost, 50% EXP.
+[*]Common: 100% power, 100% Qi cost, 100% EXP.
+[*]Refined: 112% power, 92% Qi cost, 200% EXP.
+[*]Earth Grade: 127% power, 82% Qi cost, 500% EXP.
+[*]Heaven Grade: 148% power, 70% Qi cost, 1000% EXP.
+[/list]
+
+Artifacts from Tiers below your current Path Tier now grant significantly less EXP. Tooltips now display quality, exact stats, effective Qi cost, base EXP, and the current EXP reward.
+
+[h2]New Forges[/h2]
+
+[list]
+[*]Artifact Forge.
+[*]Spirit Jade Forge.
+[*]Profound Forge.
+[*]New and distinct textures for each Tier.
+[*]Fixed cases where forges could disappear after being placed.
+[*]Updated inventory and manual icons.
+[/list]
+
+[h2]New Artifacts[/h2]
+
+[list]
+[*]Verdant Antler Staff - fires a homing green projectile that inflicts poison.
+[*]Jade Antler Talisman - increases defense, regeneration, and magic damage.
+[*]Flame Spirit Fan - launches three Qi fireballs.
+[*]Thunderclap Seal - unleashes a long-range electrical attack.
+[*]Beast Soul Banner - summons a spiritual guardian and improves summon damage, magic damage, defense, and minion capacity.
+[/list]
+
+Improved the Beast Soul Guardian's behavior during fast movement, teleportation, combat, and when returning to its owner.
+
+[h2]Spiritual Rain[/h2]
+
+Added the new Spiritual Rain Technique:
+
+[list]
+[*]Advances every immature spiritual plant in the area by one growth stage.
+[*]Requires the Qi Gathering Realm.
+[*]Initially costs 40 Qi.
+[*]Mastery reduces the cost and increases the radius.
+[*]Has a 15-second cooldown.
+[*]Added to the Abilities menu with a new icon.
+[/list]
+
+[h2]Spiritual Plants[/h2]
+
+[list]
+[*]New textures for all four seed types.
+[*]New textures for all four growth stages.
+[*]Plants are now larger and easier to see.
+[*]Fixed a visual issue that could temporarily split a plant into two.
+[*]Seeds obtained from naturally generated plants now have a 2.5% drop chance.
+[*]Mature spiritual plants always drop herbs and new seeds.
+[/list]
+
+[h2]Alchemy[/h2]
+
+[list]
+[*]New matching textures for all three cauldron Tiers.
+[*]Updated inventory and manual icons.
+[*]Fixed placement issues that could cause cauldrons to disappear.
+[/list]
+
+[h2]Independent Cultivator Merchant[/h2]
+
+Added Wanderer Shen, a new town NPC for players who do not wish to join a Sect.
+
+[list]
+[*]Arrives after reaching the Qi Gathering Realm.
+[*]Trades techniques in exchange for Spirit Stones.
+[*]Sword Intent: 40 Spirit Stones.
+[*]Spiritual Sword Rain: 120 Spirit Stones.
+[*]Protective Formation: 300 Spirit Stones.
+[*]Each technique retains a minimum Realm requirement.
+[*]New animated texture, icon, dialogue, and Bestiary entry.
+[/list]
+
+[h2]Difficulty Configuration[/h2]
+
+Added a new server configuration setting that multiplies the Qi EXP required for every Stage and Realm:
+
+[list]
+[*]1x preserves the original progression.
+[*]2x doubles all requirements.
+[*]Configurable up to 10x.
+[*]Existing characters retain their Stage and progression percentage when the setting changes.
+[/list]
+
+[h2]Fixes and Improvements[/h2]
+
+[list]
+[*]Fixed tooltips displaying "\n" instead of starting a new line.
+[*]Artifact tooltips now display exact stats and Qi costs.
+[*]Improved multiplayer synchronization for Paths and artifacts.
+[*]Updated the Cultivator's Manual with new pages and recipes.
+[*]Updated English, Italian, and Simplified Chinese localizations.
+[*]Numerous fixes for graphics, object placement, and NPC behavior.
+[/list]
+
+Thank you all for your feedback and for playing the mod!
+
+[url=https://discord.gg/qgNTXt8cs8]Join the official Discord server[/url]

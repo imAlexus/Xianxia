@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
@@ -17,10 +18,16 @@ public class AlchemyCauldronTile : ModTile
 		Main.tileLavaDeath[Type] = false;
 		TileID.Sets.DisableSmartCursor[Type] = true;
 
-		TileObjectData.newTile.CopyFrom(TileObjectData.Style4x2);
+		// Style4x2 includes directional placement alternates, but this
+		// cauldron has only one 4x3 spritesheet frame.
+		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
+		TileObjectData.newTile.Width = 4;
 		TileObjectData.newTile.Height = 3;
 		TileObjectData.newTile.Origin = new Point16(2, 2);
 		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
+		TileObjectData.newTile.AnchorBottom = new AnchorData(
+			AnchorType.SolidTile | AnchorType.SolidWithTop,
+			TileObjectData.newTile.Width, 0);
 		TileObjectData.addTile(Type);
 
 		DustType = DustID.Iron;

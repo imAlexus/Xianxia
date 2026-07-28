@@ -72,6 +72,9 @@ public class XianxiaDebugCommand : ModCommand
 			case "alchemy":
 				SetAlchemyDebug(caller, args);
 				break;
+			case "forging":
+				SetForgingDebug(caller, args);
+				break;
 			case "sect":
 			case "sectrank":
 				SetSectDebug(caller, args);
@@ -90,7 +93,7 @@ public class XianxiaDebugCommand : ModCommand
 	private void ShowHelp(CommandCaller caller)
 	{
 		caller.Reply(Mod.GetLocalization("DebugCommands.HelpTitle").Value);
-		for (int i = 1; i <= 12; i++)
+		for (int i = 1; i <= 13; i++)
 		{
 			caller.Reply(Mod.GetLocalization($"DebugCommands.Help{i}").Value);
 		}
@@ -133,6 +136,23 @@ public class XianxiaDebugCommand : ModCommand
 		}
 
 		caller.Reply(Mod.GetLocalization("DebugCommands.AlchemyUsage").Value);
+	}
+
+	private void SetForgingDebug(CommandCaller caller, string[] args)
+	{
+		ArtifactForgingPlayer forging =
+			caller.Player.GetModPlayer<ArtifactForgingPlayer>();
+		if (args.Length == 3 && int.TryParse(args[1], out int tier)
+			&& tier is >= 0 and <= ArtifactForgingPlayer.MaxTier
+			&& TryParseAlchemyStage(args[2], out int stage))
+		{
+			forging.DebugSetRank(tier, stage);
+			caller.Reply(Mod.GetLocalization("DebugCommands.ForgingRankSet").Format(
+				tier, forging.TierRealmName, forging.StageName));
+			return;
+		}
+
+		caller.Reply(Mod.GetLocalization("DebugCommands.ForgingUsage").Value);
 	}
 
 	private static bool TryParseAlchemyStage(string value, out int stage)

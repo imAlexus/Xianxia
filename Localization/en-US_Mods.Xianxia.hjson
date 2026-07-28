@@ -16,7 +16,10 @@ Keybinds: {
 	SectFormation.DisplayName: Sect Protection Formation
 }
 
-Currencies.SectContribution: sect contribution tokens
+Currencies: {
+	SectContribution: sect contribution tokens
+	SpiritStone: Spirit Stones
+}
 
 Buffs: {
 	QiResistanceBuff: {
@@ -153,6 +156,7 @@ Buffs: {
 Abilities: {
 	RequiresRealm: Required Realm: {0}
 	NotEnoughQi: Not enough Qi. Required: {0}
+	SpiritualRainCooldown: Spiritual Rain is recharging: {0}s
 	AlreadyActive: Qi Resistance is already active
 	QiResistanceActivated: Qi Resistance activated for 1 minute
 	QiFlightEnabled: Qi Flight enabled
@@ -242,6 +246,7 @@ AbilityTree: {
 	SwordIntentEffect: Level {0} | Flying Sword damage increases by 10%, then 1.5% per level | {1}
 	SwordRainEffect: Level {0} | five swords, cursor-controlled range, higher damage and lower Qi cost/cooldown | {1}
 	FormationEffect: Level {0} | maintained with Qi; allies can meditate inside to reinforce and repair it | {1}
+	SpiritualRainEffect: Level {0} | lower Qi cost and wider growth area at higher levels | {1}
 
 	Tabs: {
 		Abilities: Abilities
@@ -300,6 +305,18 @@ AbilityTree: {
 			Tier3: Unlock Restoration | 3 simultaneous array slots
 			Tier4: Grand Formation | all 4 array types can operate together
 		}
+
+		Forging: {
+			Name: Artifact Forging
+			Tier: Tier {0} - {1} ({2})
+			Progress: "{0} Stage | {1}"
+			Hint: Craft spiritual artifacts to gain Path EXP and improve their quality
+			Tier0: Mortal forging | learn basic beast-material artifacts
+			Tier1: Qi Gathering forging | unlock Spirit Jade artifact refinement
+			Tier2: Foundation forging | bind elemental essences into artifacts
+			Tier3: Core forging | unlock Profound artifacts and thunder seals
+			Tier4: Nascent Soul forging | create soul-bound supreme artifacts
+		}
 	}
 
 	Abilities: {
@@ -320,6 +337,7 @@ AbilityTree: {
 		SwordIntent.Name: Sword Intent
 		SpiritSwordRain.Name: Spirit Sword Rain
 		SectProtectionFormation.Name: Sect Protection Formation
+		SpiritualRain.Name: Spiritual Rain
 	}
 }
 
@@ -346,7 +364,13 @@ Configs: {
 			Tooltip: Controls how quickly day and night pass during meditation
 		}
 
+		CultivationRequirementMultiplier: {
+			Label: Cultivation requirement multiplier
+			Tooltip: Multiplies the QiEXP required for every Stage and Realm. 1x uses the normal requirements; 2x doubles them
+		}
+
 		Headers: {
+			Progression: Cultivation difficulty
 			SpiritualQiZones: High spiritual Qi zones
 			SpiritBeasts: Spirit Beasts
 			Debug: Debug tools
@@ -719,6 +743,19 @@ Items: {
 			'''
 	}
 
+	SpiritualRainTechnique: {
+		DisplayName: Spiritual Rain Technique
+		Tooltip:
+			'''
+			Summons spiritual rain near the cursor
+			Advances every immature spiritual plant in the area by one growth stage
+			Requires Qi Gathering and initially consumes 40 Qi
+			Mastery reduces the Qi cost and expands the affected area
+			15 second cooldown
+			Only one spiritual rain can be active at a time
+			'''
+	}
+
 	SpiritFur: {
 		DisplayName: Spirit Fur
 		Tooltip: Fur carrying a faint trace of natural Qi
@@ -732,6 +769,62 @@ Items: {
 	JadeAntler: {
 		DisplayName: Jade Antler
 		Tooltip: A crystallized antler filled with wood-aspected Qi
+	}
+
+	ArtifactForge: {
+		DisplayName: Artifact Forge
+		Tooltip: A basic forge for shaping beast materials into spiritual artifacts
+	}
+
+	SpiritJadeArtifactForge: {
+		DisplayName: Spirit Jade Artifact Forge
+		Tooltip: Improves artifact quality with a stable Spirit Jade flame
+	}
+
+	ProfoundArtifactForge: {
+		DisplayName: Profound Artifact Forge
+		Tooltip: A high-grade forge capable of refining Core and soul artifacts
+	}
+
+	VerdantAntlerStaff: {
+		DisplayName: Verdant Antler Staff
+		Tooltip:
+			'''
+			Fires a seeking verdant antler bolt that poisons enemies
+			Consumes Qi when used
+			'''
+	}
+
+	JadeAntlerTalisman: {
+		DisplayName: Jade Antler Talisman
+		Tooltip: Increases defense, life regeneration and magic damage
+	}
+
+	FlameSpiritFan: {
+		DisplayName: Flame Spirit Fan
+		Tooltip:
+			'''
+			Releases three spreading Qi fireballs that do not break terrain
+			Consumes Qi when used
+			'''
+	}
+
+	ThunderclapSeal: {
+		DisplayName: Thunderclap Seal
+		Tooltip:
+			'''
+			Unleashes a long-range condensed bolt of heavenly thunder
+			Consumes Qi when used
+			'''
+	}
+
+	BeastSoulBanner: {
+		DisplayName: Beast Soul Banner
+		Tooltip:
+			'''
+			Summons a visible Beast Soul guardian that fires seeking soul cores
+			Also strengthens summon and magic damage, defense and minion capacity
+			'''
 	}
 
 	FlameEssence: {
@@ -836,17 +929,17 @@ Items: {
 
 	SwordIntentManual: {
 		DisplayName: Sword Intent Manual
-		Tooltip: Teaches the passive Sword Intent technique | Requires Outer Disciple
+		Tooltip: Teaches passive Sword Intent | Requires Outer Disciple or Qi Gathering while independent
 	}
 
 	SpiritSwordRainManual: {
 		DisplayName: Spirit Sword Rain Manual
-		Tooltip: Teaches Spirit Sword Rain | Requires Inner Disciple
+		Tooltip: Teaches Spirit Sword Rain | Requires Inner Disciple or Foundation Establishment while independent
 	}
 
 	SectProtectionFormationManual: {
 		DisplayName: Sect Protection Formation Manual
-		Tooltip: Teaches the Sect Protection Formation | Requires Core Disciple
+		Tooltip: Teaches the Protection Formation | Requires Core Disciple or Core Formation while independent
 	}
 }
 
@@ -894,6 +987,21 @@ NPCs: {
 		}
 	}
 
+	IndependentCultivatorMerchant: {
+		DisplayName: Independent Cultivator Merchant
+
+		TownNPCMood: {
+			Content: The road is quiet today.
+			NoHome: Even a wanderer needs a roof sometimes.
+			FarFromHome: My wares are too far away.
+			LoveSpace: Open space keeps the mind clear.
+			DislikeCrowded: Too many people disturb the flow of Qi.
+			HateCrowded: I cannot trade in this crowd.
+			LikeNPC_Princess: "{NPCName} treats every traveler kindly."
+			Princess_LovesNPC: I bring stories from distant lands.
+		}
+	}
+
 	SpiritHare.DisplayName: Spirit Hare
 	JadeHornDeer.DisplayName: Jade Horn Deer
 	FlameTailedFox.DisplayName: Flame-Tailed Fox
@@ -904,7 +1012,7 @@ Sect: {
 	ElderName: Elder Jian
 	TechniqueLearned: Technique learned: {0}
 	RankUp: Sect promotion: {0}!
-	RequiresManual: This technique must be learned from a Sect manual
+	RequiresManual: This technique must be learned from a technique manual
 	FormationBlocked: Formation blocked {0} damage | Integrity: {1}/{2}
 	FormationShattered: Formation shattered after absorbing {0} damage!
 	FormationContribution: "{0} contributed {1} Qi | +{2} integrity"
@@ -964,6 +1072,18 @@ Sect: {
 			SpiritSwordRain: Active technique
 			SectProtectionFormation: Active formation
 		}
+	}
+}
+
+IndependentMerchant: {
+	Name: Wanderer Shen
+	Trade: Trade techniques
+	Bestiary: A wandering cultivator who exchanges rare independent techniques for Spirit Stones without demanding allegiance to a Sect.
+
+	Chat: {
+		TooWeak: Your meridians have not opened yet. Return after reaching Qi Gathering.
+		Independent: I ask for no oath and offer no protection. Bring Spirit Stones, and the technique will be yours.
+		SectMember: You already walk beneath a Sect banner. Seek its Elder for techniques and guidance.
 	}
 }
 
@@ -1047,6 +1167,13 @@ Projectiles: {
 	PermanentFormationDomeProjectile.DisplayName: Permanent Formation Dome
 	PermanentFormationBarrierImpactProjectile.DisplayName: Permanent Formation Barrier Impact Projectile
 	PermanentFormationUpgradeEffectProjectile.DisplayName: Permanent Formation Upgrade Effect Projectile
+	BeastSoulBoltProjectile.DisplayName: Beast Soul Bolt Projectile
+	BeastSoulGuardianProjectile.DisplayName: Beast Soul Guardian Projectile
+	FlameSpiritFanProjectile.DisplayName: Flame Spirit Fan Projectile
+	ThunderclapBoltProjectile.DisplayName: Thunderclap Bolt Projectile
+	VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
+	ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
+	SpiritualRainProjectile.DisplayName: Spiritual Rain
 }
 
 Tiles: {
@@ -1055,6 +1182,9 @@ Tiles: {
 	AlchemyCauldronTile.MapEntry: Alchemy Cauldron
 	SpiritJadeCauldronTile.MapEntry: Spirit Jade Cauldron
 	ProfoundAlchemyCauldronTile.MapEntry: Profound Alchemy Cauldron
+	ArtifactForgeTile.MapEntry: Artifact Forge
+	SpiritJadeArtifactForgeTile.MapEntry: Spirit Jade Artifact Forge
+	ProfoundArtifactForgeTile.MapEntry: Profound Artifact Forge
 	SpiritGrassTile.MapEntry: Spirit Grass
 	FireLotusTile.MapEntry: Fire Lotus
 	MoonDewFlowerTile.MapEntry: Moon Dew Flower
@@ -1208,6 +1338,7 @@ DebugCommands: {
 	Help10: /xiadebug spawncheck - explain which Spirit Beasts can spawn here
 	Help11: /xiadebug alchemy <tier 0-4> <low|middle|high> | alchemy saturation <0-100>
 	Help12: /xiadebug sect max - set Verdant Cloud Sect rank to maximum
+	Help13: /xiadebug forging <tier 0-4> <low|middle|high>
 	Unknown: Unknown debug action: {0}
 	SetUsage: Usage: /xiadebug set <realm 1-5|name> <stage 1-9>
 	QiUsage: Usage: /xiadebug qi <amount|fill|empty>
@@ -1218,6 +1349,8 @@ DebugCommands: {
 	BeastSinglePlayer: Spirit Beast spawning is available only in single-player
 	BeastSpawned: Spawned: {0}
 	AlchemyUsage: Usage: /xiadebug alchemy <tier 0-4> <low|middle|high> | /xiadebug alchemy saturation <0-100>
+	ForgingUsage: Usage: /xiadebug forging <tier 0-4> <low|middle|high>
+	ForgingRankSet: Artifact Forging debug rank set to Tier {0} - {1}, {2} Stage
 	SectUsage: Usage: /xiadebug sect max
 	SectRankMaxed: Sect rank set to {0} with {1} lifetime contribution
 	AlchemyRankSet: Alchemy debug rank set to Tier {0} - {1}, {2} Stage
@@ -1256,6 +1389,24 @@ DebugCommands: {
 
 FormationPath.Advanced: Array Formations advanced to Tier {0} - {1} ({2})
 
+Forging: {
+	Advanced: Artifact Forging advanced to Tier {0} - {1} ({2})
+	RecipeRequirement: Requires Artifact Forging Tier {0}, {1} Stage
+	QualityTooltip: "{0} quality | Power: {1}% | Qi cost: {2}% | Forging EXP: {3}%"
+	MasteryTooltip: Artifact Forging: Tier {0} ({1}), {2} Stage | Base EXP: {3} | Current reward: {4} EXP
+	ArtifactQiCost: Current Qi cost per use: {0}
+	JadeAntlerStats: +{0} defense | +{1} life regeneration | +{2}% magic damage
+	BeastSoulStats: +{0}% summon damage | +{1}% magic damage | +{2} defense | +1 minion | Guardian base damage: {3}
+
+	Quality: {
+		Crude: Crude
+		Common: Common
+		Refined: Refined
+		Earth: Earth Grade
+		Heaven: Heaven Grade
+	}
+}
+
 Manual: {
 	Title: Cultivator's Manual
 	Received: You received the Cultivator's Manual. Use it to learn about the Xianxia world
@@ -1271,6 +1422,7 @@ Manual: {
 		NoviceAttire: Novice Disciple Attire
 		MaterialsEquipment: Materials, Equipment and Weapons
 		FormationCores: Permanent Formation Cores
+		ArtifactForging: Artifact Forges and Spiritual Artifacts
 		AccessoriesTechniques: Accessories, Techniques and Basic Pills
 		CauldronsBeastPills: Cauldrons, Compasses and Spirit Beast Pills
 		ProgressionPills: Cultivation Progression Pills
@@ -1299,6 +1451,7 @@ Manual: {
 			AlchemyPath: Alchemy Path
 			SectSystem: Sects and Missions
 			FormationPath: Permanent Formations
+			ArtifactForging: Artifact Forging Path
 			AdvancedPills: Advanced Pill Recipes
 		}
 	}
@@ -1687,6 +1840,38 @@ Manual: {
 				During a Heavenly Tribulation, the Core directly intercepts lightning that hits a cultivator inside its territory. It initially absorbs 55% of each strike; Formation Tier and Stage can raise this to 80%. Tribulation lightning consumes much more integrity than ordinary attacks, with higher Realm Tribulations applying greater strain. A Core at zero integrity shatters, deactivates and leaves the remaining lightning damage to the cultivator. Qi Protection is applied afterward to whatever passes through the Formation.
 
 				Relay Flags are the first territorial network component. Future updates can expand this system with permissions, specialized nodes and links between multiple Cores.
+				'''
+		}
+
+		ArtifactForging: {
+			Title: Artifact Forging
+			Body:
+				'''
+				THE ARTIFACT FORGING PATH
+				Artifact Forging is an independent profession with five Tiers. Every Tier contains Low, Middle and High Stages. Crafting a spiritual artifact grants Path EXP; merely collecting materials or advancing your cultivation Realm does not improve this Path.
+
+				Forge mastery above a recipe requirement and a better forge both improve the finished artifact's quality. Quality is saved on the individual item and remains synchronized in multiplayer. Artifacts below your current Forging Tier grant sharply reduced EXP.
+
+				ARTIFACT QUALITY
+				Crude - 82% power, 120% Qi cost and 50% Forging EXP.
+				Common - 100% power, 100% Qi cost and 100% Forging EXP.
+				Refined - 112% power, 92% Qi cost and 200% Forging EXP.
+				Earth Grade - 127% power, 82% Qi cost and 500% Forging EXP.
+				Heaven Grade - 148% power, 70% Qi cost and 1000% Forging EXP.
+
+				SPIRITUAL FORGES
+				Artifact Forge - basic Mortal refinement.
+				Spirit Jade Artifact Forge - improves the quality roll and supports Qi Gathering and Foundation artifacts.
+				Profound Artifact Forge - the strongest current forge, required for Core Formation and Nascent Soul artifacts.
+
+				CURRENT ARTIFACTS
+				Verdant Antler Staff - the first practical use for Jade Antlers; fires a seeking verdant antler bolt that poisons enemies.
+				Jade Antler Talisman - a defensive accessory that improves regeneration and magic damage.
+				Flame Spirit Fan - releases three spreading Qi fireballs without destroying terrain.
+				Thunderclap Seal - releases a long-range stream of electric particles that shocks enemies on contact.
+				Beast Soul Banner - summons a visible orbiting Beast Soul that attacks enemies with seeking soul cores while strengthening summon and magic cultivation.
+
+				Open Cultivation Menu > Paths > Artifact Forging to inspect Tier, Stage, EXP and the artifact unlocked by each Tier. Every artifact tooltip displays its Path requirement, EXP reward, quality, power multiplier and Qi-cost multiplier.
 				'''
 		}
 	}

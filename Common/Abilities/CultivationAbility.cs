@@ -21,6 +21,7 @@ public enum CultivationAbility
 	SwordIntent,
 	SpiritSwordRain,
 	SectProtectionFormation,
+	SpiritualRain,
 	Count
 }
 
@@ -41,6 +42,7 @@ public static class CultivationAbilityInfo
 		CultivationAbility.SwordIntent => 1,
 		CultivationAbility.SpiritSwordRain => 2,
 		CultivationAbility.SectProtectionFormation => 3,
+		CultivationAbility.SpiritualRain => 1,
 		_ => 99
 	};
 

@@ -4,6 +4,11 @@ Cultivate Qi and walk the path to immortality in Terraria.
 
 [b]Begin as a mere mortal, master spiritual arts, build powerful formations, join a sect, and defy the heavens to reach the Nascent Soul Realm.[/b]
 
+[h2]Community and Support[/h2]
+Join the official Xianxia Discord server to share feedback, report bugs, suggest new content, and follow development:
+
+[url=https://discord.gg/qgNTXt8cs8][b]Join the Xianxia Discord Server[/b][/url]
+
 [h2]Cultivation[/h2]
 [list]
 [*]5 Realms: Mortal, Qi Gathering, Foundation Establishment, Core Formation, and Nascent Soul.[/*]
@@ -20,6 +25,7 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [*]Meditation, Spiritual Breathing, Qi Sense, Qi Resistance, Qi Protection, and Night Vision.[/*]
 [*]Fireball, Qi Palm, Flame Step, Qi Flight, Void Step, and Spiritual Pressure.[/*]
 [*]Golden Core Circulation, Nascent Soul Regeneration, Sword Intent, Spirit Sword Rain, and Sect Protection Formation.[/*]
+[*]Use Spiritual Rain to accelerate the growth of nearby spiritual plants.[/*]
 [/list]
 
 [h2]Breakthroughs and Heavenly Tribulations[/h2]
@@ -51,10 +57,22 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [*]A complete Alchemy Path with 5 Realm-based Tiers and Low, Middle, and High Stages.[/*]
 [*]Three refining stations: Alchemy Cauldron, Spirit Jade Cauldron, and Profound Alchemy Cauldron.[/*]
 [*]Renewable Spirit Grass, Fire Lotus, Moon Dew Flower, and Ironroot with visible growth stages.[/*]
+[*]Unique seed and growth-stage artwork makes every spiritual plant easy to identify.[/*]
 [*]Qi, cultivation, combat, cleansing, Tribulation, and Spirit Beast pills.[/*]
 [*]Every crafted pill receives a persistent quality: Impure, Common, Refined, Earth Grade, or Heaven Grade.[/*]
 [*]Pill quality changes effect strength, duration, cleansing power, and Saturation cost.[/*]
 [*]Mastery and better Cauldrons improve yield and quality; Saturation prevents unlimited stacking.[/*]
+[/list]
+
+[h2]Artifact Forging[/h2]
+[list]
+[*]A complete independent Artifact Forging Path with 5 Tiers and Low, Middle, and High Stages.[/*]
+[*]Forge spiritual artifacts to gain Path EXP; higher-quality creations grant significantly more progress.[/*]
+[*]Three distinct crafting stations: Artifact Forge, Spirit Jade Forge, and Profound Forge.[/*]
+[*]Every artifact receives a persistent quality: Crude, Common, Refined, Earth Grade, or Heaven Grade.[/*]
+[*]Quality modifies artifact power, Qi consumption, and the Artifact Forging EXP earned when it is created.[/*]
+[*]Artifact tooltips display exact bonuses, effective Qi costs, quality, and forging rewards.[/*]
+[*]Create the Verdant Antler Staff, Jade Antler Talisman, Flame Spirit Fan, Thunderclap Seal, and Beast Soul Banner.[/*]
 [/list]
 
 [h2]Verdant Cloud Sect[/h2]
@@ -64,6 +82,7 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [*]Complete missions and earn spendable Tokens plus permanent lifetime contribution.[/*]
 [*]Purchase spiritual supplies and manuals for Sword Intent, Spirit Sword Rain, and Sect Protection Formation.[/*]
 [*]Sustain the Sect Formation with personal or allied Qi, Spirit Stones, or a Spirit Vein.[/*]
+[*]Players who prefer to remain independent can trade Spirit Stones with Wanderer Shen for selected techniques.[/*]
 [/list]
 
 [h2]Permanent Array Formations[/h2]
@@ -83,7 +102,7 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [list]
 [*]Craftable Novice Disciple attire with early cultivation bonuses and full dye support.[/*]
 [*]A complete Spirit Jade armor set with native-resolution item and equipment textures.[/*]
-[*]Spirit Jade Sword, Profound Iron Spear, homing Flying Sword, accessories, manuals, compasses, and spiritual treasures.[/*]
+[*]Spirit Jade Sword, Profound Iron Spear, homing Flying Sword, artifacts, accessories, manuals, compasses, and spiritual treasures.[/*]
 [/list]
 
 [h2]Manual, Interface, and Configuration[/h2]
@@ -91,7 +110,8 @@ Cultivate Qi and walk the path to immortality in Terraria.
 [*]An indexed, scrollable Cultivator's Manual with explanations and illustrated recipes.[/*]
 [*]Qi bar tooltips show advancement, stat gains, unlocks, and Tribulation preparation.[/*]
 [*]Client options configure the Qi bar, concentration display, nameplates, and effect intensity.[/*]
-[*]Server options cover world time, beasts, spiritual zones, debug tools, and terrain destruction.[/*]
+[*]Server options cover cultivation difficulty, world time, beasts, spiritual zones, debug tools, and terrain destruction.[/*]
+[*]Cultivation requirements can be scaled from the original 1x progression up to 10x.[/*]
 [*]Use [b]/xiadebug help[/b] for testing commands.[/*]
 [*]Full English, Italian, and Simplified Chinese localization.[/*]
 [/list]
