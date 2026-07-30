@@ -4,7 +4,8 @@ Keybinds: {
 	Meditate.DisplayName: Meditate
 	QiResistance.DisplayName: Qi Resistance
 	QiFlight.DisplayName: Qi Flight
-	Fireball.DisplayName: Fireball
+	Fireball.DisplayName: Use Selected Technique
+	DirectFireball.DisplayName: Fireball
 	QiPalm.DisplayName: Qi Palm
 	FlameStep.DisplayName: Flame Step
 	NascentTeleport.DisplayName: Void Step
@@ -14,6 +15,111 @@ Keybinds: {
 	AbilityTree.DisplayName: Ability Tree
 	SpiritSwordRain.DisplayName: Spirit Sword Rain
 	SectFormation.DisplayName: Sect Protection Formation
+	QiBurning.DisplayName: Qi Burning
+}
+
+TechniqueLoadout: {
+	Title: Technique Loadout
+	Equipped: EQUIPPED
+	Empty: Empty Slot
+	EmptyHint: Equip a technique from the Abilities menu
+	LockedPreset: LOCK
+	LockedSlot: LOCK
+	Select: SELECT
+	SelectedHint: Selected — press the Use Selected Technique key
+	SelectionHint: Click to select this technique
+	SelectedMessage: Selected technique: {0}
+	NoSelected: Select an equipped technique from the Ability Wheel first
+	DirectLocked: "{0} is not unlocked."
+	ToggleMenu: Toggle
+	ToggleMenuHint: Open the toggle-technique semicircle
+	ToggleMenuClose: Close the toggle-technique semicircle
+	ToggleBadge: TOGGLE
+	ToggleClickHint: Click to enable or disable without changing the selected technique
+	NoToggles: No toggle techniques unlocked
+}
+
+SpiritualElements: {
+	Neutral: Neutral
+	Wood: Wood
+	Fire: Fire
+	Earth: Earth
+	Metal: Metal
+	Water: Water
+	Lightning: Lightning
+	Ice: Ice
+	Wind: Wind
+	Void: Void
+}
+
+SpiritualRoots: {
+	Qualities: {
+		Mixed: Mixed Root
+		True: True Root
+		Heavenly: Heavenly Root
+		Mutated: Mutated Root
+		Primordial: Primordial Root
+	}
+
+	Appraisal: {
+		Button: Appraise Root
+		Result: Your Spiritual Root is revealed: {0} | Elements: {1} | Purity: {2}%.
+		NotEnough: Root appraisal costs {0} Spirit Stones.
+	}
+
+	UI: {
+		Title: Spiritual Root
+		Hidden: Your Spiritual Root has not been appraised
+		AppraisalHint: Ask Elder Jian or Wanderer Shen to appraise it
+		Summary: "{0} | Primary: {1} | Purity: {2}%"
+		CultivationBonus: Meditation cultivation speed: +{0}%
+		BiomeResonanceActive: Biome resonance: {0} in {1} | +{2}% meditation
+		BiomeResonanceInactive: Biome resonance inactive
+		Affinity: "{0} Affinity: {1}%"
+	}
+
+	Biomes: {
+		Jungle: Jungle
+		Underworld: Underworld
+		Underground: Underground and Caverns
+		Dungeon: Dungeon
+		Ocean: Ocean
+		Storm: Rain and storms
+		Snow: Snow biome
+		Sky: High Sky
+		Space: Space
+	}
+}
+
+CharacterStats: {
+	Title: Character Statistics
+	Progression: Cultivation
+	ProgressionRealmValue: "{0} — Stage {1}"
+	ProgressionQiValue: Qi {0}/{1}  •  QiEXP {2}/{3}
+	CurrentStats: Current Combat Stats
+	CurrentStatsPrimary: Life {0}/{1}  •  Defense {2}
+	CurrentStatsSecondary: Critical chance {0}%  •  Damage reduction {1}%
+	CultivationBonuses: Total Cultivation Bonuses
+	CultivationBonusPrimary: +{0} life  •  +{1} defense  •  +{2}% damage  •  +{3}% speed
+	CultivationBonusSecondary: +{0}% critical  •  +{1}% damage reduction  •  +{2} regeneration
+	BreakthroughRecord: Realm Breakthrough Record
+	BreakthroughRecordPrimary: Attempts {0}  •  Successes {1}
+	BreakthroughRecordSecondary: Failures {0}  •  Pills used {1}
+	TreasureImprints: Permanent Heavenly Treasure Imprints
+	TreasureImprintsValue: Eye x{0} | Nectar x{1} | Marrow x{2}
+	BreakthroughHistory: Successful Breakthrough Catalysts
+	HistoryEntry: "{0}: {1}"
+	NotCompleted: Not completed
+	LegacyUnknown: Legacy — catalyst not recorded
+	NoCatalyst: No catalyst
+	PillAndTreasure: "{0} + {1}"
+	HeartDemonsTitle: Heart Demons
+	HeartDemonsPoints: "{0}/{1} points  •  Breakthrough {2}%  •  Cultivation {3}%"
+	HeartDemonsProgress: Next point: failures {0}/{1}  •  deaths {2}/{3}
+	ConfrontHeartDemon: Confront Heart Demon
+	BreakthroughGrades: Foundation: {0}  •  Golden Core: {1}
+	GradeQiGathering: Breakthrough quality Qi gathering: +{0}%
+	NotReached: Not reached
 }
 
 Currencies: {
@@ -22,6 +128,21 @@ Currencies: {
 }
 
 Buffs: {
+	DamagedOriginDebuff: {
+		DisplayName: Damaged Cultivation Origin
+		Description:
+			'''
+			Your Qi capacity is wounded.
+			Meditate anywhere; Qi Concentration and Formations accelerate repair.
+			Or use a Meridian Mending Pill. Full repair is required to advance.
+			'''
+	}
+
+	QiDeviationDebuff: {
+		DisplayName: Qi Deviation
+		Description: Damage, defense, movement and Qi recovery are severely reduced
+	}
+
 	QiResistanceBuff: {
 		DisplayName: Qi Resistance
 		Description: +10 defense
@@ -107,6 +228,26 @@ Buffs: {
 		Description: Greatly reduces enemy attention and natural spawning
 	}
 
+	MeridianOpeningBuff: {
+		DisplayName: Meridian Opening
+		Description: +10% chance for the Qi Gathering breakthrough; consumed on attempt
+	}
+
+	FoundationAscensionBuff: {
+		DisplayName: Foundation Ascension
+		Description: +12% chance for the Foundation breakthrough; consumed on attempt
+	}
+
+	GoldenCoreCondensationBuff: {
+		DisplayName: Golden Core Condensation
+		Description: +15% chance for the Golden Core breakthrough; consumed on attempt
+	}
+
+	NascentSoulIntegrationBuff: {
+		DisplayName: Nascent Soul Integration
+		Description: +18% chance for the Nascent Soul breakthrough; consumed on attempt
+	}
+
 	PermanentFormationProtectionBuff: {
 		DisplayName: Permanent Formation Protection
 		Description: Protected by a territorial array: +12 defense and 6% damage reduction
@@ -157,6 +298,7 @@ Abilities: {
 	RequiresRealm: Required Realm: {0}
 	NotEnoughQi: Not enough Qi. Required: {0}
 	SpiritualRainCooldown: Spiritual Rain is recharging: {0}s
+	QiBurningDeviationState: Qi Deviation: {0}s
 	AlreadyActive: Qi Resistance is already active
 	QiResistanceActivated: Qi Resistance activated for 1 minute
 	QiFlightEnabled: Qi Flight enabled
@@ -199,7 +341,7 @@ AbilityWheel: {
 	Unbound: Unbound
 	ActiveKey: Key: [{0}]
 	PassiveToggle: "{0} - base cost 5 Qi per damage - Left-click to toggle"
-	QiSenseToggle: "{0} - reveals creatures, treasure and danger - 1 Qi/s - Left-click to toggle"
+	QiSenseToggle: "{0} - reveals creatures, treasure, danger and spiritual ores - 1 Qi/s - Left-click to toggle"
 	RequiresFoundation: Requires Foundation Establishment
 	RequiresQiGathering: Requires Qi Gathering
 	RequiresNascentSoul: Requires Nascent Soul
@@ -221,9 +363,26 @@ AbilityWheel: {
 	SpiritualPressure: Spiritual Pressure
 	SpiritualPressureDescription: Toggle aura that damages and slows; costs 25 Qi/s
 	NightVisionDescription: Creates a local spiritual light aura; radius and efficiency improve with mastery
+	QiBurning: Qi Burning
+	QiBurningDescription: Burn maximum Qi for extreme combat power | Burned {0}% / {1}% | {2}
+	SpiritualRain: Spiritual Rain
+	SpiritualRainDescription: Create a spiritual rain field at the cursor that accelerates herb growth
+	SpiritSwordRain: Spirit Sword Rain
+	SpiritSwordRainDescription: Launch five flying swords toward the cursor
+	SectProtectionFormation: Sect Protection Formation
+	SectProtectionFormationDescription: Toggle the sect barrier formation
 }
 
 AbilityTree: {
+	ElementTag: Element: {0}
+
+	RootSynergy: {
+		Neutral: Neutral technique - no Spiritual Root modifier
+		Hidden: Appraise your Spiritual Root to reveal elemental compatibility
+		NoAffinity: No matching Spiritual Root affinity
+		Match: Root affinity {0}% | +{1}% power | -{2}% Qi cost | +{3}% mastery EXP
+	}
+
 	Title: Cultivation Menu
 	Hint: Hover over a technique to see its progress and bonuses
 	Locked: LOCKED
@@ -247,11 +406,13 @@ AbilityTree: {
 	SwordRainEffect: Level {0} | five swords, cursor-controlled range, higher damage and lower Qi cost/cooldown | {1}
 	FormationEffect: Level {0} | maintained with Qi; allies can meditate inside to reinforce and repair it | {1}
 	SpiritualRainEffect: Level {0} | lower Qi cost and wider growth area at higher levels | {1}
+	QiBurningEffect: Level {0} | +{1}% damage and +{2}% attack speed | {3}% capacity burned | {4} | {5}
 
 	Tabs: {
 		Abilities: Abilities
 		Paths: Paths
 		Sect: Sect
+		Character: Character
 	}
 
 	Paths: {
@@ -338,13 +499,62 @@ AbilityTree: {
 		SpiritSwordRain.Name: Spirit Sword Rain
 		SectProtectionFormation.Name: Sect Protection Formation
 		SpiritualRain.Name: Spiritual Rain
+		QiBurning.Name: Qi Burning
 	}
+}
+
+BreakthroughGrades: {
+	Foundation: {
+		Inferior: Inferior Foundation
+		Stable: Stable Foundation
+		Perfect: Perfect Foundation
+		Heavenly: Heavenly Foundation
+	}
+
+	GoldenCoreTier: Golden Core Tier {0}
+}
+
+BreakthroughConfirmation: {
+	Title: Realm Breakthrough
+	Message: You are ready to attempt the breakthrough to {0}
+	Chance: "{0}% SUCCESS CHANCE"
+	Breakdown: Base {0}%  •  Root {1}%  •  Pill {2}%  •  Heart Demons −{3}%  •  Quality {4}%
+	QualityTarget: Select breakthrough quality
+	QualityBonuses: "{0} | Statistics ×{1} | Qi gathering +{2}%"
+	TreasureSlot: Heavenly Treasure
+	PillSlot: Breakthrough Pill
+	EmptySlot: EMPTY
+	SlotHint: Left-click a slot to select or cycle an eligible inventory item • Right-click to clear
+	InferiorStableRequirement: Requires a Foundation Ascension Pill or 1 Heavenly Treasure
+	PerfectRequirement: Requires 1 Heavenly Treasure; Foundation pill is optional
+	HeavenlyRequirement: Requires 1 Heavenly Treasure and a Foundation Ascension Pill
+	GoldenRequirement: Requires 1 Heavenly Treasure; Golden Core pill is optional
+	GoldenTierOneRequirement: Tier 1 requires 1 Heavenly Treasure and a Golden Core Condensation Pill
+	FoundationPill: Catalyst: Foundation Ascension Pill — replaces the Heavenly Treasure
+	SelectedTreasure: Selected Heavenly Treasure: {0} — first matching inventory slot
+	MissingCatalyst: Missing catalyst — prepare the Foundation pill or a required Heavenly Treasure
+	NoCatalystRequired: No special catalyst required for this Realm
+	Failure: Failure consumes the selected pill, if any, and removes 25% of the final Stage's required QiEXP
+	Confirm: Attempt Breakthrough
+	NotReady: Catalyst Missing
+	Cancel: Postpone
+	BurnedCapacity: Repair all burned Qi capacity before attempting a breakthrough
+}
+
+HeartDemonTrialConfirmation: {
+	Title: Heart Demon Trial
+	Message: Confront your Heart Demon carrying {0} corruption points?
+	Warning: Personal boss trial. Death or fleeing preserves every Heart Demon point.
+	Reward: Victory purifies all Heart Demon points and removes their penalties.
+	Confirm: Begin Trial
+	Cancel: Postpone
 }
 
 TribulationConfirmation: {
 	Title: Heavenly Tribulation
 	Message: You are about to attempt the breakthrough to {0}
 	Strikes: You must survive {0} heavenly lightning strikes
+	Difficulty: Heavenly power +{0}% | {1} | Golden Core Tier {2}
 	Warning: Confirm only when your health, equipment and Qi are ready
 	Confirm: Confirm
 	Cancel: Cancel
@@ -373,6 +583,7 @@ Configs: {
 			Progression: Cultivation difficulty
 			SpiritualQiZones: High spiritual Qi zones
 			SpiritBeasts: Spirit Beasts
+			CultivationRisks: Cultivation risks
 			Debug: Debug tools
 			AbilityTerrainDestruction: Ability world destruction
 		}
@@ -405,6 +616,26 @@ Configs: {
 		SpiritBeastSpawnRatePercent: {
 			Label: Spirit Beast spawn rate
 			Tooltip: Percentage multiplier applied to Spirit Beast natural spawn chances
+		}
+
+		EnableQiBurning: {
+			Label: Enable Qi Burning
+			Tooltip: Allows Foundation cultivators to trade persistent maximum Qi capacity for emergency combat power
+		}
+
+		MaximumBurnedQiPercent: {
+			Label: Maximum burned Qi
+			Tooltip: Maximum percentage of base Qi capacity that Qi Burning can wound
+		}
+
+		EnableHeartDemons: {
+			Label: Enable Heart Demons
+			Tooltip: Breakthrough failures and PvE deaths can create Heart Demon points and personal trials
+		}
+
+		HeartDemonPenaltyStrengthPercent: {
+			Label: Heart Demon penalty strength
+			Tooltip: Scales breakthrough and cultivation penalties from Heart Demon points
 		}
 
 		EnableDebugCommandsInMultiplayer: {
@@ -560,6 +791,11 @@ Items: {
 	MeridianCleansingPill: {
 		DisplayName: Meridian Cleansing Pill
 		Tooltip: Removes 40 Pill Saturation
+	}
+
+	MeridianMendingPill: {
+		DisplayName: Meridian Mending Pill
+		Tooltip: Repairs 10% of base Qi capacity wounded by Qi Burning
 	}
 
 	GreaterQiRecoveryPill: {
@@ -912,6 +1148,56 @@ Items: {
 		Tooltip: Reduces Tribulation damage and Qi shield consumption for 10 minutes
 	}
 
+	MeridianOpeningPill: {
+		DisplayName: Meridian Opening Pill
+		Tooltip: +10% Qi Gathering breakthrough chance for 10 minutes | Consumed on attempt
+	}
+
+	FoundationAscensionPill: {
+		DisplayName: Foundation Ascension Pill
+		Tooltip: +12% Foundation breakthrough chance for 10 minutes | Can replace the required Heavenly Treasure | Consumed on attempt
+	}
+
+	GoldenCoreCondensationPill: {
+		DisplayName: Golden Core Condensation Pill
+		Tooltip: +15% Golden Core breakthrough chance for 10 minutes | Consumed on attempt
+	}
+
+	NascentSoulIntegrationPill: {
+		DisplayName: Nascent Soul Integration Pill
+		Tooltip: +18% Nascent Soul breakthrough chance for 10 minutes | Consumed on attempt
+	}
+
+	HeavenlyEyeEssence: {
+		DisplayName: Heavenly Eye Essence
+		Tooltip:
+			'''
+			Heavenly Treasure from the Eye of Cthulhu
+			Choose for Foundation or Golden Core
+			On success: permanently +5% critical chance and +10% Qi Sense range
+			'''
+	}
+
+	HeavenlyRoyalNectar: {
+		DisplayName: Heavenly Royal Nectar
+		Tooltip:
+			'''
+			Heavenly Treasure from Queen Bee
+			Choose for Foundation or Golden Core
+			On success: permanently +20 maximum life and +1 life regeneration
+			'''
+	}
+
+	HeavenlyBoneMarrow: {
+		DisplayName: Heavenly Bone Marrow
+		Tooltip:
+			'''
+			Heavenly Treasure from Skeletron
+			Choose for Foundation or Golden Core
+			On success: permanently +4 defense and +2% damage reduction
+			'''
+	}
+
 	SpiritBeastLurePill: {
 		DisplayName: Spirit Beast Lure Pill
 		Tooltip: Multiplies Spirit Beast spawn weight by 2.5 for 5 minutes
@@ -1006,6 +1292,7 @@ NPCs: {
 	JadeHornDeer.DisplayName: Jade Horn Deer
 	FlameTailedFox.DisplayName: Flame-Tailed Fox
 	ThunderclawTiger.DisplayName: Thunderclaw Tiger
+	HeartDemon.DisplayName: Heart Demon
 }
 
 Sect: {
@@ -1077,8 +1364,8 @@ Sect: {
 
 IndependentMerchant: {
 	Name: Wanderer Shen
-	Trade: Trade techniques
-	Bestiary: A wandering cultivator who exchanges rare independent techniques for Spirit Stones without demanding allegiance to a Sect.
+	Trade: Trade
+	Bestiary: A wandering cultivator who exchanges spiritual materials and rare independent techniques for Spirit Stones without demanding allegiance to a Sect.
 
 	Chat: {
 		TooWeak: Your meridians have not opened yet. Return after reaching Qi Gathering.
@@ -1114,6 +1401,7 @@ Cultivation: {
 	QiStatusMax: Qi {0}/{1} | QiEXP MAX
 	QiGain: +{0} Qi
 	Breakthrough: Breakthrough! You reached {0}
+	BreakthroughGradeAchieved: Breakthrough quality established: {0}
 	StageAdvanced: Advancement! {0} - Stage {1}
 	TribulationBegins: Heavenly Tribulation! To enter {0}, survive {1} lightning strikes
 	TribulationReady: A Heavenly Tribulation awaits your breakthrough to {0}
@@ -1130,10 +1418,70 @@ Cultivation: {
 	RealmBonuses: +{0} max life | +{1} defense | +{2}% damage | +{3}% movement speed | +{4}% critical chance | +{5}% damage reduction | +{6} life regeneration
 	SpiritualQiZoneStatus: Qi Concentration Lv.{0}: +{1}% ({2} crystals)
 
+	BurnedQi: {
+		DisabledByServer: Qi Burning is disabled by server settings
+		NotEquipped: Equip Qi Burning in the active Technique Loadout first
+		Dead: The dead cannot ignite their meridians
+		RequiresFoundation: Qi Burning requires Foundation Establishment
+		WhileMeditating: Stop meditating before using Qi Burning
+		NoCapacity: No Qi capacity remains to burn
+		DeviationBlocked: Qi Deviation prevents Qi Burning
+		LimitBlocked: Maximum burned Qi limit reached
+		ConfirmationBlocked: Finish or close the breakthrough confirmation first
+		TrialBlocked: Qi Burning cannot be used during a Heart Demon trial
+		Enabled: Qi Burning ignited
+		Disabled: Qi Burning ended at {0}% burned capacity
+		DisabledNetwork: Qi Burning ended
+		Pulse: Qi capacity burned: {0}%
+		LimitReached: Qi Burning reached its safety limit
+		Repaired: Repaired {0}% capacity | {1}% remains burned
+		BreakthroughBlocked: Repair burned Qi capacity before attempting a breakthrough
+	}
+
+	HeartDemons: {
+		PointGained: Heart Demon deepened: {0}/{1}
+		MaximumReached: Heart Demon corruption has reached its maximum
+		DeathCounted: PvE death counted: {0}/{1} toward the next Heart Demon point
+		FailureCounted: Breakthrough failure counted: {0}/{1} toward the next Heart Demon point
+	}
+
+	HeartDemonTrial: {
+		DisabledByServer: Heart Demons are disabled by server settings
+		NoPoints: You have no Heart Demon to confront
+		Dead: The dead cannot face an inner trial
+		Cooldown: Inner trial recovers in {0}s
+		QiBurningBlocked: End Qi Burning before confronting your Heart Demon
+		AlreadyActive: Your Heart Demon trial is already active
+		TribulationBlocked: Finish or postpone the Heavenly Tribulation first
+		EventBlocked: Heart Demon trial cannot begin during an invasion or event
+		BossBlocked: Defeat the current boss before starting the inner trial
+		Started: Your Heart Demon manifests
+		Purified: Heart Demon purified. All corruption points removed
+		Failed: Heart Demon trial failed. Corruption remains
+	}
+
+	BreakthroughChance: {
+		Failed: Realm breakthrough failed at {0}% chance. Lost {1} QiEXP from the final Stage.
+		Succeeded: Realm breakthrough succeeded at {0}% chance!
+		MissingFoundationCatalyst: Foundation breakthrough blocked. Prepare a Foundation Ascension Pill or carry 1 Heavenly Treasure.
+		MissingGoldenCoreTreasure: Golden Core blocked. Carry 1 Heavenly Treasure from the Eye of Cthulhu, Queen Bee, or Skeletron.
+		HeavenlyEyeImprint: Heavenly Eye imprinted: permanently +5% critical chance and +10% Qi Sense range.
+		HeavenlyRoyalNectarImprint: Heavenly Royal Nectar refined: permanently +20 maximum life and +1 life regeneration.
+		HeavenlyBoneMarrowImprint: Heavenly Bone Marrow fused: permanently +4 defense and +2% damage reduction.
+	}
+
 	BreakthroughTooltip: {
 		Title: Breakthrough Readiness
 		Next: Next advancement: {0}, Stage {1}
 		Progress: QiEXP {0}/{1} - {2} remaining
+		SuccessChance: Realm success chance: {0}% | Base {1}% | Root {2}% | Pill {3}% | Heart Demons {4}%
+		QiCapacity: Qi: {0}/{1} effective | Base capacity {2} | Burned {3}%
+		FailurePenalty: Failure removes 25% of the final Stage's required QiEXP; the current Realm and completed Stages remain
+		FoundationCatalyst: Foundation catalyst | Pill: {0} | Or choose 1 treasure: Eye {1}, Nectar {2}, Marrow {3}
+		GoldenCoreTreasure: Golden Core requires 1 chosen treasure | Eye {0}, Nectar {1}, Marrow {2}
+		PermanentImprints: Permanent treasure imprints | Eye x{0} | Nectar x{1} | Marrow x{2}
+		Ready: Ready
+		Absent: Absent
 		Bonuses: Next bonuses: +{0} life | +{1} defense | +{2}% damage | +{3}% speed | +{4}% crit | +{5}% damage reduction | +{6} regeneration
 		NextAbilities: Next abilities at {0}: {1}
 		Tribulation: Heavenly Tribulation: {0} strikes | shield ~{1} Qi each | ~{2} total
@@ -1174,6 +1522,7 @@ Projectiles: {
 	VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
 	ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
 	SpiritualRainProjectile.DisplayName: Spiritual Rain
+	HeartDemonBolt.DisplayName: Heart Demon Bolt
 }
 
 Tiles: {
@@ -1324,6 +1673,10 @@ PermanentFormation: {
 }
 
 DebugCommands: {
+	Help14: /xiadebug root [show|reveal|roll] - inspect or test Spiritual Roots
+	RootUsage: Usage: /xiadebug root [show|reveal|roll]
+	RootRolled: Generated a new hidden Spiritual Root.
+	RootStatus: Root: {0} | Elements: {1} | Primary: {2} | Purity: {3}% | Revealed: {4}
 	MultiplayerDisabled: Debug commands are disabled in multiplayer. Enable them explicitly in the server configuration for a private test session
 	HelpTitle: Xianxia debug commands (Realm numbers: 1-5)
 	Help1: /xiadebug status - show current test state
@@ -1395,6 +1748,14 @@ Forging: {
 	QualityTooltip: "{0} quality | Power: {1}% | Qi cost: {2}% | Forging EXP: {3}%"
 	MasteryTooltip: Artifact Forging: Tier {0} ({1}), {2} Stage | Base EXP: {3} | Current reward: {4} EXP
 	ArtifactQiCost: Current Qi cost per use: {0}
+	ArtifactElement: Spiritual element: {0}
+
+	RootSynergy: {
+		Hidden: Appraise your Spiritual Root to reveal artifact compatibility
+		NoAffinity: No matching Spiritual Root affinity
+		Match: Root affinity {0}% | +{1}% power | -{2}% Qi cost | +{3} forging quality roll
+	}
+
 	JadeAntlerStats: +{0} defense | +{1} life regeneration | +{2}% magic damage
 	BeastSoulStats: +{0}% summon damage | +{1}% magic damage | +{2} defense | +1 minion | Guardian base damage: {3}
 
@@ -1452,6 +1813,7 @@ Manual: {
 			SectSystem: Sects and Missions
 			FormationPath: Permanent Formations
 			ArtifactForging: Artifact Forging Path
+			SpiritualRoots: Spiritual Roots
 			AdvancedPills: Advanced Pill Recipes
 		}
 	}
@@ -1493,7 +1855,7 @@ Manual: {
 				Always active. Increases passive Qi recovery by 10% and trains while restoring missing Qi.
 
 				QI SENSE - Qi Gathering
-				Reveals creatures, treasure and danger. Costs 1 Qi/s. Toggle it from the Ability Wheel or with /qisense on|off.
+				Reveals creatures, treasure and danger. Spirit Jade glows green-cyan and Profound Iron glows violet-blue through darkness. Detection range increases with Qi Sense level. Costs 1 Qi/s. Toggle it from the Ability Wheel or with /qisense on|off.
 
 				QI PROTECTION - Foundation Establishment
 				Absorbs incoming damage at a cost of 5 Qi per damage, including damage over time from fire, poison and similar debuffs. When breath is exhausted underwater, it also spends Qi to prevent drowning while keeping the breath meter at its last sliver. Cultivation life regeneration is applied before the shield and can reduce or overcome negative regeneration. A spiritual shield appears when activated. Toggle it from the wheel or with /qiprotection on|off.
@@ -1541,7 +1903,7 @@ Manual: {
 				Teleport to the cursor. It also works on the fullscreen map. Costs 20 Qi + 2 Qi per 2 blocks traveled and finds a clear space near the selected point.
 
 				ABILITY WHEEL [{3}]
-				Hold the key to view abilities, requirements, controls and passive states. Click a passive to toggle it.
+				The main wheel contains cast techniques equipped in the active Technique Loadout. Hold the wheel key and click one to bind it to Use Selected Technique. Click Toggle to open a separate upper semicircle for Qi Sense, Qi Protection, Qi Burning, Night Vision, Qi Flight and Spiritual Pressure. Clicking those immediately toggles them without replacing the selected cast technique.
 				'''
 		}
 
@@ -1549,13 +1911,34 @@ Manual: {
 			Title: Breakthroughs, Resources and Alchemy
 			Body:
 				'''
-				Reaching the QiEXP threshold causes a breakthrough. From Core Formation onward, you must confirm and survive a Heavenly Tribulation. Cancelling only postpones the attempt and never removes QiEXP; meditate again with full Qi to reopen the confirmation. Failing the actual Tribulation still removes the failed breakthrough progress. The first contains 9 lightning strikes.
+				BREAKTHROUGH QUALITY
+				Foundation Establishment offers four targets. Inferior Foundation is the default and preserves normal statistics. Stable, Perfect, and Heavenly Foundation grant ×1.15, ×1.35, and ×1.60 Foundation statistics plus 7%, 15%, and 25% Qi gathering. Higher targets reduce success chance. Perfect requires one Heavenly Treasure; Heavenly requires one Treasure and a Foundation Ascension Pill.
+
+				Golden Core has nine Tiers: Tier 9 is the default and Tier 1 is highest. Higher Tiers progressively grant up to ×1.65 Core statistics and +27% Qi gathering while reducing success chance. Every Tier requires one Heavenly Treasure; Tier 1 also requires a Golden Core Condensation Pill. Foundation quality modifies Golden Core chance.
+
+				Use the two catalyst slots in the centered breakthrough window. Left-click a slot to select or cycle a valid item from inventory; right-click clears it. Selected pills are consumed on every attempt. A selected Heavenly Treasure is consumed only after the chance roll succeeds. Existing characters default to Inferior Foundation and Golden Core Tier 9.
+
+				Every Realm breakthrough now has a success chance: 90% for Qi Gathering, 75% for Foundation Establishment, 55% for Core Formation and 35% for Nascent Soul. Spiritual Root quality and purity can raise or lower this chance. Failure removes 25% of the final Stage's required QiEXP, but never removes the current Realm or completed Stages.
+
+				QI BURNING [H]
+				Foundation cultivators can ignite their meridians for major damage, attack-speed, critical, movement and defensive bonuses. Every 3 seconds it permanently wounds 2% of base maximum Qi, up to the server limit. Stopping causes Qi Deviation. Burned capacity blocks Realm breakthroughs. Meditation repairs 0.25% every 30 seconds even at Qi Concentration Lv.0; each concentration level multiplies the repair rate, and Formations double it. A Meridian Mending Pill repairs it immediately.
+
+				HEART DEMONS
+				Every 2 failed Realm breakthroughs or 5 PvE deaths creates 1 Heart Demon point, up to 9. Each point reduces breakthrough chance and cultivation gain by 2%. Open Character and choose Confront Heart Demon to begin a personal boss trial. Victory purifies all points; death or fleeing preserves them.
+
+				Breakthrough pills add 10-18% chance and their preparation buff is consumed when an attempt occurs, whether it succeeds or fails. Hover over the Qi bar to see the exact base, Root and pill modifiers.
+
+				Entering Foundation Establishment requires either an active Foundation Ascension Pill or one chosen Heavenly Treasure. Forming a Golden Core requires one chosen Heavenly Treasure. Heavenly Eye Essence drops from the Eye of Cthulhu, Heavenly Royal Nectar from Queen Bee and Heavenly Bone Marrow from Skeletron; each drop is guaranteed.
+
+				A chosen treasure is consumed only after the chance roll succeeds. It permanently imprints the cultivator: Eye grants +5% critical chance and +10% Qi Sense range, Nectar grants +20 maximum life and +1 life regeneration, while Marrow grants +4 defense and +2% damage reduction. If several treasures are carried, the first one in inventory order is used.
+
+				From Core Formation onward, a successful chance roll must still be followed by a confirmed Heavenly Tribulation. Cancelling only postpones it and never removes QiEXP. Failing the actual Tribulation removes the failed breakthrough progress. The first contains 9 lightning strikes.
 
 				Heavenly lightning pierces ordinary defenses. At base mastery, Qi Protection consumes about 12% of maximum Qi per Core Formation strike and blocks 70% of its health damage; the rest penetrates the shield. Nascent Soul strikes consume about 15% and deal substantially more damage. Qi Protection mastery lowers the reserve cost. Arrive with full Qi, healing and suitable equipment.
 
 				Spirit Stones cannot be crafted: they are mined from Spirit Crystal veins. Spirit Jade and Profound Iron make bars for armor, accessories, weapons and Flying Swords.
 
-				The Alchemy Cauldron crafts pills. A Qi Recovery Pill restores 100 Qi without increasing QiEXP; other pills temporarily improve meditation, defense and damage.
+				The Alchemy Cauldron crafts pills. A Qi Recovery Pill restores 100 Qi without increasing QiEXP; dedicated Meridian, Foundation, Golden Core and Nascent Soul pills improve their matching Realm breakthrough chance.
 
 				The Flying Sword requires Qi Gathering and consumes Qi with every launch. It automatically homes in on the closest visible enemy within 60 blocks; if no target is found it continues normally, then returns to its owner.
 				'''
@@ -1843,6 +2226,21 @@ Manual: {
 				'''
 		}
 
+		SpiritualRoots: {
+			Title: Spiritual Roots
+			Body:
+				'''
+				Every character receives one permanent Spiritual Root that follows the character between worlds. Roots can be Mixed, True, Heavenly, Mutated, or Primordial and contain elemental affinities.
+
+				The Root starts hidden. Sect members receive a free appraisal from Elder Jian. Independent cultivators pay Wanderer Shen 5 Spirit Stones. After appraisal, open Cultivation > Character to inspect it.
+
+				Quality and purity increase meditation cultivation speed by roughly 5-25%. Heavenly Roots scale from 18% at 85 purity to 25% at 100 purity; Mutated Roots scale from 15-22%, and Primordial Roots grant 25%. Elements grant small thematic bonuses. Roots cannot be rerolled during normal play.
+
+				BIOME RESONANCE
+				Each element gains extra meditation cultivation speed in a matching environment: Wood in the Jungle, Fire in the Underworld, Earth underground, Metal in the Dungeon, Water at the Ocean, Lightning during rain, Ice in Snow, Wind in the high Sky, and Void in Space. The bonus scales with that element's affinity, up to 15% (12% for Earth). Multi-element Roots use only the strongest active resonance.
+				'''
+		}
+
 		ArtifactForging: {
 			Title: Artifact Forging
 			Body:
@@ -1858,6 +2256,9 @@ Manual: {
 				Refined - 112% power, 92% Qi cost and 200% Forging EXP.
 				Earth Grade - 127% power, 82% Qi cost and 500% Forging EXP.
 				Heaven Grade - 148% power, 70% Qi cost and 1000% Forging EXP.
+
+				ELEMENTAL COMPATIBILITY
+				Every artifact carries one or two spiritual elements. A matching Spiritual Root improves artifact power, projectile utility and Qi efficiency. During crafting, matching affinity also adds up to 5 points to the quality roll. Multi-element artifacts use average affinity.
 
 				SPIRITUAL FORGES
 				Artifact Forge - basic Mortal refinement.

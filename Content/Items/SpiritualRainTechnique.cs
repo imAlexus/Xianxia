@@ -55,21 +55,47 @@ public class SpiritualRainTechnique : ModItem
 	public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source,
 		Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 	{
+		TryCast(player, source);
+		return false;
+	}
+
+	public static bool TryCast(Player player, IEntitySource source)
+	{
 		CultivationPlayer cultivation = player.GetModPlayer<CultivationPlayer>();
+		int projectileType =
+			ModContent.ProjectileType<SpiritualRainProjectile>();
+		if (player.ownedProjectileCounts[projectileType] > 0)
+			return false;
+		if (cultivation.SpiritualRainCooldown > 0)
+		{
+			if (player.whoAmI == Main.myPlayer)
+			{
+				int seconds = (int)MathF.Ceiling(
+					cultivation.SpiritualRainCooldown / 60f);
+				Main.NewText(cultivation.Mod.GetLocalization(
+					"Abilities.SpiritualRainCooldown").Format(seconds),
+					Color.Orange);
+			}
+			return false;
+		}
 		if (cultivation.RealmIndex < 1)
 		{
-			Main.NewText(Mod.GetLocalization("Abilities.RequiresRealm").Format(
-				Mod.GetLocalization("Cultivation.Realms.QiCondensation").Value),
+			Main.NewText(cultivation.Mod.GetLocalization(
+				"Abilities.RequiresRealm").Format(
+					cultivation.Mod.GetLocalization(
+						"Cultivation.Realms.QiCondensation").Value),
 				Color.OrangeRed);
 			return false;
 		}
 
 		int abilityLevel = cultivation.GetAbilityLevel(CultivationAbility.SpiritualRain);
-		int qiCost = Math.Max(MinimumQiCost, BaseQiCost - abilityLevel + 1);
-		if (!cultivation.SpendQi(qiCost))
+		int baseQiCost = Math.Max(MinimumQiCost, BaseQiCost - abilityLevel + 1);
+		int qiCost = cultivation.GetAbilityQiCost(
+			baseQiCost, CultivationAbility.SpiritualRain);
+		if (!cultivation.SpendAbilityQi(baseQiCost, CultivationAbility.SpiritualRain))
 		{
-			Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(qiCost),
-				Color.OrangeRed);
+			Main.NewText(cultivation.Mod.GetLocalization(
+				"Abilities.NotEnoughQi").Format(qiCost), Color.OrangeRed);
 			return false;
 		}
 
@@ -78,12 +104,15 @@ public class SpiritualRainTechnique : ModItem
 		if (offset.LengthSquared() > MaximumCastRange * MaximumCastRange)
 			target = player.Center + offset.SafeNormalize(Vector2.UnitY) * MaximumCastRange;
 
-		float radiusInTiles = BaseRadiusInTiles + (abilityLevel - 1) * RadiusPerLevel;
-		Projectile.NewProjectile(source, target, Vector2.Zero, type, 0, 0f,
+		float radiusInTiles = (BaseRadiusInTiles + (abilityLevel - 1) * RadiusPerLevel)
+			* cultivation.GetAbilityPowerMultiplier(
+				CultivationAbility.SpiritualRain, 0f);
+		Projectile.NewProjectile(source, target, Vector2.Zero,
+			projectileType, 0, 0f,
 			player.whoAmI, radiusInTiles);
 		cultivation.StartSpiritualRainCooldown(CooldownTicks);
 		cultivation.AddAbilityExperience(CultivationAbility.SpiritualRain, 5);
-		return false;
+		return true;
 	}
 
 	public override void AddRecipes()

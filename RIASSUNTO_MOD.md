@@ -2,11 +2,11 @@
 
 **Mod:** Xianxia
 **Author:** imAlexus
-**Version:** 0.1.6
+**Version:** 0.1.8.2
 **Source path:** `C:/Users/Utente/Documents/My Games/Terraria/tModLoader/ModSources/Xianxia`
 **Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3768052356
 
-Xianxia is a tModLoader mod for Terraria that adds a spiritual cultivation system inspired by the xianxia genre: Qi, meditation, Realms, Stages, techniques, heavenly tribulations, spiritual mines, spirit beasts, alchemy, a sect, permanent formations, equipment, and an in-game manual.
+Xianxia is a tModLoader mod for Terraria that adds a spiritual cultivation system inspired by the xianxia genre: Qi, meditation, Realms, Stages, Spiritual Roots, graded breakthroughs, techniques, heavenly tribulations, Heart Demons, spiritual mines, spirit beasts, alchemy, a sect, permanent formations, equipment, and an in-game manual.
 
 ---
 
@@ -14,13 +14,30 @@ Xianxia is a tModLoader mod for Terraria that adds a spiritual cultivation syste
 
 The mod contains:
 
-- **100 C# source files**
-- **98 PNG textures**
+- **123 C# source files**
+- **174 PNG textures**
 - **3 localizations:** English, Italian, Simplified Chinese
-- **8 Markdown/documentation files**
+- **14 Markdown/documentation files**
 - Main systems under `Common/`
 - Playable content under `Content/`
 - Documentation, changelog, Workshop description, and release notes
+
+---
+
+## Major systems added in 0.1.8
+
+Version 0.1.8 is the largest progression update so far.
+
+- Permanent **Spiritual Roots** with quality, purity, primary element, affinities, appraisal, multiplayer synchronization, and biome meditation resonance.
+- Visible **Realm breakthrough chances** affected by Realm, Spiritual Root, pills, Heart Demons, Foundation quality, and Golden Core Tier.
+- **Foundation quality:** Inferior, Stable, Perfect, and Heavenly.
+- **Golden Core quality:** Tier 9 through Tier 1, with stronger rewards and harder Tribulations at higher quality.
+- **Heavenly Treasures** from bosses, used as breakthrough catalysts and recorded as permanent character imprints.
+- **Qi Burning**, burned maximum-Qi capacity, Qi Deviation, origin repair, and Meridian Mending Pills.
+- **Heart Demon** progression from deaths and breakthrough failures, plus personal cleansing trials.
+- Three synchronized **Technique Loadout** presets, Realm-based fixed slots, a universal cast key, optional direct hotkeys, and an expanded Toggle wheel.
+- Expanded **Character** page with live statistics, Root data, breakthrough grades, catalysts, history, and Heart Demon state.
+- Safe one-time Spirit Jade and Profound Iron generation for existing worlds.
 
 ---
 
@@ -82,6 +99,9 @@ Features:
 - passive Qi recovery scales by Realm
 - if Qi is missing, meditation restores it much faster
 - near Spirit Stone veins, gains are multiplied
+- Spiritual Root quality and purity modify cultivation speed
+- matching elemental biomes grant additional Root resonance
+- while the cultivation origin is damaged, meditation restores Qi and repairs burned capacity without increasing QiEXP
 
 ---
 
@@ -94,6 +114,7 @@ The system includes:
 - a confirmation before it begins
 - 9 lightning strikes in the first tribulation
 - harsher lightning at higher Realms
+- strike count and power scale with Foundation quality and Golden Core Tier
 - damage that partially penetrates defenses
 - percentage-based maximum Qi consumption
 - Qi Protection is useful but not sufficient alone
@@ -107,6 +128,8 @@ The mod includes an Ability Wheel and an ability menu/tree with level-based prog
 
 Each technique can gain EXP through use and improve up to its maximum level.
 
+The Technique Loadout system provides three persistent presets. Fixed slots increase from 2 at Mortal to 6 at Nascent Soul. The main wheel selects cast techniques for the universal key; a separate semicircle directly controls sustained toggle techniques.
+
 ### Main passives and abilities
 
 - **Meditation**
@@ -118,6 +141,7 @@ Each technique can gain EXP through use and improve up to its maximum level.
 - **Nascent Soul Regeneration**
 - **Night Vision**
 - **Sword Intent**
+- **Qi Burning**
 
 ### Active techniques
 
@@ -128,6 +152,7 @@ Each technique can gain EXP through use and improve up to its maximum level.
 - **Void Step**
 - **Spiritual Pressure**
 - **Spirit Sword Rain**
+- **Spiritual Rain**
 - **Sect Protection Formation**
 
 ### Technique items
@@ -178,6 +203,10 @@ Features:
 - mines create high Qi Concentration zones
 - Qi Concentration ranges from level 0 to 10
 - the multiplier affects both meditation and passive recovery
+- version 0.1.8 increases Spirit Jade and Profound Iron generation
+- existing worlds receive a one-time safe ore migration
+- Qi Sense highlights Spirit Jade and Profound Iron through walls
+- Wanderer Shen and Elder Jian provide progression-based ore shops
 
 ### Mining resources
 
@@ -371,7 +400,7 @@ Life, damage, defense, and rewards scale with Realm and Stage.
 
 ---
 
-## Green Cloud Sect
+## Verdant Cloud Sect
 
 The mod has a sect system with an NPC, missions, currency, ranks, and techniques.
 
@@ -586,6 +615,22 @@ The Italian localization is extensive and covers:
 ---
 
 ## Changelog summary
+
+### 0.1.8 / 0.1.8.2
+
+- Added Spiritual Roots, elemental affinities, appraisal, passive bonuses, and biome resonance.
+- Added visible breakthrough chances, breakthrough pills, and centered confirmation UI.
+- Added Inferior, Stable, Perfect, and Heavenly Foundation qualities.
+- Added Golden Core Tiers 9 through 1 and grade-scaled Heavenly Tribulations.
+- Added Heavenly Treasures with boss drops, catalyst slots, permanent imprints, and character records.
+- Added Qi Burning, damaged cultivation origin, Qi Deviation, meditation repair, and Meridian Mending Pills.
+- Added Heart Demon points, accurate death/failure tracking, penalties, and personal trials.
+- Added synchronized Technique Loadouts, fixed Realm slots, three presets, universal casting, optional direct hotkeys, and Toggle semicircle.
+- Added Spiritual Rain and Spirit Sword Rain to loadouts and Sect Protection Formation to Toggle techniques.
+- Expanded Character statistics, Ability Tree scrolling, card readability, and Ability Wheel layout.
+- Increased Spirit Jade and Profound Iron availability, added existing-world migration, NPC sales, and improved Qi Sense highlighting.
+- Fixed higher Artifact Forges so they inherit all lower-Tier recipes.
+- Updated English, Italian, Simplified Chinese, Cultivator Manual, Workshop description, and Steam-ready release notes.
 
 ### 0.1.0
 

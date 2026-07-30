@@ -91,3 +91,31 @@ public class ConcealmentBuff : ModBuff
 		player.GetModPlayer<AlchemyPillEffectPlayer>().Concealment = true;
 	}
 }
+
+public class MeridianOpeningBuff : ModBuff
+{
+	public override string Texture => $"Terraria/Images/Buff_{BuffID.Clairvoyance}";
+	public override void Update(Player player, ref int buffIndex) =>
+		player.GetModPlayer<AlchemyPillEffectPlayer>().MeridianOpening = true;
+}
+
+public class FoundationAscensionBuff : ModBuff
+{
+	public override string Texture => $"Terraria/Images/Buff_{BuffID.MagicPower}";
+	public override void Update(Player player, ref int buffIndex) =>
+		player.GetModPlayer<AlchemyPillEffectPlayer>().FoundationAscension = true;
+}
+
+public class GoldenCoreCondensationBuff : ModBuff
+{
+	public override string Texture => $"Terraria/Images/Buff_{BuffID.Wrath}";
+	public override void Update(Player player, ref int buffIndex) =>
+		player.GetModPlayer<AlchemyPillEffectPlayer>().GoldenCoreCondensation = true;
+}
+
+public class NascentSoulIntegrationBuff : ModBuff
+{
+	public override string Texture => $"Terraria/Images/Buff_{BuffID.Lifeforce}";
+	public override void Update(Player player, ref int buffIndex) =>
+		player.GetModPlayer<AlchemyPillEffectPlayer>().NascentSoulIntegration = true;
+}

@@ -4,7 +4,8 @@ Keybinds: {
 	Meditate.DisplayName: 冥想
 	QiResistance.DisplayName: 真气护体
 	QiFlight.DisplayName: 御气飞行
-	Fireball.DisplayName: 火球术
+	Fireball.DisplayName: 使用所选功法
+	DirectFireball.DisplayName: 火球术
 	QiPalm.DisplayName: 真气掌
 	FlameStep.DisplayName: 炎步
 	NascentTeleport.DisplayName: 虚空步
@@ -14,6 +15,111 @@ Keybinds: {
 	AbilityTree.DisplayName: 功法树
 	// SpiritSwordRain.DisplayName: Spirit Sword Rain
 	// SectFormation.DisplayName: Sect Protection Formation
+	QiBurning.DisplayName: 燃烧真气
+}
+
+TechniqueLoadout: {
+	Title: 功法配置
+	Equipped: 已装备
+	Empty: 空槽位
+	EmptyHint: 从功法菜单装备一项功法
+	LockedPreset: 锁定
+	LockedSlot: 锁定
+	Select: 选择
+	SelectedHint: 已选择——按下“使用所选功法”键
+	SelectionHint: 点击选择此功法
+	SelectedMessage: 已选择功法：{0}
+	NoSelected: 请先从功法轮盘选择一项已装备功法
+	DirectLocked: "{0} 尚未解锁。"
+	ToggleMenu: 切换
+	ToggleMenuHint: 打开切换型功法半圆菜单
+	ToggleMenuClose: 关闭切换型功法半圆菜单
+	ToggleBadge: 切换
+	ToggleClickHint: 点击启用或关闭，不改变当前所选功法
+	NoToggles: 尚未解锁切换型功法
+}
+
+SpiritualElements: {
+	Neutral: 无属性
+	Wood: 木
+	Fire: 火
+	Earth: 土
+	Metal: 金
+	Water: 水
+	Lightning: 雷
+	Ice: 冰
+	Wind: 风
+	Void: 虚空
+}
+
+SpiritualRoots: {
+	Qualities: {
+		Mixed: 杂灵根
+		True: 真灵根
+		Heavenly: 天灵根
+		Mutated: 变异灵根
+		Primordial: 太初灵根
+	}
+
+	Appraisal: {
+		Button: 鉴定灵根
+		Result: 你的灵根已揭晓：{0} | 元素：{1} | 纯度：{2}%。
+		NotEnough: 鉴定灵根需要 {0} 灵石。
+	}
+
+	UI: {
+		Title: 灵根
+		Hidden: 你的灵根尚未鉴定
+		AppraisalHint: 请剑长老或游士沈鉴定灵根
+		Summary: "{0} | 主属性：{1} | 纯度：{2}%"
+		CultivationBonus: 打坐修炼速度：+{0}%
+		BiomeResonanceActive: 生物群系共鸣：{0}于{1} | 打坐 +{2}%
+		BiomeResonanceInactive: 生物群系共鸣未激活
+		Affinity: "{0}亲和：{1}%"
+	}
+
+	Biomes: {
+		Jungle: 丛林
+		Underworld: 地狱
+		Underground: 地下与洞穴
+		Dungeon: 地牢
+		Ocean: 海洋
+		Storm: 降雨与风暴
+		Snow: 雪原
+		Sky: 高空
+		Space: 太空
+	}
+}
+
+CharacterStats: {
+	Title: 角色统计
+	Progression: 修炼进度
+	ProgressionRealmValue: "{0} — {1} 阶"
+	ProgressionQiValue: 真气 {0}/{1}  •  真气经验 {2}/{3}
+	CurrentStats: 当前战斗属性
+	CurrentStatsPrimary: 生命 {0}/{1}  •  防御 {2}
+	CurrentStatsSecondary: 暴击 {0}%  •  减伤 {1}%
+	CultivationBonuses: 修炼总加成
+	CultivationBonusPrimary: +{0} 生命  •  +{1} 防御  •  +{2}% 伤害  •  +{3}% 速度
+	CultivationBonusSecondary: +{0}% 暴击  •  +{1}% 减伤  •  +{2} 生命再生
+	BreakthroughRecord: 境界突破记录
+	BreakthroughRecordPrimary: 尝试 {0}  •  成功 {1}
+	BreakthroughRecordSecondary: 失败 {0}  •  已用丹药 {1}
+	TreasureImprints: 永久天材地宝烙印
+	TreasureImprintsValue: 天眼 x{0} | 王浆 x{1} | 骨髓 x{2}
+	BreakthroughHistory: 成功突破所用媒介
+	HistoryEntry: "{0}：{1}"
+	NotCompleted: 尚未完成
+	LegacyUnknown: 旧记录 — 未记录媒介
+	NoCatalyst: 未使用媒介
+	PillAndTreasure: "{0} + {1}"
+	HeartDemonsTitle: 心魔
+	HeartDemonsPoints: "{0}/{1} 点  •  突破 {2}%  •  修炼 {3}%"
+	HeartDemonsProgress: 下一点：失败 {0}/{1}  •  死亡 {2}/{3}
+	ConfrontHeartDemon: 挑战心魔
+	BreakthroughGrades: 筑基：{0}  •  金丹：{1}
+	GradeQiGathering: 突破品质真气获取：+{0}%
+	NotReached: 尚未达到
 }
 
 Currencies: {
@@ -22,6 +128,21 @@ Currencies: {
 }
 
 Buffs: {
+	DamagedOriginDebuff: {
+		DisplayName: 修炼根基受损
+		Description:
+			'''
+			你的真气容量已经受损。
+			任何地点都可冥想修复；灵气浓度与阵法会加快修复。
+			也可使用经脉修复丹。完全修复后才能继续突破。
+			'''
+	}
+
+	QiDeviationDebuff: {
+		DisplayName: 真气逆行
+		Description: 伤害、防御、移动与真气恢复大幅降低
+	}
+
 	QiResistanceBuff: {
 		DisplayName: 真气护体
 		Description: +10 防御
@@ -107,6 +228,26 @@ Buffs: {
 		Description: 大幅降低敌人注意力和自然生成率
 	}
 
+	MeridianOpeningBuff: {
+		DisplayName: 开脉
+		Description: 炼气境突破概率 +10%；尝试突破时消耗
+	}
+
+	FoundationAscensionBuff: {
+		DisplayName: 筑基升华
+		Description: 筑基境突破概率 +12%；尝试突破时消耗
+	}
+
+	GoldenCoreCondensationBuff: {
+		DisplayName: 金丹凝结
+		Description: 结丹境突破概率 +15%；尝试突破时消耗
+	}
+
+	NascentSoulIntegrationBuff: {
+		DisplayName: 元婴融合
+		Description: 元婴境突破概率 +18%；尝试突破时消耗
+	}
+
 	PermanentFormationProtectionBuff: {
 		// DisplayName: Permanent Formation Protection
 		// Description: Protected by a territorial array: +12 defense and 6% damage reduction
@@ -157,6 +298,7 @@ Abilities: {
 	RequiresRealm: 所需境界：{0}
 	NotEnoughQi: 真气不足。需要：{0}
 	SpiritualRainCooldown: 灵雨术冷却中：{0}秒
+	QiBurningDeviationState: 真气逆行：{0}秒
 	AlreadyActive: 真气护体已生效
 	QiResistanceActivated: 真气护体已激活，持续 1 分钟
 	QiFlightEnabled: 御气飞行已开启
@@ -199,7 +341,7 @@ AbilityWheel: {
 	Unbound: 未绑定
 	ActiveKey: 按键：[{0}]
 	PassiveToggle: "{0} - 每点伤害基础消耗 5 真气 - 左键切换"
-	QiSenseToggle: "{0} - 探测生灵、宝藏与危险 - 1 真气/秒 - 左键切换"
+	QiSenseToggle: "{0} - 探测生灵、宝藏、危险与灵矿 - 1 真气/秒 - 左键切换"
 	RequiresFoundation: 需要筑基境
 	RequiresQiGathering: 需要炼气境
 	RequiresNascentSoul: 需要元婴境
@@ -221,9 +363,26 @@ AbilityWheel: {
 	SpiritualPressure: 灵压
 	SpiritualPressureDescription: 可切换的伤害与减速光环；每秒消耗 25 真气
 	NightVisionDescription: 生成局部灵光；范围与效率随熟练度提高
+	QiBurning: 燃烧真气
+	QiBurningDescription: 燃烧最大真气换取极强战力 | 已燃烧 {0}% / {1}% | {2}
+	SpiritualRain: 灵雨
+	SpiritualRainDescription: 在光标处召唤灵雨区域，加速草药生长
+	SpiritSwordRain: 灵剑雨
+	SpiritSwordRainDescription: 朝光标方向发射五把飞剑
+	SectProtectionFormation: 宗门守护阵
+	SectProtectionFormationDescription: 开启或关闭宗门屏障阵法
 }
 
 AbilityTree: {
+	ElementTag: 元素：{0}
+
+	RootSynergy: {
+		Neutral: 中性功法——不受灵根修正
+		Hidden: 鉴定灵根后可查看元素契合
+		NoAffinity: 灵根没有匹配的元素亲和
+		Match: 灵根亲和 {0}% | 威力 +{1}% | 真气消耗 -{2}% | 熟练经验 +{3}%
+	}
+
 	Title: 修炼菜单
 	Hint: 悬停在功法上查看进度与加成
 	Locked: 未解锁
@@ -247,11 +406,13 @@ AbilityTree: {
 	// SwordRainEffect: Level {0} | five swords, cursor-controlled range, higher damage and lower Qi cost/cooldown | {1}
 	// FormationEffect: Level {0} | maintained with Qi; allies can meditate inside to reinforce and repair it | {1}
 	SpiritualRainEffect: 等级 {0} | 等级越高，真气消耗越低，催生范围越大 | {1}
+	QiBurningEffect: 等级 {0} | +{1}% 伤害与 +{2}% 攻速 | 已燃烧 {3}% | {4} | {5}
 
 	Tabs: {
 		Abilities: 功法
 		Paths: 道途
 		// Sect: Sect
+		Character: 角色
 	}
 
 	Paths: {
@@ -338,13 +499,62 @@ AbilityTree: {
 		// SpiritSwordRain.Name: Spirit Sword Rain
 		// SectProtectionFormation.Name: Sect Protection Formation
 		SpiritualRain.Name: 灵雨
+		QiBurning.Name: 燃烧真气
 	}
+}
+
+BreakthroughGrades: {
+	Foundation: {
+		Inferior: 下品筑基
+		Stable: 稳固筑基
+		Perfect: 完美筑基
+		Heavenly: 天道筑基
+	}
+
+	GoldenCoreTier: 金丹第 {0} 品
+}
+
+BreakthroughConfirmation: {
+	Title: 境界突破
+	Message: 你已准备突破至 {0}
+	Chance: "{0}% 成功率"
+	Breakdown: 基础 {0}%  •  灵根 {1}%  •  丹药 {2}%  •  心魔 −{3}%  •  品质 {4}%
+	QualityTarget: 选择突破品质
+	QualityBonuses: "{0} | 属性 ×{1} | 真气获取 +{2}%"
+	TreasureSlot: 天材地宝
+	PillSlot: 突破丹
+	EmptySlot: 空
+	SlotHint: 左键选择或切换物品栏中的有效物品 • 右键清除
+	InferiorStableRequirement: 需要筑基升华丹或 1 件天材地宝
+	PerfectRequirement: 需要 1 件天材地宝；筑基丹可选
+	HeavenlyRequirement: 需要 1 件天材地宝和筑基升华丹
+	GoldenRequirement: 需要 1 件天材地宝；金丹丹药可选
+	GoldenTierOneRequirement: 一品金丹需要 1 件天材地宝和金丹凝结丹
+	FoundationPill: 媒介：筑基升华丹 — 可代替天材地宝
+	SelectedTreasure: 已选天材地宝：{0} — 按物品栏顺序取第一件
+	MissingCatalyst: 缺少媒介 — 请准备筑基丹或所需天材地宝
+	NoCatalystRequired: 此境界无需特殊媒介
+	Failure: 失败会消耗所选丹药（如有），并损失最终阶段所需真气经验的25%
+	Confirm: 尝试突破
+	NotReady: 缺少媒介
+	Cancel: 推迟
+	BurnedCapacity: 突破前必须修复全部燃烧的真气容量
+}
+
+HeartDemonTrialConfirmation: {
+	Title: 心魔试炼
+	Message: 携带 {0} 点腐化挑战心魔？
+	Warning: 个人首领试炼。死亡或逃离不会移除心魔点。
+	Reward: 胜利将净化全部心魔点及其惩罚。
+	Confirm: 开始试炼
+	Cancel: 推迟
 }
 
 TribulationConfirmation: {
 	Title: 天劫
 	Message: 你即将尝试突破至 {0}
 	Strikes: 你必须承受 {0} 道天雷
+	Difficulty: 天劫威力 +{0}% | {1} | 金丹品阶 {2}
 	Warning: 请确认生命、装备与真气均已准备妥当
 	Confirm: 确认
 	Cancel: 取消
@@ -373,6 +583,7 @@ Configs: {
 			Progression: 修炼难度
 			SpiritualQiZones: 高灵气区域
 			SpiritBeasts: 灵兽
+			CultivationRisks: 修炼风险
 			Debug: 调试工具
 			AbilityTerrainDestruction: 功法地形破坏
 		}
@@ -405,6 +616,26 @@ Configs: {
 		SpiritBeastSpawnRatePercent: {
 			Label: 灵兽生成率
 			Tooltip: 应用于灵兽自然生成概率的百分比倍率
+		}
+
+		EnableQiBurning: {
+			Label: 启用燃烧真气
+			Tooltip: 筑基修士可永久损伤最大真气容量以换取紧急战力
+		}
+
+		MaximumBurnedQiPercent: {
+			Label: 最大燃烧真气
+			Tooltip: 燃烧真气可损伤的基础容量百分比上限
+		}
+
+		EnableHeartDemons: {
+			Label: 启用心魔
+			Tooltip: 突破失败与 PvE 死亡会产生心魔点与个人试炼
+		}
+
+		HeartDemonPenaltyStrengthPercent: {
+			Label: 心魔惩罚强度
+			Tooltip: 调整心魔点对突破与修炼的惩罚
 		}
 
 		EnableDebugCommandsInMultiplayer: {
@@ -560,6 +791,11 @@ Items: {
 	MeridianCleansingPill: {
 		DisplayName: 洗脉丹
 		Tooltip: 降低 40 点丹药饱和度
+	}
+
+	MeridianMendingPill: {
+		DisplayName: 经脉修复丹
+		Tooltip: 修复被燃烧真气损伤的 10% 基础真气容量
 	}
 
 	GreaterQiRecoveryPill: {
@@ -912,6 +1148,56 @@ Items: {
 		Tooltip: 降低天劫伤害与真气护盾消耗，持续 10 分钟
 	}
 
+	MeridianOpeningPill: {
+		DisplayName: 开脉丹
+		Tooltip: 炼气境突破概率 +10%，持续10分钟 | 尝试时消耗
+	}
+
+	FoundationAscensionPill: {
+		DisplayName: 筑基升华丹
+		Tooltip: 筑基境突破概率 +12%，持续10分钟 | 可代替所需天材地宝 | 尝试时消耗
+	}
+
+	GoldenCoreCondensationPill: {
+		DisplayName: 金丹凝结丹
+		Tooltip: 结丹境突破概率 +15%，持续10分钟 | 尝试时消耗
+	}
+
+	NascentSoulIntegrationPill: {
+		DisplayName: 元婴融合丹
+		Tooltip: 元婴境突破概率 +18%，持续10分钟 | 尝试时消耗
+	}
+
+	HeavenlyEyeEssence: {
+		DisplayName: 天眼精华
+		Tooltip:
+			'''
+			克苏鲁之眼掉落的天材地宝
+			筑基或结丹时可选
+			成功后永久 +5% 暴击率、+10% 真气感知范围
+			'''
+	}
+
+	HeavenlyRoyalNectar: {
+		DisplayName: 天御王浆
+		Tooltip:
+			'''
+			蜂王掉落的天材地宝
+			筑基或结丹时可选
+			成功后永久 +20 最大生命、+1 生命再生
+			'''
+	}
+
+	HeavenlyBoneMarrow: {
+		DisplayName: 天骨髓
+		Tooltip:
+			'''
+			骷髅王掉落的天材地宝
+			筑基或结丹时可选
+			成功后永久 +4 防御、+2% 伤害减免
+			'''
+	}
+
 	SpiritBeastLurePill: {
 		DisplayName: 引兽丹
 		Tooltip: 灵兽生成权重变为 2.5 倍，持续 5 分钟
@@ -1006,6 +1292,7 @@ NPCs: {
 	JadeHornDeer.DisplayName: 玉角鹿
 	FlameTailedFox.DisplayName: 炎尾狐
 	ThunderclawTiger.DisplayName: 雷爪虎
+	HeartDemon.DisplayName: 心魔
 }
 
 Sect: {
@@ -1114,6 +1401,7 @@ Cultivation: {
 	QiStatusMax: 真气 {0}/{1} | 真气经验 已满
 	QiGain: +{0} 真气
 	Breakthrough: 突破！你已达到 {0}
+	BreakthroughGradeAchieved: 突破品质已稳固：{0}
 	StageAdvanced: 进阶！{0} - {1} 阶
 	TribulationBegins: 天劫降临！承受 {1} 道天雷以踏入 {0}
 	TribulationReady: 突破至 {0} 的天劫正在等待
@@ -1130,10 +1418,70 @@ Cultivation: {
 	RealmBonuses: +{0} 最大生命 | +{1} 防御 | +{2}% 伤害 | +{3}% 移速 | +{4}% 暴击 | +{5}% 伤害减免 | +{6} 生命再生
 	SpiritualQiZoneStatus: 灵气浓度 Lv.{0}：+{1}%（{2} 块晶体）
 
+	BurnedQi: {
+		DisabledByServer: 服务器已禁用燃烧真气
+		NotEquipped: 请先在当前功法配置中装备燃烧真气
+		Dead: 死亡时无法点燃经脉
+		RequiresFoundation: 燃烧真气需要筑基境
+		WhileMeditating: 使用前请停止冥想
+		NoCapacity: 没有可继续燃烧的真气容量
+		DeviationBlocked: 真气逆行阻止燃烧真气
+		LimitBlocked: 已达到燃烧上限
+		ConfirmationBlocked: 请先关闭突破确认
+		TrialBlocked: 心魔试炼中无法使用
+		Enabled: 燃烧真气已点燃
+		Disabled: 燃烧结束，已损伤 {0}% 容量
+		DisabledNetwork: 燃烧真气已结束
+		Pulse: 已燃烧真气容量：{0}%
+		LimitReached: 已达到燃烧安全上限
+		Repaired: 修复 {0}% | 仍损伤 {1}%
+		BreakthroughBlocked: 突破前必须修复燃烧的真气容量
+	}
+
+	HeartDemons: {
+		PointGained: 心魔加深：{0}/{1}
+		MaximumReached: 心魔腐化已达上限
+		DeathCounted: PvE 死亡已计数：{0}/{1}，达到后增加心魔点
+		FailureCounted: 突破失败已计数：{0}/{1}，达到后增加心魔点
+	}
+
+	HeartDemonTrial: {
+		DisabledByServer: 服务器已禁用心魔
+		NoPoints: 没有可挑战的心魔
+		Dead: 死亡时无法面对内在试炼
+		Cooldown: 内在试炼还需 {0} 秒恢复
+		QiBurningBlocked: 挑战前请结束燃烧真气
+		AlreadyActive: 心魔试炼已经开始
+		TribulationBlocked: 请先完成或推迟天劫
+		EventBlocked: 入侵或事件期间无法开始
+		BossBlocked: 请先击败当前首领
+		Started: 你的心魔显现了
+		Purified: 心魔已净化，全部腐化点移除
+		Failed: 心魔试炼失败，腐化仍在
+	}
+
+	BreakthroughChance: {
+		Failed: 境界突破失败（成功率 {0}%）。损失最终阶段的 {1} 真气经验。
+		Succeeded: 境界突破成功（成功率 {0}%）！
+		MissingFoundationCatalyst: 无法筑基。请准备筑基升华丹，或携带 1 件天材地宝。
+		MissingGoldenCoreTreasure: 无法凝结金丹。请携带克苏鲁之眼、蜂王或骷髅王掉落的 1 件天材地宝。
+		HeavenlyEyeImprint: 天眼精华烙印：永久 +5% 暴击率、+10% 真气感知范围。
+		HeavenlyRoyalNectarImprint: 天御王浆炼化：永久 +20 最大生命、+1 生命再生。
+		HeavenlyBoneMarrowImprint: 天骨髓融合：永久 +4 防御、+2% 伤害减免。
+	}
+
 	BreakthroughTooltip: {
 		Title: 突破准备
 		Next: 下一进阶：{0}，{1} 阶
 		Progress: 真气经验 {0}/{1} - 还需 {2}
+		SuccessChance: 境界成功率：{0}% | 基础 {1}% | 灵根 {2}% | 丹药 {3}% | 心魔 {4}%
+		QiCapacity: 真气：{0}/{1} 有效 | 基础容量 {2} | 已燃烧 {3}%
+		FailurePenalty: 失败会损失最终阶段所需真气经验的25%；当前境界和已完成阶段保留
+		FoundationCatalyst: 筑基媒介 | 丹药：{0} | 或任选 1 件宝物：天眼 {1}、王浆 {2}、骨髓 {3}
+		GoldenCoreTreasure: 结丹需要任选 1 件宝物 | 天眼 {0}、王浆 {1}、骨髓 {2}
+		PermanentImprints: 永久宝物烙印 | 天眼 x{0} | 王浆 x{1} | 骨髓 x{2}
+		Ready: 已准备
+		Absent: 未准备
 		Bonuses: 下一阶段加成：+{0} 生命 | +{1} 防御 | +{2}% 伤害 | +{3}% 速度 | +{4}% 暴击 | +{5}% 伤害减免 | +{6} 再生
 		NextAbilities: 达到 {0} 时解锁：{1}
 		Tribulation: 天劫：{0} 道 | 每次护盾约耗 {1} 真气 | 总计约 {2}
@@ -1174,6 +1522,7 @@ Projectiles: {
 	// VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
 	// ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
 	SpiritualRainProjectile.DisplayName: 灵雨
+	// HeartDemonBolt.DisplayName: Heart Demon Bolt
 }
 
 Tiles: {
@@ -1324,6 +1673,10 @@ PermanentFormation: {
 }
 
 DebugCommands: {
+	Help14: /xiadebug root [show|reveal|roll] - 查看或测试灵根
+	RootUsage: 用法：/xiadebug root [show|reveal|roll]
+	RootRolled: 已生成新的隐藏灵根。
+	RootStatus: 灵根：{0} | 元素：{1} | 主属性：{2} | 纯度：{3}% | 已鉴定：{4}
 	MultiplayerDisabled: 多人模式已禁用调试命令。请仅在私人测试时于服务器配置中明确启用
 	HelpTitle: Xianxia 调试命令（境界编号：1-5）
 	Help1: /xiadebug status - 显示当前测试状态
@@ -1395,6 +1748,14 @@ Forging: {
 	QualityTooltip: "{0}品质 | 威力：{1}% | 真气消耗：{2}% | 炼器经验：{3}%"
 	MasteryTooltip: 炼器：品阶 {0}（{1}），{2}阶段 | 基础经验：{3} | 当前奖励：{4}经验
 	ArtifactQiCost: 当前每次使用消耗真气：{0}
+	ArtifactElement: 灵性元素：{0}
+
+	RootSynergy: {
+		Hidden: 鉴定灵根后可查看法宝契合
+		NoAffinity: 灵根没有匹配的元素亲和
+		Match: 灵根亲和 {0}% | 威力 +{1}% | 真气消耗 -{2}% | 炼器品质判定 +{3}
+	}
+
 	JadeAntlerStats: +{0}防御 | +{1}生命恢复 | +{2}%魔法伤害
 	BeastSoulStats: +{0}%召唤伤害 | +{1}%魔法伤害 | +{2}防御 | +1召唤栏 | 守护兽基础伤害：{3}
 
@@ -1452,6 +1813,7 @@ Manual: {
 			// SectSystem: Sects and Missions
 			// FormationPath: Permanent Formations
 			// ArtifactForging: Artifact Forging Path
+			SpiritualRoots: 灵根
 			AdvancedPills: 高级丹药配方
 		}
 	}
@@ -1493,7 +1855,7 @@ Manual: {
 				始终生效。被动真气恢复提高 10%，恢复缺失真气时获得熟练度。
 
 				神识 - 炼气境
-				探测生灵、宝藏与危险。消耗 1 真气/秒。可从功法轮盘或用 /qisense on|off 切换。
+				探测生灵、宝藏与危险。灵玉矿会发出青绿色光芒，玄铁矿会发出紫蓝色光芒，即使在黑暗中也清晰可见。探测范围随神识等级提升。消耗 1 真气/秒。可从功法轮盘或用 /qisense on|off 切换。
 
 				真气护盾 - 筑基境
 				每吸收 1 点伤害消耗 5 真气，包括火焰、中毒等减益的持续伤害。水下氧气耗尽时也会消耗真气防止溺水，并将氧气条维持在最后一格。修炼带来的生命再生先于护盾结算，可减轻或抵消负再生。开启时会出现灵力护盾。可从轮盘或用 /qiprotection on|off 切换。
@@ -1541,7 +1903,7 @@ Manual: {
 				传送到光标位置，也可在全屏地图中使用。基础消耗 20 真气，每移动 2 格另加 2 真气，并会在目标附近寻找安全空间。
 
 				功法轮盘 [{3}]
-				按住按键查看功法、需求、控制与被动状态。点击被动功法可切换。
+				主轮盘显示当前功法配置中已装备的施放型功法。按住轮盘键并点击一项，即可绑定到“使用所选功法”。点击“切换”会展开独立的上方半圆菜单，其中包含神识、真气护盾、燃烧真气、夜视、御气飞行与灵压。点击这些功法会立即启用或关闭，且不会替换当前所选施放型功法。
 				'''
 		}
 
@@ -1549,13 +1911,34 @@ Manual: {
 			Title: 突破、资源与炼丹
 			Body:
 				'''
-				真气经验达到门槛便会突破。从结丹境开始，必须确认并挺过天劫。第一次天劫有 9 道雷击，失败将无法进阶。
+				突破品质
+				筑基有四种目标。下品筑基为默认，保留正常属性。稳固、完美与天道筑基分别给予 ×1.15、×1.35、×1.60 筑基属性，以及 7%、15%、25% 真气获取。高品质会降低成功率。完美需要 1 件天材地宝；天道还需要筑基升华丹。
+
+				金丹分九品：九品为默认，一品最高。更高品级最多给予 ×1.65 金丹属性与 +27% 真气获取，但成功率更低。所有品级需要 1 件天材地宝；一品还需要金丹凝结丹。筑基品质会影响结丹成功率。
+
+				在中央突破窗口使用两个媒介槽。左键选择或切换物品栏中的有效物品，右键清除。所选丹药每次尝试都会消耗；天材地宝只在成功通过概率判定后消耗。旧角色默认为下品筑基与九品金丹。
+
+				燃烧真气 [H]
+				筑基后可点燃经脉，获得大量伤害、攻速、暴击、移动与防御加成。每3秒永久损伤2%基础最大真气，直到服务器上限。停止后触发真气逆行。损伤容量会阻止境界突破。即使灵气浓度为0级，冥想每30秒也会修复0.25%；每级灵气浓度都会提高修复倍率，阵法则使其翻倍。经脉修复丹可立即修复。
+
+				心魔
+				每2次境界突破失败或5次 PvE 死亡产生1点心魔，最多9点。每点使突破率与修炼收益降低2%。在角色页选择挑战心魔以开始个人首领试炼。胜利净化全部点数；死亡或逃离不会移除。
+
+				每次境界突破都有成功率：炼气境90%，筑基境75%，结丹境55%，元婴境35%。灵根品质与纯度可提高或降低成功率。失败会损失最终阶段所需真气经验的25%，但不会失去当前境界或已完成阶段。
+
+				对应的突破丹可增加10-18%成功率；无论成功或失败，尝试时都会消耗丹药效果。悬停真气条可查看基础、灵根和丹药修正。
+
+				突破筑基境需要筑基升华丹效果，或任选 1 件天材地宝。凝结金丹需要任选 1 件天材地宝。天眼精华、天御王浆和天骨髓分别由克苏鲁之眼、蜂王和骷髅王必定掉落。
+
+				宝物只在成功率判定通过后消耗，并给予永久烙印：天眼 +5% 暴击率与 +10% 真气感知范围；王浆 +20 最大生命与 +1 生命再生；骨髓 +4 防御与 +2% 伤害减免。携带多件时按物品栏顺序使用第一件。
+
+				从结丹境开始，成功率判定通过后仍需确认并渡过天劫。取消只会推迟，不损失真气经验。第一次天劫有9道雷击。
 
 				天雷会穿透普通防御。基础熟练度下，结丹境每道雷击会让真气护盾消耗约 12% 最大真气并抵挡 70% 生命伤害，其余伤害穿透护盾。元婴境雷击消耗约 15%，伤害也高得多。提升真气护盾熟练度可降低储备消耗。请带满真气、治疗品与合适装备。
 
 				灵石无法制作，只能从灵晶矿脉开采。灵玉与玄铁可炼成锭，用于护甲、饰品、武器与飞剑。
 
-				炼丹炉可炼制丹药。回气丹恢复 100 真气但不增加真气经验；其他丹药可暂时提升冥想、防御与伤害。
+				炼丹炉还可炼制炼气、筑基、结丹和元婴专用突破丹，提高对应境界的突破成功率。
 
 				飞剑需要炼气境，每次发射都会消耗真气。它会自动追踪 60 格内最近的可见敌人；未找到目标时会正常前进，随后返回主人身边。
 				'''
@@ -1843,6 +2226,21 @@ Manual: {
 				''' */
 		}
 
+		SpiritualRoots: {
+			Title: 灵根
+			Body:
+				'''
+				每个角色永久拥有一个灵根，并可带往所有世界。灵根具有不同品质和元素亲和。
+
+				灵根初始隐藏。宗门成员可请剑长老免费鉴定；散修可支付5灵石请游士沈鉴定。鉴定后打开修炼 > 角色查看。
+
+				灵根品质与纯度使打坐修炼速度提高约5-25%。天灵根从85纯度的18%提升至100纯度的25%；变异灵根为15-22%，太初灵根为25%。元素还会给予小型主题加成。正常游戏中不能重随灵根。
+
+				生物群系共鸣
+				每种元素在对应环境中获得额外打坐修炼速度：木对应丛林，火对应地狱，土对应地下，金对应地牢，水对应海洋，雷对应降雨，冰对应雪原，风对应高空，虚空对应太空。加成随该元素亲和度提升，最高15%（土最高12%）。多元素灵根只使用当前最强共鸣。
+				'''
+		}
+
 		ArtifactForging: {
 			// Title: Artifact Forging
 			/* Body:
@@ -1858,6 +2256,9 @@ Manual: {
 				Refined - 112% power, 92% Qi cost and 200% Forging EXP.
 				Earth Grade - 127% power, 82% Qi cost and 500% Forging EXP.
 				Heaven Grade - 148% power, 70% Qi cost and 1000% Forging EXP.
+
+				ELEMENTAL COMPATIBILITY
+				Every artifact carries one or two spiritual elements. A matching Spiritual Root improves artifact power, projectile utility and Qi efficiency. During crafting, matching affinity also adds up to 5 points to the quality roll. Multi-element artifacts use average affinity.
 
 				SPIRITUAL FORGES
 				Artifact Forge - basic Mortal refinement.

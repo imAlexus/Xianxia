@@ -1,0 +1,92 @@
+[h1]Xianxia 0.1.8 - Spiritual Roots[/h1]
+
+[b]Workshop hotfix build: 0.1.8.2[/b]
+
+This update introduces Spiritual Roots, breakthrough grades, Technique Loadouts, Qi Burning, Heart Demons, improved spiritual ore access, and major interface upgrades.
+
+[h2]Spiritual Roots[/h2]
+[list]
+[*]Added permanent Mixed, True, Heavenly, Mutated, and Primordial Spiritual Roots.
+[*]Roots contain elemental affinities, purity, a primary element, and meditation bonuses.
+[*]Elements improve compatible technique power, Qi cost, mastery gain, artifacts, and passive statistics.
+[*]Added biome resonance: Wood/Jungle, Fire/Underworld, Earth/Underground, Metal/Dungeon, Water/Ocean, Lightning/Rain, Ice/Snow, Wind/Sky, and Void/Space.
+[*]Roots can be appraised by Elder Jian or Wanderer Shen and are synchronized in multiplayer.
+[/list]
+
+[h2]Technique Loadouts and Ability Wheel[/h2]
+[list]
+[*]Added three persistent, multiplayer-synchronized Technique Loadout presets.
+[*]Available slots increase from 2 at Mortal to 6 at Nascent Soul.
+[*]Foundation Establishment unlocks presets 2 and 3.
+[*]Equip unlocked cast techniques through the Abilities page.
+[*]The Ability Wheel mirrors the active preset. Select a technique, then cast it with the universal key.
+[*]Optional individual hotkeys remain available and work without equipping the technique.
+[*]Added a persistent Toggle semicircle for Qi Sense, Qi Protection, Qi Burning, Night Vision, Qi Flight, Spiritual Pressure, and Sect Protection Formation.
+[*]Spiritual Rain and Spirit Sword Rain are now compatible with loadout slots.
+[*]Added scrolling to the Ability Tree and improved cards, progress bars, elemental colors, details, and layout.
+[/list]
+
+[h2]Realm Breakthroughs[/h2]
+[list]
+[*]Realm breakthroughs now use visible success chances that decrease at higher Realms.
+[*]Spiritual Roots, pills, Heart Demons, and selected breakthrough grade modify success chance.
+[*]Added centered confirmation UI with chance breakdown and catalyst slots.
+[*]Added Inferior, Stable, Perfect, and Heavenly Foundation qualities.
+[*]Higher Foundation quality grants stronger statistics and faster Qi gathering.
+[*]Golden Core now has nine Tiers: Tier 9 is default and Tier 1 is strongest.
+[*]Higher Golden Core Tiers grant better statistics and Qi gathering but reduce breakthrough chance.
+[*]Tribulation strength scales with Realm, Foundation quality, and Golden Core Tier.
+[*]Added breakthrough pills for Qi Gathering, Foundation, Golden Core, and Nascent Soul.
+[/list]
+
+[h2]Heavenly Treasures[/h2]
+[list]
+[*]Foundation requires one Foundation Pill or one Heavenly Treasure; higher Foundation grades have stricter requirements.
+[*]Golden Core requires one chosen Heavenly Treasure; Tier 1 also requires a Golden Core Pill.
+[*]Eye of Cthulhu, Queen Bee, and Skeletron guarantee unique Heavenly Treasures.
+[*]Successful use grants permanent critical chance/Qi Sense, life/regeneration, or defense/damage reduction bonuses.
+[*]Added Terraria-scale textures, multiline tooltips, catalyst selection, and permanent records in the Character tab.
+[/list]
+
+[h2]Qi Burning and Heart Demons[/h2]
+[list]
+[*]Added Qi Burning: sacrifice maximum Qi capacity for major combat bonuses.
+[*]Burned capacity persists, blocks Realm advancement, and causes Qi Deviation when Qi Burning ends.
+[*]Repair the cultivation origin through meditation or Meridian Mending Pills.
+[*]Repair meditation restores current Qi without increasing QiEXP until the origin is healed.
+[*]Added Heart Demon points from eligible deaths and failed Realm breakthroughs.
+[*]Heart Demons reduce cultivation gain and breakthrough chance.
+[*]Added personal Heart Demon trials with a Realm-scaled boss and server-authoritative multiplayer state.
+[*]Fixed death and breakthrough-failure counters in the Character UI and multiplayer.
+[/list]
+
+[h2]Spiritual Ores and Existing Worlds[/h2]
+[list]
+[*]Greatly increased Spirit Jade and Profound Iron generation; Spirit Stone generation is unchanged.
+[*]Existing worlds receive a one-time safe migration for missing Spirit Jade and Profound Iron.
+[*]Qi Sense now highlights both ores through walls with distinct pulsing colors.
+[*]Wanderer Shen and Elder Jian sell progression-appropriate Spirit Jade and Profound Iron.
+[*]Fixed higher Artifact Forges so they can craft recipes from all lower Forge Tiers.
+[/list]
+
+[h2]Character and Interface[/h2]
+[list]
+[*]Expanded Character tab with Spiritual Root, affinities, Realm grade, Golden Core Tier, combat statistics, Qi bonuses, catalysts, breakthrough history, and Heart Demon progress.
+[*]Improved text size, multiline descriptions, catalyst records, and long-stat readability.
+[*]Breakthrough readiness now displays correct current, effective, base, and burned Qi values.
+[*]Added the Damaged Cultivation Origin status with repair instructions.
+[*]Fixed repeated breakthrough prompts interrupting meditation while the cultivation origin is damaged.
+[/list]
+
+[h2]Other Improvements[/h2]
+[list]
+[*]Updated Cultivator Manual and English, Italian, and Simplified Chinese localization.
+[*]Added server settings for Qi Burning, burned Qi limits, Heart Demons, and penalty strength.
+[*]Improved Ability Wheel title placement and preserved Toggle-menu state after closing the wheel.
+[*]Shortened the Workshop description to remain safely below Steam limits.
+[*]Updated RIASSUNTO_MOD.md with the complete 0.1.8.2 systems, file counts, and changelog summary.
+[*]Aligned ROADMAP_0.2.0.md with current version 0.1.8.2.
+[*]Verified compilation and packaged build with 0 errors.
+[/list]
+
+[url=https://discord.gg/qgNTXt8cs8]Join the official Xianxia Discord server[/url]

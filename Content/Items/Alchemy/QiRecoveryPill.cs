@@ -33,7 +33,7 @@ public class QiRecoveryPill : ModItem, IAlchemyPill
 	public override bool CanUseItem(Player player)
 	{
 		CultivationPlayer cultivation = player.GetModPlayer<CultivationPlayer>();
-		return cultivation.Qi < cultivation.QiExp;
+		return cultivation.Qi < cultivation.MaxQi;
 	}
 
 	public override bool? UseItem(Player player)

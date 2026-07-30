@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Xianxia.Common.Items;
 using Xianxia.Common.Players;
+using Xianxia.Common.Elements;
 using Xianxia.Content.Items.Materials;
 using Xianxia.Content.Items.Materials.SpiritBeasts;
 using Xianxia.Content.Projectiles;
@@ -13,7 +14,7 @@ using Xianxia.Content.Tiles;
 
 namespace Xianxia.Content.Items.Artifacts;
 
-public interface ISpiritualArtifact
+public interface ISpiritualArtifact : ISpiritualElementSource
 {
 	int RequiredForgingTier { get; }
 	int RequiredForgingStage { get; }
@@ -25,12 +26,22 @@ public abstract class SpiritualArtifactItem : ModItem, ISpiritualArtifact
 	public abstract int RequiredForgingTier { get; }
 	public abstract int RequiredForgingStage { get; }
 	public abstract int ForgingExperience { get; }
+	public abstract SpiritualElement SpiritualElements { get; }
 
 	protected int AdjustedQiCost(Player player, int baseCost)
 	{
-		float multiplier = Item.GetGlobalItem<ArtifactGlobalItem>().QiCostMultiplier;
-		return Math.Max(1, (int)MathF.Ceiling(baseCost * multiplier));
+		ArtifactGlobalItem artifact = Item.GetGlobalItem<ArtifactGlobalItem>();
+		int qualityAdjusted = Math.Max(1,
+			(int)MathF.Ceiling(baseCost * artifact.QiCostMultiplier));
+		return artifact.GetElementalQiCost(player, qualityAdjusted, SpiritualElements);
 	}
+
+	protected float AdjustedPower(Player player) =>
+		Item.GetGlobalItem<ArtifactGlobalItem>().PowerMultiplier
+		* ArtifactGlobalItem.GetElementalPowerMultiplier(player, SpiritualElements);
+
+	protected float AdjustedUtility(Player player) =>
+		ArtifactGlobalItem.GetElementalUtilityMultiplier(player, SpiritualElements);
 
 	protected bool TrySpendQi(Player player, int baseCost) =>
 		player.GetModPlayer<CultivationPlayer>().SpendQi(
@@ -52,6 +63,7 @@ public class VerdantAntlerStaff : SpiritualArtifactItem
 	public override int RequiredForgingTier => 0;
 	public override int RequiredForgingStage => 0;
 	public override int ForgingExperience => 18;
+	public override SpiritualElement SpiritualElements => SpiritualElement.Wood;
 
 	public override void SetDefaults()
 	{
@@ -77,7 +89,8 @@ public class VerdantAntlerStaff : SpiritualArtifactItem
 	{
 		if (!TrySpendQi(player, 5))
 			return false;
-		Projectile.NewProjectile(source, position, velocity, type, damage, knockback,
+		Projectile.NewProjectile(source, position, velocity * AdjustedUtility(player),
+			type, damage, knockback,
 			player.whoAmI);
 		return false;
 	}
@@ -97,6 +110,8 @@ public class JadeAntlerTalisman : SpiritualArtifactItem
 	public override int RequiredForgingTier => 1;
 	public override int RequiredForgingStage => 0;
 	public override int ForgingExperience => 28;
+	public override SpiritualElement SpiritualElements =>
+		SpiritualElement.Wood | SpiritualElement.Earth;
 
 	public override void SetDefaults()
 	{
@@ -109,7 +124,7 @@ public class JadeAntlerTalisman : SpiritualArtifactItem
 
 	public override void UpdateAccessory(Player player, bool hideVisual)
 	{
-		float power = Item.GetGlobalItem<ArtifactGlobalItem>().PowerMultiplier;
+		float power = AdjustedPower(player);
 		player.statDefense += (int)MathF.Round(5f * power);
 		player.lifeRegen += (int)MathF.Round(2f * power);
 		player.GetDamage(DamageClass.Magic) += 0.06f * power;
@@ -130,6 +145,8 @@ public class FlameSpiritFan : SpiritualArtifactItem
 	public override int RequiredForgingTier => 2;
 	public override int RequiredForgingStage => 0;
 	public override int ForgingExperience => 42;
+	public override SpiritualElement SpiritualElements =>
+		SpiritualElement.Fire | SpiritualElement.Wind;
 
 	public override void SetDefaults()
 	{
@@ -155,9 +172,10 @@ public class FlameSpiritFan : SpiritualArtifactItem
 	{
 		if (!TrySpendQi(player, 15))
 			return false;
+		float utility = AdjustedUtility(player);
 		for (int i = -1; i <= 1; i++)
 			Projectile.NewProjectile(source, position,
-				velocity.RotatedBy(MathHelper.ToRadians(i * 9f)), type,
+				velocity.RotatedBy(MathHelper.ToRadians(i * 9f)) * utility, type,
 				damage, knockback, player.whoAmI);
 		return false;
 	}
@@ -177,6 +195,7 @@ public class ThunderclapSeal : SpiritualArtifactItem
 	public override int RequiredForgingTier => 3;
 	public override int RequiredForgingStage => 0;
 	public override int ForgingExperience => 62;
+	public override SpiritualElement SpiritualElements => SpiritualElement.Lightning;
 
 	public override void SetDefaults()
 	{
@@ -202,7 +221,8 @@ public class ThunderclapSeal : SpiritualArtifactItem
 	{
 		if (!TrySpendQi(player, 28))
 			return false;
-		Projectile.NewProjectile(source, position, velocity, type, damage, knockback,
+		Projectile.NewProjectile(source, position, velocity * AdjustedUtility(player),
+			type, damage, knockback,
 			player.whoAmI);
 		return false;
 	}
@@ -222,6 +242,8 @@ public class BeastSoulBanner : SpiritualArtifactItem
 	public override int RequiredForgingTier => 4;
 	public override int RequiredForgingStage => 0;
 	public override int ForgingExperience => 85;
+	public override SpiritualElement SpiritualElements =>
+		SpiritualElement.Earth | SpiritualElement.Metal;
 
 	public override void SetDefaults()
 	{
@@ -234,7 +256,7 @@ public class BeastSoulBanner : SpiritualArtifactItem
 
 	public override void UpdateAccessory(Player player, bool hideVisual)
 	{
-		float power = Item.GetGlobalItem<ArtifactGlobalItem>().PowerMultiplier;
+		float power = AdjustedPower(player);
 		player.GetDamage(DamageClass.Summon) += 0.16f * power;
 		player.GetDamage(DamageClass.Magic) += 0.10f * power;
 		player.maxMinions += 1;

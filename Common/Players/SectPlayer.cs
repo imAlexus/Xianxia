@@ -592,24 +592,28 @@ public class SectPlayer : ModPlayer
 		return Mod.GetLocalization($"Sect.Missions.{MissionType}").Format(progress, MissionTarget);
 	}
 
-	private void TryUseSpiritSwordRain()
+	public void TryUseSpiritSwordRain()
 	{
 		CultivationPlayer cultivation = Player.GetModPlayer<CultivationPlayer>();
 		if (!SpiritSwordRainUnlocked || cultivation.RealmIndex < 2 || swordRainCooldown > 0)
 			return;
 		int level = cultivation.GetAbilityLevel(CultivationAbility.SpiritSwordRain);
-		int cost = Math.Max(35, 80 - (level - 1) * 2);
-		if (!cultivation.SpendQi(cost))
+		int baseCost = Math.Max(35, 80 - (level - 1) * 2);
+		if (!cultivation.SpendAbilityQi(baseCost, CultivationAbility.SpiritSwordRain))
 			return;
 
 		const int count = 5;
-		int damage = (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(52 + level * 4);
+		float elementalPower = cultivation.GetAbilityPowerMultiplier(
+			CultivationAbility.SpiritSwordRain, 0f);
+		int damage = (int)Player.GetTotalDamage(DamageClass.Magic)
+			.ApplyTo((52 + level * 4) * elementalPower);
 		Vector2 aimDirection = Player.DirectionTo(Main.MouseWorld);
 		if (aimDirection.LengthSquared() < 0.001f)
 			aimDirection = new Vector2(Player.direction, 0f);
 		// Sword Rain never has less reach than the ordinary flying sword, but
 		// aiming farther away extends its maximum travel distance to the cursor.
-		float maximumRange = Math.Max(960f, Vector2.Distance(Player.Center, Main.MouseWorld));
+		float maximumRange = Math.Max(960f,
+			Vector2.Distance(Player.Center, Main.MouseWorld)) * elementalPower;
 		Vector2 formationAxis = aimDirection.RotatedBy(MathHelper.PiOver2);
 		if (Math.Abs(aimDirection.X) > 0.01f)
 			Player.direction = Math.Sign(aimDirection.X);
@@ -645,7 +649,7 @@ public class SectPlayer : ModPlayer
 		SoundEngine.PlaySound(SoundID.Item84, Player.Center);
 	}
 
-	private void TryUseSectProtectionFormation()
+	public void TryUseSectProtectionFormation()
 	{
 		CultivationPlayer cultivation = Player.GetModPlayer<CultivationPlayer>();
 		if (Player.HasBuff<SectProtectionFormationBuff>())

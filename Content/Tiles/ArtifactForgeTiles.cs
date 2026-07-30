@@ -14,6 +14,7 @@ public abstract class ArtifactForgeTileBase : ModTile
 	protected abstract int DropItem { get; }
 	protected abstract Color MapColor { get; }
 	protected abstract Color LightColor { get; }
+	protected abstract int[] CraftingAdjacencies { get; }
 
 	public override void SetStaticDefaults()
 	{
@@ -36,7 +37,7 @@ public abstract class ArtifactForgeTileBase : ModTile
 
 		DustType = DustID.GemEmerald;
 		HitSound = SoundID.Tink;
-		AdjTiles = [TileID.Anvils, TileID.MythrilAnvil];
+		AdjTiles = CraftingAdjacencies;
 		AddMapEntry(MapColor, CreateMapEntryName());
 		RegisterItemDrop(DropItem);
 	}
@@ -64,6 +65,7 @@ public class ArtifactForgeTile : ArtifactForgeTileBase
 	protected override int DropItem => ModContent.ItemType<ArtifactForge>();
 	protected override Color MapColor => new(80, 150, 145);
 	protected override Color LightColor => Color.Cyan;
+	protected override int[] CraftingAdjacencies => [TileID.Anvils, TileID.MythrilAnvil];
 }
 
 public class SpiritJadeArtifactForgeTile : ArtifactForgeTileBase
@@ -71,6 +73,8 @@ public class SpiritJadeArtifactForgeTile : ArtifactForgeTileBase
 	protected override int DropItem => ModContent.ItemType<SpiritJadeArtifactForge>();
 	protected override Color MapColor => new(65, 190, 125);
 	protected override Color LightColor => new(65, 255, 180);
+	protected override int[] CraftingAdjacencies =>
+		[ModContent.TileType<ArtifactForgeTile>(), TileID.Anvils, TileID.MythrilAnvil];
 }
 
 public class ProfoundArtifactForgeTile : ArtifactForgeTileBase
@@ -78,4 +82,8 @@ public class ProfoundArtifactForgeTile : ArtifactForgeTileBase
 	protected override int DropItem => ModContent.ItemType<ProfoundArtifactForge>();
 	protected override Color MapColor => new(135, 75, 190);
 	protected override Color LightColor => new(180, 80, 255);
+	protected override int[] CraftingAdjacencies =>
+		[ModContent.TileType<ArtifactForgeTile>(),
+			ModContent.TileType<SpiritJadeArtifactForgeTile>(),
+			TileID.Anvils, TileID.MythrilAnvil];
 }

@@ -1,5 +1,5 @@
 displayName = Xianxia
 author = imAlexus
-version = 0.1.7.1
+version = 0.1.8.2
 homepage = https://steamcommunity.com/sharedfiles/filedetails/?id=3768052356
 buildIgnore = Assets/*, Assets/**, tmp/*, tmp/**, .tmp/*, .tmp/**, release_notes_*.txt

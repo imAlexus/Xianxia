@@ -19,6 +19,10 @@ public class AlchemyPillEffectPlayer : ModPlayer
 	public bool TribulationWard { get; set; }
 	public bool SpiritBeastLure { get; set; }
 	public bool Concealment { get; set; }
+	public bool MeridianOpening { get; set; }
+	public bool FoundationAscension { get; set; }
+	public bool GoldenCoreCondensation { get; set; }
+	public bool NascentSoulIntegration { get; set; }
 
 	public override void ResetEffects()
 	{
@@ -31,6 +35,10 @@ public class AlchemyPillEffectPlayer : ModPlayer
 		TribulationWard = false;
 		SpiritBeastLure = false;
 		Concealment = false;
+		MeridianOpening = false;
+		FoundationAscension = false;
+		GoldenCoreCondensation = false;
+		NascentSoulIntegration = false;
 	}
 
 	public override void PostUpdate()
@@ -81,4 +89,28 @@ public class AlchemyPillEffectPlayer : ModPlayer
 		(FoundationStabilization ? 0.9f : 1f) * (TribulationWard ? 0.75f : 1f);
 
 	public float TribulationShieldCostMultiplier => TribulationWard ? 0.8f : 1f;
+
+	public float GetBreakthroughChanceBonus(int targetRealm) => targetRealm switch
+	{
+		1 when MeridianOpening => 10f,
+		2 when FoundationAscension => 12f,
+		3 when GoldenCoreCondensation => 15f,
+		4 when NascentSoulIntegration => 18f,
+		_ => 0f
+	};
+
+	public void ConsumeBreakthroughPill(int targetRealm)
+	{
+		int buffType = targetRealm switch
+		{
+			1 => ModContent.BuffType<MeridianOpeningBuff>(),
+			2 => ModContent.BuffType<FoundationAscensionBuff>(),
+			3 => ModContent.BuffType<GoldenCoreCondensationBuff>(),
+			4 => ModContent.BuffType<NascentSoulIntegrationBuff>(),
+			_ => 0
+		};
+		int buffIndex = buffType > 0 ? Player.FindBuffIndex(buffType) : -1;
+		if (buffIndex >= 0)
+			Player.DelBuff(buffIndex);
+	}
 }

@@ -9,7 +9,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Xianxia.Common.Players;
+using Xianxia.Common.Elements;
 using Xianxia.Common.Systems;
+using Xianxia.Content.Items;
+using Xianxia.Content.Items.Materials;
 using Xianxia.Content.Items.Sect;
 
 namespace Xianxia.Content.NPCs;
@@ -114,18 +117,49 @@ public class IndependentCultivatorMerchant : ModNPC
 		Player player = Main.LocalPlayer;
 		if (!player.GetModPlayer<SectPlayer>().JoinedSect
 			&& player.GetModPlayer<CultivationPlayer>().RealmIndex >= 1)
+		{
 			button = Mod.GetLocalization("IndependentMerchant.Trade").Value;
+			if (!player.GetModPlayer<SpiritualRootPlayer>().IsRevealed)
+				button2 = Mod.GetLocalization("SpiritualRoots.Appraisal.Button").Value;
+		}
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
 	{
 		if (firstButton)
+		{
 			shopName = ShopName;
+			return;
+		}
+
+		Player player = Main.LocalPlayer;
+		SpiritualRootPlayer root = player.GetModPlayer<SpiritualRootPlayer>();
+		const int appraisalCost = 5;
+		int spiritStoneType = ModContent.ItemType<SpiritStone>();
+		if (root.IsRevealed)
+			return;
+		if (player.CountItem(spiritStoneType) < appraisalCost)
+		{
+			Main.npcChatText = Mod.GetLocalization(
+				"SpiritualRoots.Appraisal.NotEnough").Format(appraisalCost);
+			return;
+		}
+		for (int i = 0; i < appraisalCost; i++)
+			player.ConsumeItem(spiritStoneType);
+		root.RevealRoot();
+		Main.npcChatText = Mod.GetLocalization(
+			"SpiritualRoots.Appraisal.Result").Format(
+				Mod.GetLocalization(
+					$"SpiritualRoots.Qualities.{root.GetQualityLocalizationKey()}").Value,
+				SpiritualElementInfo.GetDisplayName(Mod, root.Elements),
+				root.Purity);
 	}
 
 	public override void AddShops()
 	{
 		new NPCShop(Type, ShopName)
+			.Add(CurrencyItem<SpiritJadeOre>(1))
+			.Add(CurrencyItem<ProfoundIronOre>(2))
 			.Add(CurrencyItem<SwordIntentManual>(40))
 			.Add(CurrencyItem<SpiritSwordRainManual>(120))
 			.Add(CurrencyItem<SectProtectionFormationManual>(300))
@@ -153,6 +187,8 @@ public class IndependentCultivatorMerchant : ModNPC
 			}
 
 			bool unavailable = sect.JoinedSect
+				|| item.type == ModContent.ItemType<SpiritJadeOre>() && realm < 1
+				|| item.type == ModContent.ItemType<ProfoundIronOre>() && realm < 2
 				|| item.type == ModContent.ItemType<SwordIntentManual>()
 					&& (realm < 1 || sect.SwordIntentUnlocked)
 				|| item.type == ModContent.ItemType<SpiritSwordRainManual>()
@@ -210,6 +246,10 @@ public class IndependentCultivatorMerchant : ModNPC
 
 	private static int? GetPrice(int itemType)
 	{
+		if (itemType == ModContent.ItemType<SpiritJadeOre>())
+			return 1;
+		if (itemType == ModContent.ItemType<ProfoundIronOre>())
+			return 2;
 		if (itemType == ModContent.ItemType<SwordIntentManual>())
 			return 40;
 		if (itemType == ModContent.ItemType<SpiritSwordRainManual>())

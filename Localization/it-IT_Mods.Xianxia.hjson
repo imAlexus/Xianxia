@@ -4,7 +4,8 @@ Keybinds: {
 	Meditate.DisplayName: Medita
 	QiResistance.DisplayName: Resistenza Qi
 	QiFlight.DisplayName: Volo Qi
-	Fireball.DisplayName: Palla di Fuoco
+	Fireball.DisplayName: Usa Tecnica Selezionata
+	DirectFireball.DisplayName: Palla di Fuoco
 	QiPalm.DisplayName: Palmo del Qi
 	FlameStep.DisplayName: Passo di Fiamma
 	NascentTeleport.DisplayName: Passo del Vuoto
@@ -14,6 +15,111 @@ Keybinds: {
 	AbilityTree.DisplayName: Albero delle Abilita
 	SpiritSwordRain.DisplayName: Pioggia di Spade Spirituali
 	SectFormation.DisplayName: Formazione Protettiva della Setta
+	QiBurning.DisplayName: Combustione del Qi
+}
+
+TechniqueLoadout: {
+	Title: Loadout Tecniche
+	Equipped: EQUIPAGGIATA
+	Empty: Slot vuoto
+	EmptyHint: Equipaggia una tecnica dal menu Abilità
+	LockedPreset: BLOCCO
+	LockedSlot: BLOCCO
+	Select: SELEZIONA
+	SelectedHint: Selezionata — premi il tasto Usa Tecnica Selezionata
+	SelectionHint: Clicca per selezionare questa tecnica
+	SelectedMessage: Tecnica selezionata: {0}
+	NoSelected: Seleziona prima una tecnica equipaggiata dalla Ruota delle Abilità
+	DirectLocked: "{0} non è sbloccata."
+	ToggleMenu: Toggle
+	ToggleMenuHint: Apri il semicerchio delle tecniche toggle
+	ToggleMenuClose: Chiudi il semicerchio delle tecniche toggle
+	ToggleBadge: TOGGLE
+	ToggleClickHint: Clicca per attivare o disattivare senza cambiare tecnica selezionata
+	NoToggles: Nessuna tecnica toggle sbloccata
+}
+
+SpiritualElements: {
+	Neutral: Neutrale
+	Wood: Legno
+	Fire: Fuoco
+	Earth: Terra
+	Metal: Metallo
+	Water: Acqua
+	Lightning: Fulmine
+	Ice: Ghiaccio
+	Wind: Vento
+	Void: Vuoto
+}
+
+SpiritualRoots: {
+	Qualities: {
+		Mixed: Radice Mista
+		True: Radice Vera
+		Heavenly: Radice Celeste
+		Mutated: Radice Mutata
+		Primordial: Radice Primordiale
+	}
+
+	Appraisal: {
+		Button: Valuta Radice
+		Result: La tua Radice Spirituale è stata rivelata: {0} | Elementi: {1} | Purezza: {2}%.
+		NotEnough: La valutazione della Radice costa {0} Pietre Spirituali.
+	}
+
+	UI: {
+		Title: Radice Spirituale
+		Hidden: La tua Radice Spirituale non è stata valutata
+		AppraisalHint: Chiedi una valutazione all'Anziano Jian o al Viandante Shen
+		Summary: "{0} | Primario: {1} | Purezza: {2}%"
+		CultivationBonus: Velocità coltivazione in meditazione: +{0}%
+		BiomeResonanceActive: Risonanza bioma: {0} in {1} | +{2}% meditazione
+		BiomeResonanceInactive: Risonanza bioma inattiva
+		Affinity: Affinità {0}: {1}%
+	}
+
+	Biomes: {
+		Jungle: Giungla
+		Underworld: Inferi
+		Underground: Sottosuolo e Caverne
+		Dungeon: Dungeon
+		Ocean: Oceano
+		Storm: Pioggia e tempeste
+		Snow: Bioma innevato
+		Sky: Cielo alto
+		Space: Spazio
+	}
+}
+
+CharacterStats: {
+	Title: Statistiche Personaggio
+	Progression: Coltivazione
+	ProgressionRealmValue: "{0} — Stadio {1}"
+	ProgressionQiValue: Qi {0}/{1}  •  QiEXP {2}/{3}
+	CurrentStats: Statistiche di Combattimento
+	CurrentStatsPrimary: Vita {0}/{1}  •  Difesa {2}
+	CurrentStatsSecondary: Critico {0}%  •  Riduzione danni {1}%
+	CultivationBonuses: Bonus Totali della Coltivazione
+	CultivationBonusPrimary: +{0} vita  •  +{1} difesa  •  +{2}% danni  •  +{3}% velocità
+	CultivationBonusSecondary: +{0}% critico  •  +{1}% riduzione danni  •  +{2} rigenerazione
+	BreakthroughRecord: Registro Breakthrough di Realm
+	BreakthroughRecordPrimary: Tentativi {0}  •  Successi {1}
+	BreakthroughRecordSecondary: Fallimenti {0}  •  Pillole usate {1}
+	TreasureImprints: Impronte Heavenly Treasure Permanenti
+	TreasureImprintsValue: Occhio x{0} | Nettare x{1} | Midollo x{2}
+	BreakthroughHistory: Catalizzatori dei Breakthrough Riusciti
+	HistoryEntry: "{0}: {1}"
+	NotCompleted: Non completato
+	LegacyUnknown: Storico — catalizzatore non registrato
+	NoCatalyst: Nessun catalizzatore
+	PillAndTreasure: "{0} + {1}"
+	HeartDemonsTitle: Demoni del Cuore
+	HeartDemonsPoints: "{0}/{1} punti  •  Breakthrough {2}%  •  Coltivazione {3}%"
+	HeartDemonsProgress: Prossimo punto: fallimenti {0}/{1}  •  morti {2}/{3}
+	ConfrontHeartDemon: Affronta Demone del Cuore
+	BreakthroughGrades: Foundation: {0}  •  Golden Core: {1}
+	GradeQiGathering: Raccolta Qi da qualità breakthrough: +{0}%
+	NotReached: Non raggiunto
 }
 
 Currencies: {
@@ -22,6 +128,21 @@ Currencies: {
 }
 
 Buffs: {
+	DamagedOriginDebuff: {
+		DisplayName: Origine spirituale danneggiata
+		Description:
+			'''
+			La tua capacità del Qi è ferita.
+			Medita ovunque; Concentrazione Qi e Formazioni accelerano la riparazione.
+			Oppure usa una Pillola Ripara Meridiani. Serve riparazione completa.
+			'''
+	}
+
+	QiDeviationDebuff: {
+		DisplayName: Deviazione del Qi
+		Description: Danno, difesa, movimento e recupero del Qi sono fortemente ridotti
+	}
+
 	QiResistanceBuff: {
 		DisplayName: Resistenza Qi
 		Description: +10 difesa
@@ -107,6 +228,26 @@ Buffs: {
 		Description: Riduce notevolmente l'attenzione e la generazione dei nemici
 	}
 
+	MeridianOpeningBuff: {
+		DisplayName: Apertura dei Meridiani
+		Description: +10% chance breakthrough Qi Gathering; consumato al tentativo
+	}
+
+	FoundationAscensionBuff: {
+		DisplayName: Ascensione della Fondazione
+		Description: +12% chance breakthrough Foundation; consumato al tentativo
+	}
+
+	GoldenCoreCondensationBuff: {
+		DisplayName: Condensazione del Golden Core
+		Description: +15% chance breakthrough Golden Core; consumato al tentativo
+	}
+
+	NascentSoulIntegrationBuff: {
+		DisplayName: Integrazione dell'Anima Nascente
+		Description: +18% chance breakthrough Nascent Soul; consumato al tentativo
+	}
+
 	PermanentFormationProtectionBuff: {
 		DisplayName: Protezione della Formazione Permanente
 		Description: Protetto da un array territoriale: +12 difesa e 6% riduzione del danno
@@ -157,6 +298,7 @@ Abilities: {
 	RequiresRealm: Realm richiesto: {0}
 	NotEnoughQi: Qi insufficiente. Richiesto: {0}
 	SpiritualRainCooldown: Pioggia Spirituale in ricarica: {0}s
+	QiBurningDeviationState: Deviazione del Qi: {0}s
 	AlreadyActive: Resistenza Qi e gia attiva
 	QiResistanceActivated: Resistenza Qi attivata per 1 minuto
 	QiFlightEnabled: Volo Qi attivato
@@ -199,7 +341,7 @@ AbilityWheel: {
 	Unbound: Non assegnato
 	ActiveKey: Tasto: [{0}]
 	PassiveToggle: "{0} - costo base 5 Qi per danno - clic sinistro per cambiare"
-	QiSenseToggle: "{0} - rivela creature, tesori e pericoli - 1 Qi/s - clic sinistro per cambiare"
+	QiSenseToggle: "{0} - rivela creature, tesori, pericoli e minerali spirituali - 1 Qi/s - clic sinistro per cambiare"
 	RequiresFoundation: Richiede Fondazione Spirituale
 	RequiresQiGathering: Richiede Raccolta del Qi
 	RequiresNascentSoul: Richiede Anima Nascente
@@ -221,9 +363,26 @@ AbilityWheel: {
 	SpiritualPressure: Pressione Spirituale
 	SpiritualPressureDescription: Aura toggle che danneggia e rallenta; costa 25 Qi/s
 	NightVisionDescription: Crea un'aura locale di luce spirituale; raggio ed efficienza migliorano con la maestria
+	QiBurning: Combustione del Qi
+	QiBurningDescription: Brucia Qi massimo per potenza estrema | Bruciato {0}% / {1}% | {2}
+	SpiritualRain: Pioggia Spirituale
+	SpiritualRainDescription: Crea sul cursore una zona di pioggia spirituale che accelera la crescita delle erbe
+	SpiritSwordRain: Pioggia di Spade Spirituali
+	SpiritSwordRainDescription: Lancia cinque spade volanti verso il cursore
+	SectProtectionFormation: Formazione Protettiva della Setta
+	SectProtectionFormationDescription: Attiva o disattiva la barriera della setta
 }
 
 AbilityTree: {
+	ElementTag: Elemento: {0}
+
+	RootSynergy: {
+		Neutral: Tecnica neutrale - nessun modificatore dalla Radice Spirituale
+		Hidden: Valuta la Radice Spirituale per rivelare la compatibilità elementale
+		NoAffinity: Nessuna affinità compatibile nella Radice Spirituale
+		Match: Affinità Radice {0}% | +{1}% potenza | -{2}% costo Qi | +{3}% EXP maestria
+	}
+
 	Title: Menu della Coltivazione
 	Hint: Passa il cursore su una tecnica per vedere progresso e bonus
 	Locked: BLOCCATA
@@ -247,11 +406,13 @@ AbilityTree: {
 	SwordRainEffect: Livello {0} | cinque spade, raggio controllato dal cursore, piu danno e minori costo Qi/cooldown | {1}
 	FormationEffect: Livello {0} | mantenuta con il Qi; gli alleati possono meditare dentro per potenziarla e ripararla | {1}
 	SpiritualRainEffect: Livello {0} | il costo in Qi diminuisce e l'area di crescita aumenta con i livelli | {1}
+	QiBurningEffect: Livello {0} | +{1}% danno e +{2}% velocità attacco | {3}% capacità bruciata | {4} | {5}
 
 	Tabs: {
 		Abilities: Abilita
 		Paths: Path
 		Sect: Setta
+		Character: Personaggio
 	}
 
 	Paths: {
@@ -338,13 +499,62 @@ AbilityTree: {
 		SpiritSwordRain.Name: Pioggia di Spade Spirituali
 		SectProtectionFormation.Name: Formazione Protettiva della Setta
 		SpiritualRain.Name: Pioggia Spirituale
+		QiBurning.Name: Combustione del Qi
 	}
+}
+
+BreakthroughGrades: {
+	Foundation: {
+		Inferior: Foundation Inferiore
+		Stable: Foundation Stabile
+		Perfect: Perfect Foundation
+		Heavenly: Heavenly Foundation
+	}
+
+	GoldenCoreTier: Golden Core Tier {0}
+}
+
+BreakthroughConfirmation: {
+	Title: Breakthrough di Realm
+	Message: Sei pronto a tentare il breakthrough verso {0}
+	Chance: "{0}% CHANCE DI SUCCESSO"
+	Breakdown: Base {0}%  •  Radice {1}%  •  Pillola {2}%  •  Demoni −{3}%  •  Qualità {4}%
+	QualityTarget: Scegli qualità breakthrough
+	QualityBonuses: "{0} | Statistiche ×{1} | Raccolta Qi +{2}%"
+	TreasureSlot: Heavenly Treasure
+	PillSlot: Pillola Breakthrough
+	EmptySlot: VUOTO
+	SlotHint: Click sinistro seleziona o cambia un oggetto valido nell'inventario • Click destro rimuove
+	InferiorStableRequirement: Richiede Foundation Ascension Pill oppure 1 Heavenly Treasure
+	PerfectRequirement: Richiede 1 Heavenly Treasure; pillola Foundation opzionale
+	HeavenlyRequirement: Richiede 1 Heavenly Treasure e Foundation Ascension Pill
+	GoldenRequirement: Richiede 1 Heavenly Treasure; pillola Golden Core opzionale
+	GoldenTierOneRequirement: Tier 1 richiede 1 Heavenly Treasure e Golden Core Condensation Pill
+	FoundationPill: Catalizzatore: Foundation Ascension Pill — sostituisce l'Heavenly Treasure
+	SelectedTreasure: Heavenly Treasure selezionato: {0} — primo slot valido nell'inventario
+	MissingCatalyst: Catalizzatore mancante — prepara la pillola Foundation o l'Heavenly Treasure richiesto
+	NoCatalystRequired: Nessun catalizzatore speciale richiesto per questo Realm
+	Failure: Il fallimento consuma la pillola selezionata, se presente, e rimuove il 25% del QiEXP richiesto dallo Stadio finale
+	Confirm: Tenta Breakthrough
+	NotReady: Catalizzatore Mancante
+	Cancel: Rimanda
+	BurnedCapacity: Ripara tutta la capacità Qi bruciata prima del breakthrough
+}
+
+HeartDemonTrialConfirmation: {
+	Title: Prova del Demone del Cuore
+	Message: Affrontare il Demone del Cuore con {0} punti di corruzione?
+	Warning: Boss personale. Morire o fuggire conserva tutti i punti.
+	Reward: La vittoria purifica tutti i punti e rimuove le penalità.
+	Confirm: Inizia Prova
+	Cancel: Rimanda
 }
 
 TribulationConfirmation: {
 	Title: Tribolazione Celeste
 	Message: Stai per tentare il breakthrough verso {0}
 	Strikes: Devi sopravvivere a {0} fulmini celesti
+	Difficulty: Potenza celeste +{0}% | {1} | Golden Core Tier {2}
 	Warning: Conferma solo quando vita, equipaggiamento e Qi sono pronti
 	Confirm: Conferma
 	Cancel: Annulla
@@ -373,6 +583,7 @@ Configs: {
 			Progression: Difficolta della coltivazione
 			SpiritualQiZones: Zone ad alta concentrazione di Qi
 			SpiritBeasts: Bestie Spirituali
+			CultivationRisks: Rischi della coltivazione
 			Debug: Strumenti di debug
 			AbilityTerrainDestruction: Distruzione del mondo tramite abilita
 		}
@@ -405,6 +616,26 @@ Configs: {
 		SpiritBeastSpawnRatePercent: {
 			Label: Frequenza delle Bestie Spirituali
 			Tooltip: Moltiplicatore percentuale applicato alla probabilita di comparsa naturale
+		}
+
+		EnableQiBurning: {
+			Label: Abilita Combustione del Qi
+			Tooltip: Permette ai coltivatori Foundation di sacrificare capacità Qi persistente per potenza d'emergenza
+		}
+
+		MaximumBurnedQiPercent: {
+			Label: Qi massimo bruciabile
+			Tooltip: Percentuale massima della capacità Qi base danneggiabile dalla Combustione
+		}
+
+		EnableHeartDemons: {
+			Label: Abilita Demoni del Cuore
+			Tooltip: Fallimenti e morti PvE possono generare punti e prove personali
+		}
+
+		HeartDemonPenaltyStrengthPercent: {
+			Label: Forza penalità Demoni del Cuore
+			Tooltip: Scala le penalità a breakthrough e coltivazione
 		}
 
 		EnableDebugCommandsInMultiplayer: {
@@ -560,6 +791,11 @@ Items: {
 	MeridianCleansingPill: {
 		DisplayName: Pillola di Purificazione dei Meridiani
 		Tooltip: Rimuove 40 Saturazione da Pillole
+	}
+
+	MeridianMendingPill: {
+		DisplayName: Pillola Ripara-Meridiani
+		Tooltip: Ripara il 10% della capacità Qi base ferita dalla Combustione del Qi
 	}
 
 	GreaterQiRecoveryPill: {
@@ -912,6 +1148,56 @@ Items: {
 		Tooltip: Riduce danni e consumo dello scudo Qi durante le Tribulation per 10 minuti
 	}
 
+	MeridianOpeningPill: {
+		DisplayName: Pillola Apertura dei Meridiani
+		Tooltip: +10% chance Qi Gathering per 10 minuti | Consumata al tentativo
+	}
+
+	FoundationAscensionPill: {
+		DisplayName: Pillola Ascensione della Fondazione
+		Tooltip: +12% chance Foundation per 10 minuti | Sostituisce l'Heavenly Treasure richiesto | Consumata al tentativo
+	}
+
+	GoldenCoreCondensationPill: {
+		DisplayName: Pillola Condensazione Golden Core
+		Tooltip: +15% chance Golden Core per 10 minuti | Consumata al tentativo
+	}
+
+	NascentSoulIntegrationPill: {
+		DisplayName: Pillola Integrazione Anima Nascente
+		Tooltip: +18% chance Nascent Soul per 10 minuti | Consumata al tentativo
+	}
+
+	HeavenlyEyeEssence: {
+		DisplayName: Essenza dell'Occhio Celeste
+		Tooltip:
+			'''
+			Heavenly Treasure dall'Occhio di Cthulhu
+			Sceglilo per Foundation o Golden Core
+			Successo: +5% critico e +10% raggio Qi Sense permanenti
+			'''
+	}
+
+	HeavenlyRoyalNectar: {
+		DisplayName: Nettare Reale Celeste
+		Tooltip:
+			'''
+			Heavenly Treasure dall'Ape Regina
+			Sceglilo per Foundation o Golden Core
+			Successo: +20 vita massima e +1 rigenerazione permanenti
+			'''
+	}
+
+	HeavenlyBoneMarrow: {
+		DisplayName: Midollo Osseo Celeste
+		Tooltip:
+			'''
+			Heavenly Treasure da Skeletron
+			Sceglilo per Foundation o Golden Core
+			Successo: +4 difesa e +2% riduzione danni permanenti
+			'''
+	}
+
 	SpiritBeastLurePill: {
 		DisplayName: Pillola del Richiamo delle Bestie
 		Tooltip: Moltiplica per 2.5 la probabilita di comparsa delle Bestie Spirituali per 5 minuti
@@ -1006,6 +1292,7 @@ NPCs: {
 	JadeHornDeer.DisplayName: Cervo dalle Corna di Giada
 	FlameTailedFox.DisplayName: Volpe dalla Coda Fiammeggiante
 	ThunderclawTiger.DisplayName: Tigre dagli Artigli Tonanti
+	HeartDemon.DisplayName: Demone del Cuore
 }
 
 Sect: {
@@ -1077,8 +1364,8 @@ Sect: {
 
 IndependentMerchant: {
 	Name: Viandante Shen
-	Trade: Commercia tecniche
-	Bestiary: Un coltivatore errante che scambia rare tecniche indipendenti per Spirit Stone senza esigere fedelta a una Setta.
+	Trade: Commercia
+	Bestiary: Un coltivatore errante che scambia materiali spirituali e rare tecniche indipendenti per Spirit Stone senza esigere fedelta a una Setta.
 
 	Chat: {
 		TooWeak: I tuoi meridiani non si sono ancora aperti. Torna dopo aver raggiunto Raccolta del Qi.
@@ -1114,6 +1401,7 @@ Cultivation: {
 	QiStatusMax: Qi {0}/{1} | QiEXP MAX
 	QiGain: +{0} Qi
 	Breakthrough: Sfondamento! Hai raggiunto: {0}
+	BreakthroughGradeAchieved: Qualità breakthrough stabilita: {0}
 	StageAdvanced: Avanzamento! {0} - Stadio {1}
 	TribulationBegins: Tribolazione Celeste! Per entrare in {0}, sopravvivi a {1} fulmini
 	TribulationReady: Una Tribolazione Celeste attende il tuo breakthrough verso {0}
@@ -1130,10 +1418,70 @@ Cultivation: {
 	RealmBonuses: +{0} vita massima | +{1} difesa | +{2}% danno | +{3}% velocita | +{4}% probabilita critica | +{5}% riduzione danni | +{6} rigenerazione vita
 	SpiritualQiZoneStatus: Concentrazione Qi Lv.{0}: +{1}% ({2} cristalli)
 
+	BurnedQi: {
+		DisabledByServer: Combustione del Qi disabilitata dal server
+		NotEquipped: Equipaggia prima Combustione del Qi nel Technique Loadout attivo
+		Dead: I morti non possono incendiare i meridiani
+		RequiresFoundation: Richiede Foundation Establishment
+		WhileMeditating: Interrompi la meditazione prima di usarla
+		NoCapacity: Nessuna capacità Qi rimasta da bruciare
+		DeviationBlocked: Deviazione del Qi impedisce la Combustione
+		LimitBlocked: Limite massimo di Qi bruciato raggiunto
+		ConfirmationBlocked: Chiudi prima la conferma del breakthrough
+		TrialBlocked: Non utilizzabile durante la Prova del Demone del Cuore
+		Enabled: Combustione del Qi attivata
+		Disabled: Combustione terminata con {0}% di capacità bruciata
+		DisabledNetwork: Combustione del Qi terminata
+		Pulse: Capacità Qi bruciata: {0}%
+		LimitReached: Raggiunto limite di sicurezza della Combustione
+		Repaired: Riparato {0}% | resta bruciato {1}%
+		BreakthroughBlocked: Ripara la capacità Qi bruciata prima del breakthrough
+	}
+
+	HeartDemons: {
+		PointGained: Demone del Cuore aggravato: {0}/{1}
+		MaximumReached: Corruzione del Demone del Cuore al massimo
+		DeathCounted: Morte PvE conteggiata: {0}/{1} verso il prossimo punto Heart Demon
+		FailureCounted: Fallimento breakthrough conteggiato: {0}/{1} verso il prossimo punto Heart Demon
+	}
+
+	HeartDemonTrial: {
+		DisabledByServer: Demoni del Cuore disabilitati dal server
+		NoPoints: Nessun Demone del Cuore da affrontare
+		Dead: I morti non possono affrontare una prova interiore
+		Cooldown: La prova interiore recupera tra {0}s
+		QiBurningBlocked: Termina la Combustione del Qi prima della prova
+		AlreadyActive: Prova del Demone del Cuore già attiva
+		TribulationBlocked: Termina o rimanda prima la Tribolazione Celeste
+		EventBlocked: Prova non disponibile durante invasioni o eventi
+		BossBlocked: Sconfiggi prima il boss attivo
+		Started: Il tuo Demone del Cuore si manifesta
+		Purified: Demone del Cuore purificato. Tutti i punti rimossi
+		Failed: Prova fallita. La corruzione rimane
+	}
+
+	BreakthroughChance: {
+		Failed: Breakthrough di Realm fallito con {0}% chance. Persi {1} QiEXP dallo Stadio finale.
+		Succeeded: Breakthrough di Realm riuscito con {0}% chance!
+		MissingFoundationCatalyst: Breakthrough Foundation bloccato. Prepara una Foundation Ascension Pill oppure porta 1 Heavenly Treasure.
+		MissingGoldenCoreTreasure: Golden Core bloccato. Porta 1 Heavenly Treasure dell'Occhio di Cthulhu, Ape Regina o Skeletron.
+		HeavenlyEyeImprint: Essenza dell'Occhio impressa: +5% critico e +10% raggio Qi Sense permanenti.
+		HeavenlyRoyalNectarImprint: Nettare Reale raffinato: +20 vita massima e +1 rigenerazione permanenti.
+		HeavenlyBoneMarrowImprint: Midollo Osseo fuso: +4 difesa e +2% riduzione danni permanenti.
+	}
+
 	BreakthroughTooltip: {
 		Title: Preparazione al Breakthrough
 		Next: Prossimo avanzamento: {0}, Stadio {1}
 		Progress: QiEXP {0}/{1} - ne mancano {2}
+		SuccessChance: Chance successo Realm: {0}% | Base {1}% | Radice {2}% | Pillola {3}% | Demoni {4}%
+		QiCapacity: Qi: {0}/{1} effettivo | Capacità base {2} | Bruciata {3}%
+		FailurePenalty: Il fallimento rimuove il 25% del QiEXP richiesto dallo Stadio finale; Realm e Stadi completati restano
+		FoundationCatalyst: Catalizzatore Foundation | Pillola: {0} | Oppure scegli 1 tesoro: Occhio {1}, Nettare {2}, Midollo {3}
+		GoldenCoreTreasure: Golden Core richiede 1 tesoro a scelta | Occhio {0}, Nettare {1}, Midollo {2}
+		PermanentImprints: Impronte permanenti | Occhio x{0} | Nettare x{1} | Midollo x{2}
+		Ready: Pronta
+		Absent: Assente
 		Bonuses: Prossimi bonus: +{0} vita | +{1} difesa | +{2}% danni | +{3}% velocita | +{4}% critico | +{5}% riduzione danni | +{6} rigenerazione
 		NextAbilities: Prossime abilita a {0}: {1}
 		Tribulation: Tribolazione Celeste: {0} fulmini | scudo ~{1} Qi ciascuno | ~{2} totali
@@ -1174,6 +1522,7 @@ Projectiles: {
 	// VerdantAntlerBoltProjectile.DisplayName: Verdant Antler Bolt Projectile
 	// ThunderclapOrbProjectile.DisplayName: Thunderclap Orb Projectile
 	SpiritualRainProjectile.DisplayName: Pioggia Spirituale
+	// HeartDemonBolt.DisplayName: Heart Demon Bolt
 }
 
 Tiles: {
@@ -1324,6 +1673,10 @@ PermanentFormation: {
 }
 
 DebugCommands: {
+	Help14: /xiadebug root [show|reveal|roll] - controlla o testa le Radici Spirituali
+	RootUsage: Uso: /xiadebug root [show|reveal|roll]
+	RootRolled: Generata una nuova Radice Spirituale nascosta.
+	RootStatus: Radice: {0} | Elementi: {1} | Primario: {2} | Purezza: {3}% | Rivelata: {4}
 	MultiplayerDisabled: I comandi debug sono disabilitati in multiplayer. Abilitali esplicitamente nella configurazione server per una sessione di test privata
 	HelpTitle: Comandi debug Xianxia (numeri dei Realm da 1 a 5)
 	Help1: /xiadebug status - mostra lo stato di test corrente
@@ -1395,6 +1748,14 @@ Forging: {
 	QualityTooltip: Qualita {0} | Potenza: {1}% | Costo Qi: {2}% | EXP Forgiatura: {3}%
 	MasteryTooltip: Forgiatura: Tier {0} ({1}), Stadio {2} | EXP base: {3} | Ricompensa attuale: {4} EXP
 	ArtifactQiCost: Costo Qi attuale per utilizzo: {0}
+	ArtifactElement: Elemento spirituale: {0}
+
+	RootSynergy: {
+		Hidden: Valuta la Radice Spirituale per rivelare la compatibilità con l'artefatto
+		NoAffinity: Nessuna affinità compatibile nella Radice Spirituale
+		Match: Affinità Radice {0}% | +{1}% potenza | -{2}% costo Qi | +{3} tiro qualità forgiatura
+	}
+
 	JadeAntlerStats: +{0} difesa | +{1} rigenerazione vitale | +{2}% danno magico
 	BeastSoulStats: +{0}% danno summon | +{1}% danno magico | +{2} difesa | +1 servitore | Danno base guardiano: {3}
 
@@ -1452,6 +1813,7 @@ Manual: {
 			SectSystem: Sette e Missioni
 			FormationPath: Formazioni Permanenti
 			ArtifactForging: Path della Forgiatura
+			SpiritualRoots: Radici Spirituali
 			AdvancedPills: Ricette delle Pillole Avanzate
 		}
 	}
@@ -1493,7 +1855,7 @@ Manual: {
 				Sempre attiva. Aumenta del 10% il recupero passivo del Qi e migliora allenandosi mentre recuperi Qi mancante.
 
 				PERCEZIONE DEL QI - Raccolta del Qi
-				Rivela creature, tesori e pericoli. Consuma 1 Qi/s. Attivala dalla Ruota delle Abilita o con /qisense on|off.
+				Rivela creature, tesori e pericoli. La Giada Spirituale brilla in verde-ciano e il Ferro Profondo in viola-blu attraverso l'oscurita. Il raggio aumenta con il livello di Percezione del Qi. Consuma 1 Qi/s. Attivala dalla Ruota delle Abilita o con /qisense on|off.
 
 				PROTEZIONE QI - Fondazione Spirituale
 				Assorbe i danni ricevuti consumando 5 Qi per ogni punto di danno, inclusi i danni nel tempo causati da fuoco, veleno e debuff simili. Quando il respiro si esaurisce sott'acqua, consuma Qi anche per impedire l'annegamento mantenendo l'indicatore dell'aria all'ultimo livello. La rigenerazione della coltivazione viene applicata prima dello scudo e puo ridurre o superare la rigenerazione negativa. Quando si attiva appare uno scudo spirituale. Attivala dalla ruota o con /qiprotection on|off.
@@ -1541,7 +1903,7 @@ Manual: {
 				Teletrasportati sul cursore. Funziona anche sulla mappa a schermo intero. Costa 20 Qi + 2 Qi ogni 2 blocchi di distanza e cerca uno spazio libero vicino al punto scelto.
 
 				RUOTA DELLE ABILITA [{3}]
-				Mantieni premuto il tasto per visualizzare abilita, requisiti, comandi e stato delle passive. Clicca una passiva per attivarla o disattivarla.
+				La ruota principale contiene le tecniche da lanciare equipaggiate nel Technique Loadout attivo. Mantieni premuto il tasto e cliccane una per assegnarla a Usa Tecnica Selezionata. Clicca Toggle per aprire un semicerchio superiore separato con Qi Sense, Qi Protection, Qi Burning, Night Vision, Qi Flight e Spiritual Pressure. Cliccandole le attivi subito senza sostituire la tecnica da lancio selezionata.
 				'''
 		}
 
@@ -1549,13 +1911,34 @@ Manual: {
 			Title: Breakthrough, Risorse e Alchimia
 			Body:
 				'''
-				Raggiunta la soglia di QiEXP avviene un breakthrough. Da Formazione del Nucleo in poi devi confermare e sopravvivere a una Tribolazione Celeste. Annullare rimanda soltanto il tentativo e non rimuove QiEXP; medita nuovamente con Qi pieno per riaprire la conferma. Fallire la vera Tribolazione rimuove ancora il progresso del breakthrough fallito. La prima contiene 9 fulmini.
+				QUALITÀ BREAKTHROUGH
+				Foundation offre quattro obiettivi. Foundation Inferiore è il default e conserva le statistiche normali. Stabile, Perfect e Heavenly concedono ×1,15, ×1,35 e ×1,60 alle statistiche Foundation, più 7%, 15% e 25% raccolta Qi. Le qualità alte riducono la chance. Perfect richiede 1 Heavenly Treasure; Heavenly richiede 1 Treasure e Foundation Ascension Pill.
+
+				Golden Core possiede nove Tier: Tier 9 è il default, Tier 1 il migliore. I Tier superiori arrivano a ×1,65 statistiche Core e +27% raccolta Qi, ma riducono la chance. Ogni Tier richiede 1 Heavenly Treasure; Tier 1 richiede anche Golden Core Condensation Pill. La qualità Foundation modifica la chance Golden Core.
+
+				Usa i due slot nella finestra centrale. Click sinistro seleziona o cambia un oggetto valido nell'inventario; click destro lo rimuove. Le pillole selezionate vengono consumate a ogni tentativo. Heavenly Treasure viene consumato solo dopo un tiro chance riuscito. I personaggi esistenti ricevono Foundation Inferiore e Golden Core Tier 9.
+
+				COMBUSTIONE DEL QI [H]
+				Dal Foundation, incendia i meridiani per grandi bonus a danno, velocità d'attacco, critico, movimento e difesa. Ogni 3 secondi ferisce permanentemente il 2% del Qi massimo base, fino al limite server. Fermarsi causa Deviazione del Qi. La capacità bruciata blocca i breakthrough. La meditazione ripara 0,25% ogni 30 secondi anche a Concentrazione Qi Lv.0; ogni livello moltiplica la velocità di riparazione e le Formazioni la raddoppiano. Una Pillola Ripara-Meridiani la ripara immediatamente.
+
+				DEMONI DEL CUORE
+				Ogni 2 breakthrough falliti o 5 morti PvE genera 1 punto, fino a 9. Ogni punto riduce del 2% la chance di breakthrough e il guadagno coltivazione. Apri Personaggio e scegli Affronta Demone del Cuore. La vittoria purifica tutti i punti; morte o fuga li conserva.
+
+				Ogni breakthrough di Realm ha una chance di successo: 90% per Qi Gathering, 75% per Foundation, 55% per Golden Core e 35% per Nascent Soul. Qualità e purezza della Radice Spirituale possono aumentarla o diminuirla. Il fallimento rimuove il 25% del QiEXP richiesto dallo Stadio finale, ma non rimuove mai Realm o Stadi completati.
+
+				Le pillole da breakthrough aggiungono dal 10% al 18% e il loro buff viene consumato al tentativo, sia in caso di successo sia di fallimento. Passa il cursore sulla barra Qi per vedere base, Radice e pillola.
+
+				Entrare in Foundation richiede una Foundation Ascension Pill attiva oppure 1 Heavenly Treasure a scelta. Formare il Golden Core richiede 1 Heavenly Treasure a scelta. Essenza dell'Occhio Celeste viene dall'Occhio di Cthulhu, Nettare Reale Celeste dall'Ape Regina e Midollo Osseo Celeste da Skeletron; ogni drop e garantito.
+
+				Il tesoro scelto viene consumato solo dopo un tiro riuscito e imprime un bonus permanente: Occhio +5% critico e +10% raggio Qi Sense, Nettare +20 vita massima e +1 rigenerazione, Midollo +4 difesa e +2% riduzione danni. Con piu tesori viene usato il primo nell'ordine dell'inventario.
+
+				Da Golden Core in poi, dopo il successo del tiro bisogna ancora confermare e superare una Tribolazione Celeste. Annullare la rimanda senza perdere QiEXP. Fallire la Tribolazione rimuove il progresso del breakthrough fallito. La prima contiene 9 fulmini.
 
 				I fulmini celesti penetrano le difese comuni. Con maestria base, Protezione Qi consuma circa il 12% del Qi massimo per ogni fulmine di Formazione del Nucleo e blocca il 70% del danno alla salute; il resto attraversa lo scudo. I fulmini di Anima Nascente consumano circa il 15% e infliggono molto piu danno. La maestria di Protezione Qi riduce il costo sulla riserva. Presentati con Qi pieno, cure ed equipaggiamento adeguato.
 
 				Le Spirit Stone non sono craftabili: si trovano scavando vene di Cristallo Spirituale. Giada Spirituale e Ferro Profondo producono lingotti per armature, accessori, armi e Spade Volanti.
 
-				Il Calderone Alchemico permette di creare pillole. La Pillola di Recupero ripristina 100 Qi senza aumentare QiEXP; altre pillole migliorano temporaneamente meditazione, difesa e danni.
+				Il Calderone Alchemico crea anche pillole dedicate a Qi Gathering, Foundation, Golden Core e Nascent Soul, che migliorano la chance del relativo breakthrough.
 
 				La Spada Volante richiede Raccolta del Qi e consuma Qi a ogni lancio. Insegue automaticamente il nemico visibile piu vicino entro 60 blocchi; se non trova bersagli prosegue normalmente, poi ritorna al proprietario.
 				'''
@@ -1843,6 +2226,21 @@ Manual: {
 				'''
 		}
 
+		SpiritualRoots: {
+			Title: Radici Spirituali
+			Body:
+				'''
+				Ogni personaggio riceve una Radice Spirituale permanente, valida in tutti i mondi. Le qualità sono Mista, Vera, Celeste, Mutata e Primordiale, con diverse affinità elementali.
+
+				La Radice parte nascosta. I membri della Setta ricevono una valutazione gratis dall'Anziano Jian. I coltivatori indipendenti pagano 5 Pietre Spirituali al Viandante Shen. Poi apri Coltivazione > Personaggio.
+
+				Qualità e purezza aumentano di circa il 5-25% la coltivazione durante la meditazione. Le Radici Celesti passano dal 18% con purezza 85 al 25% con purezza 100; le Radici Mutate dal 15% al 22%, mentre le Primordiali danno il 25%. Gli elementi danno piccoli bonus tematici. Nel gioco normale la Radice non può essere rilanciata.
+
+				RISONANZA DEL BIOMA
+				Ogni elemento ottiene velocità di coltivazione aggiuntiva nel proprio ambiente: Legno in Giungla, Fuoco negli Inferi, Terra nel sottosuolo, Metallo nel Dungeon, Acqua all'Oceano, Fulmine durante la pioggia, Ghiaccio nella Neve, Vento nel Cielo alto e Vuoto nello Spazio. Il bonus scala con l'affinità fino al 15% (12% per Terra). Le Radici multi-elemento usano solo la risonanza attiva più forte.
+				'''
+		}
+
 		ArtifactForging: {
 			Title: Forgiatura degli Artefatti
 			Body:
@@ -1858,6 +2256,9 @@ Manual: {
 				Raffinata - 112% potenza, 92% costo Qi e 200% EXP Forgiatura.
 				Grado Terra - 127% potenza, 82% costo Qi e 500% EXP Forgiatura.
 				Grado Cielo - 148% potenza, 70% costo Qi e 1000% EXP Forgiatura.
+
+				COMPATIBILITA ELEMENTALE
+				Ogni artefatto possiede uno o due elementi spirituali. Una Radice Spirituale compatibile migliora potenza, utilita dei proiettili ed efficienza Qi. Durante la creazione, l'affinita compatibile aggiunge fino a 5 punti al tiro qualita. Gli artefatti multi-elemento usano l'affinita media.
 
 				FORGE SPIRITUALI
 				Forgia per Artefatti - raffinazione Mortale di base.

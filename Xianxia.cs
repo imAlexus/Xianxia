@@ -5,7 +5,9 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Xianxia.Common.Abilities;
 using Xianxia.Common.Players;
+using Xianxia.Common.Elements;
 using Xianxia.Common.Systems;
 using Xianxia.Content.TileEntities;
 
@@ -22,7 +24,16 @@ internal enum XianxiaMessageType : byte
 	PermanentFormationTribulationHit,
 	FormationPathState,
 	PermanentFormationRelayAction,
-	ArtifactForgingState
+	ArtifactForgingState,
+	SpiritualRootState,
+	QiBurningToggleRequest,
+	QiBurningState,
+	CultivationRiskState,
+	HeartDemonTrialRequest,
+	HeartDemonDeathRequest,
+	HeartDemonBreakthroughFailureRequest,
+	TechniqueLoadoutRequest,
+	TechniqueLoadoutState
 }
 
 public class Xianxia : Mod
@@ -31,6 +42,7 @@ public class Xianxia : Mod
 	internal static ModKeybind QiResistanceKeybind { get; private set; }
 	internal static ModKeybind QiFlightKeybind { get; private set; }
 	internal static ModKeybind FireballKeybind { get; private set; }
+	internal static ModKeybind DirectFireballKeybind { get; private set; }
 	internal static ModKeybind AbilityWheelKeybind { get; private set; }
 	internal static ModKeybind QiPalmKeybind { get; private set; }
 	internal static ModKeybind FlameStepKeybind { get; private set; }
@@ -40,6 +52,7 @@ public class Xianxia : Mod
 	internal static ModKeybind AbilityTreeKeybind { get; private set; }
 	internal static ModKeybind SpiritSwordRainKeybind { get; private set; }
 	internal static ModKeybind SectFormationKeybind { get; private set; }
+	internal static ModKeybind QiBurningKeybind { get; private set; }
 
 	public override void Load()
 	{
@@ -48,18 +61,29 @@ public class Xianxia : Mod
 		SectCurrencySystem.Register();
 
 		MeditateKeybind = KeybindLoader.RegisterKeybind(this, "Meditate", "LeftControl");
-		QiResistanceKeybind = KeybindLoader.RegisterKeybind(this, "QiResistance", "Z");
-		QiFlightKeybind = KeybindLoader.RegisterKeybind(this, "QiFlight", "V");
 		FireballKeybind = KeybindLoader.RegisterKeybind(this, "Fireball", "X");
+		DirectFireballKeybind = KeybindLoader.RegisterKeybind(
+			this, "DirectFireball", "None");
+		QiResistanceKeybind = KeybindLoader.RegisterKeybind(
+			this, "QiResistance", "Z");
+		QiFlightKeybind = KeybindLoader.RegisterKeybind(
+			this, "QiFlight", "V");
 		AbilityWheelKeybind = KeybindLoader.RegisterKeybind(this, "AbilityWheel", "G");
-		QiPalmKeybind = KeybindLoader.RegisterKeybind(this, "QiPalm", "C");
-		FlameStepKeybind = KeybindLoader.RegisterKeybind(this, "FlameStep", "F");
-		NascentTeleportKeybind = KeybindLoader.RegisterKeybind(this, "NascentTeleport", "N");
-		SpiritualPressureKeybind = KeybindLoader.RegisterKeybind(this, "SpiritualPressure", "P");
-		NightVisionKeybind = KeybindLoader.RegisterKeybind(this, "NightVision", "K");
+		QiPalmKeybind = KeybindLoader.RegisterKeybind(
+			this, "QiPalm", "C");
+		FlameStepKeybind = KeybindLoader.RegisterKeybind(
+			this, "FlameStep", "F");
+		NascentTeleportKeybind = KeybindLoader.RegisterKeybind(
+			this, "NascentTeleport", "N");
+		SpiritualPressureKeybind = KeybindLoader.RegisterKeybind(
+			this, "SpiritualPressure", "P");
+		NightVisionKeybind = KeybindLoader.RegisterKeybind(
+			this, "NightVision", "K");
 		AbilityTreeKeybind = KeybindLoader.RegisterKeybind(this, "AbilityTree", "J");
 		SpiritSwordRainKeybind = KeybindLoader.RegisterKeybind(this, "SpiritSwordRain", "R");
 		SectFormationKeybind = KeybindLoader.RegisterKeybind(this, "SectFormation", "B");
+		QiBurningKeybind = KeybindLoader.RegisterKeybind(
+			this, "QiBurning", "None");
 	}
 
 	public override void Unload()
@@ -70,6 +94,7 @@ public class Xianxia : Mod
 		QiResistanceKeybind = null;
 		QiFlightKeybind = null;
 		FireballKeybind = null;
+		DirectFireballKeybind = null;
 		AbilityWheelKeybind = null;
 		QiPalmKeybind = null;
 		FlameStepKeybind = null;
@@ -79,6 +104,7 @@ public class Xianxia : Mod
 		AbilityTreeKeybind = null;
 		SpiritSwordRainKeybind = null;
 		SectFormationKeybind = null;
+		QiBurningKeybind = null;
 	}
 
 	public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -141,6 +167,61 @@ public class Xianxia : Mod
 		if (messageType == XianxiaMessageType.ArtifactForgingState)
 		{
 			HandleArtifactForgingState(reader, whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.SpiritualRootState)
+		{
+			HandleSpiritualRootState(reader, whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.QiBurningToggleRequest)
+		{
+			HandleQiBurningToggleRequest(whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.QiBurningState)
+		{
+			HandleQiBurningState(reader);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.CultivationRiskState)
+		{
+			HandleCultivationRiskState(reader);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.HeartDemonTrialRequest)
+		{
+			HandleHeartDemonTrialRequest(whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.HeartDemonDeathRequest)
+		{
+			HandleHeartDemonDeathRequest(whoAmI);
+			return;
+		}
+
+		if (messageType
+			== XianxiaMessageType.HeartDemonBreakthroughFailureRequest)
+		{
+			HandleHeartDemonBreakthroughFailureRequest(whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.TechniqueLoadoutRequest)
+		{
+			HandleTechniqueLoadoutRequest(reader, whoAmI);
+			return;
+		}
+
+		if (messageType == XianxiaMessageType.TechniqueLoadoutState)
+		{
+			HandleTechniqueLoadoutState(reader);
 			return;
 		}
 
@@ -509,6 +590,265 @@ public class Xianxia : Mod
 		packet.Write((byte)Math.Clamp(tier, 0, ArtifactForgingPlayer.MaxTier));
 		packet.Write((byte)Math.Clamp(stage, 0, ArtifactForgingPlayer.MaxStage));
 		packet.Write(Math.Max(0, experience));
+		packet.Send(toClient, ignoreClient);
+	}
+
+	private static void HandleSpiritualRootState(BinaryReader reader, int whoAmI)
+	{
+		int playerIndex = reader.ReadByte();
+		SpiritualRootQuality quality = (SpiritualRootQuality)reader.ReadByte();
+		SpiritualElement elements = (SpiritualElement)reader.ReadUInt16();
+		SpiritualElement primary = (SpiritualElement)reader.ReadUInt16();
+		int purity = reader.ReadByte();
+		bool revealed = reader.ReadBoolean();
+		byte[] affinities = reader.ReadBytes(SpiritualElementInfo.ElementCount);
+
+		if (Main.netMode == NetmodeID.Server)
+			playerIndex = whoAmI;
+		if (playerIndex < 0 || playerIndex >= Main.maxPlayers
+			|| !Main.player[playerIndex].active)
+			return;
+
+		SpiritualRootPlayer root =
+			Main.player[playerIndex].GetModPlayer<SpiritualRootPlayer>();
+		root.SetStateFromNetwork(quality, elements, primary, purity, revealed, affinities);
+		if (Main.netMode == NetmodeID.Server)
+			SendSpiritualRootState(playerIndex, root, ignoreClient: whoAmI);
+	}
+
+	internal static void SendSpiritualRootState(int playerIndex,
+		SpiritualRootPlayer root, int toClient = -1, int ignoreClient = -1)
+	{
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.SpiritualRootState);
+		packet.Write((byte)playerIndex);
+		packet.Write((byte)root.Quality);
+		packet.Write((ushort)root.Elements);
+		packet.Write((ushort)root.PrimaryElement);
+		packet.Write((byte)Math.Clamp(root.Purity, 1, 100));
+		packet.Write(root.IsRevealed);
+		packet.Write(root.GetAffinitySnapshot());
+		packet.Send(toClient, ignoreClient);
+	}
+
+	private static void HandleQiBurningToggleRequest(int whoAmI)
+	{
+		if (Main.netMode != NetmodeID.Server
+			|| whoAmI < 0 || whoAmI >= Main.maxPlayers
+			|| !Main.player[whoAmI].active)
+			return;
+		Main.player[whoAmI].GetModPlayer<CultivationPlayer>()
+			.TryToggleQiBurningAuthoritative();
+	}
+
+	private static void HandleQiBurningState(BinaryReader reader)
+	{
+		int playerIndex = reader.ReadByte();
+		bool enabled = reader.ReadBoolean();
+		if (Main.netMode != NetmodeID.MultiplayerClient
+			|| playerIndex < 0 || playerIndex >= Main.maxPlayers
+			|| !Main.player[playerIndex].active)
+			return;
+		Main.player[playerIndex].GetModPlayer<CultivationPlayer>()
+			.SetQiBurningFromNetwork(enabled);
+	}
+
+	private static void HandleCultivationRiskState(BinaryReader reader)
+	{
+		int playerIndex = reader.ReadByte();
+		int burnedBps = reader.ReadInt32();
+		int deviationTicks = reader.ReadInt32();
+		int demonPoints = reader.ReadByte();
+		int breakthroughProgress = reader.ReadByte();
+		int deathProgress = reader.ReadByte();
+		bool trialActive = reader.ReadBoolean();
+		int trialNpcIndex = reader.ReadInt16();
+		int trialCooldown = reader.ReadInt32();
+		if (Main.netMode != NetmodeID.MultiplayerClient
+			|| playerIndex < 0 || playerIndex >= Main.maxPlayers
+			|| !Main.player[playerIndex].active)
+			return;
+		Main.player[playerIndex].GetModPlayer<CultivationPlayer>()
+			.SetRiskStateFromNetwork(burnedBps, deviationTicks,
+				demonPoints, breakthroughProgress, deathProgress,
+				trialActive, trialNpcIndex, trialCooldown);
+	}
+
+	private static void HandleHeartDemonTrialRequest(int whoAmI)
+	{
+		if (Main.netMode != NetmodeID.Server
+			|| whoAmI < 0 || whoAmI >= Main.maxPlayers
+			|| !Main.player[whoAmI].active)
+			return;
+		Main.player[whoAmI].GetModPlayer<CultivationPlayer>()
+			.StartHeartDemonTrialAuthoritative();
+	}
+
+	private static void HandleHeartDemonDeathRequest(int whoAmI)
+	{
+		if (Main.netMode != NetmodeID.Server
+			|| whoAmI < 0 || whoAmI >= Main.maxPlayers
+			|| !Main.player[whoAmI].active)
+			return;
+		Main.player[whoAmI].GetModPlayer<CultivationPlayer>()
+			.RecordHeartDemonDeathAuthoritative();
+	}
+
+	private static void HandleHeartDemonBreakthroughFailureRequest(int whoAmI)
+	{
+		if (Main.netMode != NetmodeID.Server
+			|| whoAmI < 0 || whoAmI >= Main.maxPlayers
+			|| !Main.player[whoAmI].active)
+			return;
+		Main.player[whoAmI].GetModPlayer<CultivationPlayer>()
+			.RecordHeartDemonBreakthroughFailureAuthoritative();
+	}
+
+	private static byte[] ReadTechniqueLoadoutSnapshot(
+		BinaryReader reader)
+	{
+		byte[] snapshot = new byte[
+			CultivationPlayer.TechniqueLoadoutPresetCount
+				* CultivationPlayer.MaximumTechniqueLoadoutSlots];
+		for (int i = 0; i < snapshot.Length; i++)
+			snapshot[i] = reader.ReadByte();
+		return snapshot;
+	}
+
+	private static void HandleTechniqueLoadoutRequest(
+		BinaryReader reader, int whoAmI)
+	{
+		int preset = reader.ReadByte();
+		byte[] snapshot = ReadTechniqueLoadoutSnapshot(reader);
+		if (Main.netMode != NetmodeID.Server
+			|| whoAmI < 0 || whoAmI >= Main.maxPlayers
+			|| !Main.player[whoAmI].active)
+		{
+			return;
+		}
+		CultivationPlayer cultivation =
+			Main.player[whoAmI].GetModPlayer<CultivationPlayer>();
+		cultivation.ApplyTechniqueLoadoutState(
+			preset, snapshot, validateUnlocks: true);
+		SendTechniqueLoadoutState(whoAmI, cultivation);
+	}
+
+	private static void HandleTechniqueLoadoutState(BinaryReader reader)
+	{
+		int playerIndex = reader.ReadByte();
+		int preset = reader.ReadByte();
+		byte[] snapshot = ReadTechniqueLoadoutSnapshot(reader);
+		if (Main.netMode != NetmodeID.MultiplayerClient
+			|| playerIndex < 0 || playerIndex >= Main.maxPlayers
+			|| !Main.player[playerIndex].active)
+		{
+			return;
+		}
+		Main.player[playerIndex].GetModPlayer<CultivationPlayer>()
+			.ApplyTechniqueLoadoutState(
+				preset, snapshot, validateUnlocks: false);
+	}
+
+	internal static void SendQiBurningToggleRequest()
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.QiBurningToggleRequest);
+		packet.Send();
+	}
+
+	internal static void SendQiBurningState(int playerIndex, bool enabled,
+		int toClient = -1, int ignoreClient = -1)
+	{
+		if (Main.netMode != NetmodeID.Server)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.QiBurningState);
+		packet.Write((byte)playerIndex);
+		packet.Write(enabled);
+		packet.Send(toClient, ignoreClient);
+	}
+
+	internal static void SendCultivationRiskState(int playerIndex,
+		CultivationPlayer cultivation, int toClient = -1,
+		int ignoreClient = -1)
+	{
+		if (Main.netMode != NetmodeID.Server)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.CultivationRiskState);
+		packet.Write((byte)playerIndex);
+		packet.Write(cultivation.BurnedQiCapacityBps);
+		packet.Write(cultivation.QiDeviationTicksRemaining);
+		packet.Write((byte)cultivation.HeartDemonPoints);
+		packet.Write((byte)cultivation.BreakthroughFailuresTowardHeartDemon);
+		packet.Write((byte)cultivation.DeathsTowardHeartDemon);
+		packet.Write(cultivation.HeartDemonTrialActive);
+		packet.Write((short)cultivation.HeartDemonTrialNpcIndex);
+		packet.Write(cultivation.HeartDemonTrialCooldown);
+		packet.Send(toClient, ignoreClient);
+	}
+
+	internal static void SendHeartDemonTrialRequest()
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.HeartDemonTrialRequest);
+		packet.Send();
+	}
+
+	internal static void SendHeartDemonDeathRequest()
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.HeartDemonDeathRequest);
+		packet.Send();
+	}
+
+	internal static void SendHeartDemonBreakthroughFailureRequest()
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)
+			XianxiaMessageType.HeartDemonBreakthroughFailureRequest);
+		packet.Send();
+	}
+
+	internal static void SendTechniqueLoadoutRequest(
+		int preset, byte[] snapshot)
+	{
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.TechniqueLoadoutRequest);
+		packet.Write((byte)preset);
+		for (int i = 0;
+			i < CultivationPlayer.TechniqueLoadoutPresetCount
+				* CultivationPlayer.MaximumTechniqueLoadoutSlots; i++)
+		{
+			packet.Write(i < snapshot.Length
+				? snapshot[i] : (byte)CultivationAbility.Count);
+		}
+		packet.Send();
+	}
+
+	internal static void SendTechniqueLoadoutState(
+		int playerIndex, CultivationPlayer cultivation,
+		int toClient = -1, int ignoreClient = -1)
+	{
+		if (Main.netMode != NetmodeID.Server)
+			return;
+		ModPacket packet = ModContent.GetInstance<Xianxia>().GetPacket();
+		packet.Write((byte)XianxiaMessageType.TechniqueLoadoutState);
+		packet.Write((byte)playerIndex);
+		packet.Write((byte)cultivation.ActiveTechniqueLoadoutPreset);
+		byte[] snapshot = cultivation.GetTechniqueLoadoutSnapshot();
+		for (int i = 0; i < snapshot.Length; i++)
+			packet.Write(snapshot[i]);
 		packet.Send(toClient, ignoreClient);
 	}
 }

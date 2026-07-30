@@ -27,7 +27,7 @@ namespace Xianxia.Common.Systems;
 
 public class CultivationManualSystem : ModSystem
 {
-	private const int PageCount = 19;
+	private const int PageCount = 20;
 
 	private readonly record struct ManualIndexEntry(string LocalizationKey, int TargetPage);
 	private readonly record struct ManualTextLine(string Text, float Y);
@@ -62,7 +62,8 @@ public class CultivationManualSystem : ModSystem
 		new("AlchemyPath", 15),
 		new("SectSystem", 16),
 		new("FormationPath", 17),
-		new("ArtifactForging", 18)
+		new("ArtifactForging", 18),
+		new("SpiritualRoots", 19)
 	];
 
 	private static bool isOpen;
@@ -315,6 +316,7 @@ public class CultivationManualSystem : ModSystem
 		16 => "SectSystem",
 		17 => "FormationPath",
 		18 => "ArtifactForging",
+		19 => "SpiritualRoots",
 		_ => "Page0"
 	};
 
@@ -611,6 +613,12 @@ public class CultivationManualSystem : ModSystem
 				new(ModContent.ItemType<MeridianCleansingPill>(), 2, ModContent.ItemType<AlchemyCauldron>(),
 					[new(ItemID.BottledWater), new(ModContent.ItemType<MoonDewFlower>(), 3),
 						new(ModContent.ItemType<SpiritGrass>(), 3), new(ModContent.ItemType<PillDregs>(), 2)]),
+				new(ModContent.ItemType<MeridianMendingPill>(), 1, ModContent.ItemType<AlchemyCauldron>(),
+					[new(ItemID.BottledWater), new(ModContent.ItemType<Ironroot>(), 3),
+						new(ModContent.ItemType<SpiritJadeBar>(), 2),
+						new(ModContent.ItemType<SpiritBeastBlood>(), 3),
+						new(ModContent.ItemType<FoundationBeastCore>()),
+						new(ModContent.ItemType<SpiritStone>(), 5)]),
 				new(ModContent.ItemType<GreaterQiRecoveryPill>(), 2, ModContent.ItemType<AlchemyCauldron>(),
 					[new(ItemID.BottledWater), new(ModContent.ItemType<SpiritGrass>(), 5),
 						new(ModContent.ItemType<MoonDewFlower>(), 3), new(ModContent.ItemType<SpiritStone>(), 3),
@@ -642,6 +650,29 @@ public class CultivationManualSystem : ModSystem
 		{
 			return
 			[
+				new(ModContent.ItemType<MeridianOpeningPill>(), 2,
+					ModContent.ItemType<AlchemyCauldron>(),
+					[new(ItemID.BottledWater), new(ModContent.ItemType<SpiritGrass>(), 3),
+						new(ItemID.Daybloom, 2), new(ModContent.ItemType<SpiritStone>(), 2)]),
+				new(ModContent.ItemType<FoundationAscensionPill>(), 2,
+					ModContent.ItemType<AlchemyCauldron>(),
+					[new(ItemID.BottledWater), new(ModContent.ItemType<Ironroot>(), 3),
+						new(ModContent.ItemType<SpiritJadeBar>(), 2),
+						new(ModContent.ItemType<QiGatheringBeastCore>()),
+						new(ModContent.ItemType<SpiritStone>(), 5)]),
+				new(ModContent.ItemType<GoldenCoreCondensationPill>(), 1,
+					ModContent.ItemType<AlchemyCauldron>(),
+					[new(ItemID.BottledWater), new(ModContent.ItemType<FoundationBeastCore>(), 2),
+						new(ModContent.ItemType<FireLotus>(), 3),
+						new(ModContent.ItemType<SpiritJadeBar>(), 3),
+						new(ModContent.ItemType<SpiritStone>(), 8)]),
+				new(ModContent.ItemType<NascentSoulIntegrationPill>(), 1,
+					ModContent.ItemType<AlchemyCauldron>(),
+					[new(ItemID.BottledWater), new(ModContent.ItemType<CoreFormationBeastCore>()),
+						new(ModContent.ItemType<ThunderEssence>(), 2),
+						new(ModContent.ItemType<MoonDewFlower>(), 3),
+						new(ModContent.ItemType<ProfoundIronBar>(), 2),
+						new(ModContent.ItemType<SpiritStone>(), 12)]),
 				new(ModContent.ItemType<FoundationStabilizationPill>(), 2, ModContent.ItemType<AlchemyCauldron>(),
 					[new(ItemID.BottledWater), new(ModContent.ItemType<Ironroot>(), 3),
 						new(ModContent.ItemType<SpiritJadeBar>(), 2), new(ModContent.ItemType<QiGatheringBeastCore>()),

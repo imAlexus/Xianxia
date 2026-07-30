@@ -187,6 +187,98 @@ public class TribulationWardPill : ExpandedAlchemyPill
 		.AddIngredient<SpiritStone>(8)
 		.AddTile<AlchemyCauldronTile>()
 		.RequireAlchemyRank(RequiredAlchemyTier, RequiredAlchemyStage)
+			.Register();
+}
+
+public class MeridianOpeningPill : ExpandedAlchemyPill
+{
+	public override string Texture =>
+		"Xianxia/Content/Items/Alchemy/MeridianCleansingPill";
+	public override int RequiredAlchemyTier => 0;
+	public override int RequiredAlchemyStage => 0;
+	public override int AlchemyExperience => 18;
+	public override int SaturationCost => 18;
+	protected override int BuffType => ModContent.BuffType<MeridianOpeningBuff>();
+	protected override int DurationSeconds => 600;
+	protected override int Rarity => ItemRarityID.Blue;
+
+	public override void AddRecipes() => CreateRecipe(2)
+		.AddIngredient(ItemID.BottledWater)
+		.AddIngredient<SpiritGrass>(3)
+		.AddIngredient(ItemID.Daybloom, 2)
+		.AddIngredient<SpiritStone>(2)
+		.AddTile<AlchemyCauldronTile>()
+		.RequireAlchemyRank(RequiredAlchemyTier, RequiredAlchemyStage)
+		.Register();
+}
+
+public class FoundationAscensionPill : ExpandedAlchemyPill
+{
+	public override string Texture =>
+		"Xianxia/Content/Items/Alchemy/FoundationStabilizationPill";
+	public override int RequiredAlchemyTier => 1;
+	public override int RequiredAlchemyStage => 1;
+	public override int AlchemyExperience => 36;
+	public override int SaturationCost => 25;
+	protected override int BuffType => ModContent.BuffType<FoundationAscensionBuff>();
+	protected override int DurationSeconds => 600;
+	protected override int Rarity => ItemRarityID.Orange;
+
+	public override void AddRecipes() => CreateRecipe(2)
+		.AddIngredient(ItemID.BottledWater)
+		.AddIngredient<Ironroot>(3)
+		.AddIngredient<SpiritJadeBar>(2)
+		.AddIngredient<QiGatheringBeastCore>()
+		.AddIngredient<SpiritStone>(5)
+		.AddTile<AlchemyCauldronTile>()
+		.RequireAlchemyRank(RequiredAlchemyTier, RequiredAlchemyStage)
+		.Register();
+}
+
+public class GoldenCoreCondensationPill : ExpandedAlchemyPill
+{
+	public override string Texture =>
+		"Xianxia/Content/Items/Alchemy/GoldenCoreTemperingPill";
+	public override int RequiredAlchemyTier => 2;
+	public override int RequiredAlchemyStage => 1;
+	public override int AlchemyExperience => 54;
+	public override int SaturationCost => 35;
+	protected override int BuffType => ModContent.BuffType<GoldenCoreCondensationBuff>();
+	protected override int DurationSeconds => 600;
+	protected override int Rarity => ItemRarityID.LightRed;
+
+	public override void AddRecipes() => CreateRecipe()
+		.AddIngredient(ItemID.BottledWater)
+		.AddIngredient<FoundationBeastCore>(2)
+		.AddIngredient<FireLotus>(3)
+		.AddIngredient<SpiritJadeBar>(3)
+		.AddIngredient<SpiritStone>(8)
+		.AddTile<AlchemyCauldronTile>()
+		.RequireAlchemyRank(RequiredAlchemyTier, RequiredAlchemyStage)
+		.Register();
+}
+
+public class NascentSoulIntegrationPill : ExpandedAlchemyPill
+{
+	public override string Texture =>
+		"Xianxia/Content/Items/Alchemy/NascentSoulAwakeningPill";
+	public override int RequiredAlchemyTier => 3;
+	public override int RequiredAlchemyStage => 1;
+	public override int AlchemyExperience => 74;
+	public override int SaturationCost => 45;
+	protected override int BuffType => ModContent.BuffType<NascentSoulIntegrationBuff>();
+	protected override int DurationSeconds => 600;
+	protected override int Rarity => ItemRarityID.Purple;
+
+	public override void AddRecipes() => CreateRecipe()
+		.AddIngredient(ItemID.BottledWater)
+		.AddIngredient<CoreFormationBeastCore>()
+		.AddIngredient<ThunderEssence>(2)
+		.AddIngredient<MoonDewFlower>(3)
+		.AddIngredient<ProfoundIronBar>(2)
+		.AddIngredient<SpiritStone>(12)
+		.AddTile<AlchemyCauldronTile>()
+		.RequireAlchemyRank(RequiredAlchemyTier, RequiredAlchemyStage)
 		.Register();
 }
 

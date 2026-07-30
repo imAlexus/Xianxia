@@ -8,15 +8,29 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Xianxia.Content.Buffs;
+using Xianxia.Content.Items;
+using Xianxia.Content.Items.Alchemy;
 using Xianxia.Content.Items.Guides;
+using Xianxia.Content.Items.Materials;
+using Xianxia.Content.NPCs;
 using Xianxia.Content.Projectiles;
 using Xianxia.Content.TileEntities;
 using Xianxia.Content.Tiles;
 using Xianxia.Common.Utilities;
 using Xianxia.Common.Config;
 using Xianxia.Common.Abilities;
+using Xianxia.Common.Elements;
+using Xianxia.Common.Items;
 
 namespace Xianxia.Common.Players;
+
+public enum FoundationQuality : byte
+{
+	Inferior,
+	Stable,
+	Perfect,
+	Heavenly
+}
 
 public class CultivationPlayer : ModPlayer
 {
@@ -50,6 +64,32 @@ public class CultivationPlayer : ModPlayer
 	private const int TribulationInitialDelay = 120;
 	private const int TribulationStrikeInterval = 90;
 	private const int TribulationWarningTime = 45;
+	private const int QiBurnPulseInterval = 3 * 60;
+	private const int QiBurnPerPulseBps = 200;
+	private const int DefaultMaximumBurnedQiBps = 5000;
+	private const int BurnedQiMeditationRepairInterval = 30 * 60;
+	private const int BurnedQiMeditationRepairBps = 25;
+	private const int QiBurnCombatWindow = 5 * 60;
+	private const int QiBurnExperiencePerMinute = 100;
+	private const int MaximumHeartDemonPoints = 9;
+	private const int BreakthroughFailuresPerHeartDemonPoint = 2;
+	private const int DeathsPerHeartDemonPoint = 5;
+	private const int HeartDemonTrialRetryCooldown = 30 * 60;
+	public const int HeavenlyTreasureRequired = 1;
+	public const int TechniqueLoadoutPresetCount = 3;
+	public const int MaximumTechniqueLoadoutSlots = 6;
+	private const int TechniqueLoadoutSaveVersion = 2;
+
+	private static readonly CultivationAbility[] DefaultLoadoutOrder =
+	[
+		CultivationAbility.QiResistance,
+		CultivationAbility.Fireball,
+		CultivationAbility.QiPalm,
+		CultivationAbility.SpiritualRain,
+		CultivationAbility.FlameStep,
+		CultivationAbility.SpiritSwordRain,
+		CultivationAbility.NascentTeleport
+	];
 
 	private readonly record struct CultivationBonus(
 		float MaxLife,
@@ -97,12 +137,30 @@ public class CultivationPlayer : ModPlayer
 	private int nascentTeleportCooldown;
 	private int spiritualPressureQiTimer;
 	private int nightVisionQiTimer;
+	private bool qiBurningEnabled;
+	private int qiBurningPulseTimer;
+	private int burnedQiCapacityBps;
+	private int qiDeviationTimer;
+	private int qiBurningCombatTimer;
+	private int qiBurningExperienceWindowTimer;
+	private int qiBurningExperienceThisWindow;
+	private int burnedQiMeditationRepairTimer;
+	private int heartDemonPoints;
+	private int breakthroughFailuresTowardHeartDemon;
+	private int deathsTowardHeartDemon;
+	private bool heartDemonTrialActive;
+	private int heartDemonTrialNpcIndex = -1;
+	private int heartDemonTrialCooldown;
+	private bool awaitingHeartDemonTrialConfirmation;
+	private int heartDemonVisualTimer;
+	private bool suppressRiskTracking;
 	private int spiritualRainCooldown;
 	private int nascentSoulRegenerationTrainingTimer;
 	private float qiProtectionDotQiAccumulator;
 	private int qiProtectionDotVisualCooldown;
 	private int drowningProtectionTimer;
 	private int stillnessWarningCooldown;
+	private int breakthroughWarningCooldown;
 	private int breakthroughEffectTimer;
 	private int breakthroughEffectRealm;
 	private bool realmBreakthroughEffect;
@@ -111,11 +169,39 @@ public class CultivationPlayer : ModPlayer
 	private int tribulationStrikesRemaining;
 	private int pendingTribulationRealm = -1;
 	private int deferredTribulationRealm = -1;
+	private int pendingRealmBreakthroughConfirmation = -1;
+	private int confirmedRealmBreakthrough = -1;
 	private bool awaitingTribulationConfirmation;
 	private bool resolvingTribulationLightning;
 	private bool flightMaintainedDuringChat;
 	private bool meditationToggleRequested;
+	private bool forceNextRealmBreakthrough;
 	private int appliedCultivationRequirementMultiplier;
+	private int heavenlyEyeImprints;
+	private int heavenlyRoyalNectarImprints;
+	private int heavenlyBoneMarrowImprints;
+	private int realmBreakthroughAttempts;
+	private int realmBreakthroughSuccesses;
+	private int realmBreakthroughFailures;
+	private int breakthroughPillsConsumed;
+	private int successfulBreakthroughPillMask;
+	private int successfulBreakthroughRecordedMask;
+	private int pendingBreakthroughTreasure;
+	private bool pendingBreakthroughUsedPill;
+	private FoundationQuality foundationQuality;
+	private int goldenCoreTier = 9;
+	private FoundationQuality pendingFoundationQuality;
+	private int pendingGoldenCoreTier = 9;
+	private int pendingBreakthroughGoldenCoreTier = 9;
+	private int selectedBreakthroughTreasureType;
+	private int selectedBreakthroughPillType;
+	private int activeTechniqueLoadoutPreset;
+	private int selectedTechniqueLoadoutSlot;
+	private readonly CultivationAbility[,] techniqueLoadouts =
+		new CultivationAbility[
+			TechniqueLoadoutPresetCount, MaximumTechniqueLoadoutSlots];
+	private readonly int[] successfulBreakthroughTreasures =
+		new int[TotalRealms];
 	private readonly int[] abilityExperience = new int[(int)CultivationAbility.Count];
 	private readonly int[] abilityLevels = new int[(int)CultivationAbility.Count];
 
@@ -123,6 +209,44 @@ public class CultivationPlayer : ModPlayer
 	public int QiExp { get; private set; }
 	public int RealmIndex { get; private set; }
 	public int Stage { get; private set; }
+	public FoundationQuality FoundationQuality => foundationQuality;
+	public int GoldenCoreTier => goldenCoreTier;
+	public FoundationQuality PendingFoundationQuality =>
+		pendingFoundationQuality;
+	public int PendingGoldenCoreTier => pendingGoldenCoreTier;
+	public int SelectedBreakthroughTreasureType =>
+		selectedBreakthroughTreasureType;
+	public int SelectedBreakthroughPillType =>
+		GetEffectiveSelectedBreakthroughPillType();
+	public float FoundationStatMultiplier => foundationQuality switch
+	{
+		FoundationQuality.Stable => 1.15f,
+		FoundationQuality.Perfect => 1.35f,
+		FoundationQuality.Heavenly => 1.60f,
+		_ => 1f
+	};
+	public float FoundationQiGatheringMultiplier => foundationQuality switch
+	{
+		FoundationQuality.Stable => 1.07f,
+		FoundationQuality.Perfect => 1.15f,
+		FoundationQuality.Heavenly => 1.25f,
+		_ => 1f
+	};
+	public float GoldenCoreStatMultiplier => goldenCoreTier switch
+	{
+		8 => 1.05f, 7 => 1.10f, 6 => 1.16f, 5 => 1.23f,
+		4 => 1.31f, 3 => 1.40f, 2 => 1.50f, 1 => 1.65f,
+		_ => 1f
+	};
+	public float GoldenCoreQiGatheringMultiplier => goldenCoreTier switch
+	{
+		8 => 1.03f, 7 => 1.06f, 6 => 1.09f, 5 => 1.12f,
+		4 => 1.15f, 3 => 1.18f, 2 => 1.22f, 1 => 1.27f,
+		_ => 1f
+	};
+	public float BreakthroughGradeQiGatheringMultiplier =>
+		(RealmIndex >= 2 ? FoundationQiGatheringMultiplier : 1f)
+		* (RealmIndex >= 3 ? GoldenCoreQiGatheringMultiplier : 1f);
 	public int GlobalStageIndex => RealmIndex * StagesPerRealm + Stage - 1;
 	public bool IsMeditating { get; private set; }
 	public bool IsFlyingWithQi { get; private set; }
@@ -131,6 +255,45 @@ public class CultivationPlayer : ModPlayer
 	public bool QiSenseEnabled { get; private set; }
 	public bool SpiritualPressureEnabled { get; private set; }
 	public bool NightVisionEnabled { get; private set; }
+	public int BaseMaxQi => QiExp;
+	public int BurnedQiCapacityBps => burnedQiCapacityBps;
+	public float BurnedQiCapacityPercent => burnedQiCapacityBps / 100f;
+	public int BurnedMaxQi =>
+		(int)MathF.Ceiling(BaseMaxQi * burnedQiCapacityBps / 10000f);
+	public bool HasBurnedQi => burnedQiCapacityBps > 0;
+	public bool QiBurningEnabled => qiBurningEnabled;
+	public bool HasQiDeviation => qiDeviationTimer > 0;
+	public int QiDeviationTicksRemaining => qiDeviationTimer;
+	public int QiDeviationSecondsRemaining =>
+		(int)MathF.Ceiling(qiDeviationTimer / 60f);
+	public float QiBurningDamageBonusPercent =>
+		MathHelper.Lerp(30f, 45f,
+			(GetAbilityLevel(CultivationAbility.QiBurning) - 1f)
+				/ (CultivationAbilityInfo.MaxLevel - 1f));
+	public float QiBurningAttackSpeedBonusPercent =>
+		MathHelper.Lerp(10f, 20f,
+			(GetAbilityLevel(CultivationAbility.QiBurning) - 1f)
+				/ (CultivationAbilityInfo.MaxLevel - 1f));
+	public int MaximumBurnedQiBps =>
+		Math.Clamp(CultivationServerConfig.Instance?.MaximumBurnedQiPercent
+			?? DefaultMaximumBurnedQiBps / 100, 20, 80) * 100;
+	public int HeartDemonPoints => heartDemonPoints;
+	public int BreakthroughFailuresTowardHeartDemon =>
+		breakthroughFailuresTowardHeartDemon;
+	public int DeathsTowardHeartDemon => deathsTowardHeartDemon;
+	public bool HeartDemonTrialActive => heartDemonTrialActive;
+	public int HeartDemonTrialNpcIndex => heartDemonTrialNpcIndex;
+	public int HeartDemonTrialCooldown => heartDemonTrialCooldown;
+	public bool IsAwaitingHeartDemonTrialConfirmation =>
+		awaitingHeartDemonTrialConfirmation;
+	public float HeartDemonBreakthroughPenalty =>
+		heartDemonPoints * 2f * HeartDemonPenaltyStrength;
+	public float HeartDemonCultivationGainMultiplier =>
+		Math.Max(0.1f, 1f - heartDemonPoints * 0.02f
+			* HeartDemonPenaltyStrength);
+	private float HeartDemonPenaltyStrength =>
+		Math.Clamp(CultivationServerConfig.Instance
+			?.HeartDemonPenaltyStrengthPercent ?? 100, 0, 200) / 100f;
 	public int SpiritualRainCooldown => spiritualRainCooldown;
 	public bool IsAbilityWheelOpen { get; private set; }
 	public bool IsAbilityTreeOpen { get; private set; }
@@ -150,11 +313,19 @@ public class CultivationPlayer : ModPlayer
 	public float MeditationQiPerSecond =>
 		(MeditationQiGainByRealm[RealmIndex] + EquipmentMeditationQiBonus)
 		* SpiritualQiZoneMultiplier * PermanentFormationQiMultiplier
-		* GetAbilityPowerMultiplier(CultivationAbility.Meditation, 0.05f);
+		* GetAbilityPowerMultiplier(CultivationAbility.Meditation, 0.05f)
+		* Player.GetModPlayer<SpiritualRootPlayer>().CultivationGainMultiplier
+		* Player.GetModPlayer<SpiritualRootPlayer>().BiomeMeditationMultiplier
+		* BreakthroughGradeQiGatheringMultiplier
+		* (HasQiDeviation ? 0.5f : 1f);
 	public float PassiveQiRecoveryPerSecond =>
 		(PassiveQiRecoveryByRealm[RealmIndex] + EquipmentPassiveQiBonus)
 		* SpiritualQiZoneMultiplier * PermanentFormationQiMultiplier
-		* (1.10f + (GetAbilityLevel(CultivationAbility.SpiritBreathing) - 1) * 0.03f);
+		* (1.10f + (GetAbilityLevel(CultivationAbility.SpiritBreathing) - 1) * 0.03f)
+		* BreakthroughGradeQiGatheringMultiplier
+		* (RealmIndex >= 2 && foundationQuality == FoundationQuality.Heavenly
+			? 1.10f : 1f)
+		* (HasQiDeviation ? 0.5f : 1f);
 	public int CurrentRealmThreshold =>
 		GetGlobalStageThreshold(RealmIndex * StagesPerRealm);
 	public bool IsAtMaxRealm => RealmIndex >= TotalRealms - 1;
@@ -164,30 +335,208 @@ public class CultivationPlayer : ModPlayer
 	public int CurrentStageThreshold => GetGlobalStageThreshold(GlobalStageIndex);
 	public int NextStageThreshold => GetGlobalStageThreshold(Math.Min(GlobalStageIndex + 1, MaxGlobalStageIndex));
 	public int QiRequiredForNextStage => NextStageThreshold - CurrentStageThreshold;
-	public int MaxQi => QiExp;
+	public int MaxQi => Math.Max(0, BaseMaxQi - BurnedMaxQi);
 	public bool CanUseQiProtection => QiProtectionEnabled && RealmIndex >= 2;
 	public bool HasUnlockedQiProtection => RealmIndex >= 2;
 	public bool HasUnlockedQiSense => RealmIndex >= 1;
 	public bool CanUseQiSense => QiSenseEnabled && HasUnlockedQiSense && Qi > 0;
 	public bool IsAwaitingTribulationConfirmation =>
 		awaitingTribulationConfirmation && pendingTribulationRealm >= TribulationStartingRealm;
+	public bool IsAwaitingRealmBreakthroughConfirmation =>
+		pendingRealmBreakthroughConfirmation is >= 1 and < TotalRealms;
+	public int PendingRealmBreakthroughTargetRealm =>
+		IsAwaitingRealmBreakthroughConfirmation
+			? pendingRealmBreakthroughConfirmation
+			: NextBreakthroughTargetRealm;
+	public string PendingRealmBreakthroughTargetName =>
+		GetRealmName(PendingRealmBreakthroughTargetRealm);
+	public float PendingRealmBreakthroughBaseChance =>
+		GetBaseRealmBreakthroughChance(PendingRealmBreakthroughTargetRealm);
+	public float PendingRealmBreakthroughRootModifier =>
+		Player.GetModPlayer<SpiritualRootPlayer>().BreakthroughChanceModifier;
+	public float PendingRealmBreakthroughPillModifier =>
+		GetSelectedBreakthroughPillChanceBonus();
+	public float PendingBreakthroughGradeChanceModifier =>
+		GetBreakthroughGradeChanceModifier(
+			PendingRealmBreakthroughTargetRealm);
+	public float PendingBreakthroughStatMultiplier =>
+		PendingRealmBreakthroughTargetRealm switch
+		{
+			2 => pendingFoundationQuality switch
+			{
+				FoundationQuality.Stable => 1.15f,
+				FoundationQuality.Perfect => 1.35f,
+				FoundationQuality.Heavenly => 1.60f,
+				_ => 1f
+			},
+			3 => pendingGoldenCoreTier switch
+			{
+				8 => 1.05f, 7 => 1.10f, 6 => 1.16f,
+				5 => 1.23f, 4 => 1.31f, 3 => 1.40f,
+				2 => 1.50f, 1 => 1.65f, _ => 1f
+			},
+			_ => 1f
+		};
+	public float PendingBreakthroughQiGatheringBonusPercent =>
+		PendingRealmBreakthroughTargetRealm switch
+		{
+			2 => pendingFoundationQuality switch
+			{
+				FoundationQuality.Stable => 7f,
+				FoundationQuality.Perfect => 15f,
+				FoundationQuality.Heavenly => 25f,
+				_ => 0f
+			},
+			3 => pendingGoldenCoreTier switch
+			{
+				8 => 3f, 7 => 6f, 6 => 9f, 5 => 12f,
+				4 => 15f, 3 => 18f, 2 => 22f, 1 => 27f,
+				_ => 0f
+			},
+			_ => 0f
+		};
+	public float PendingRealmBreakthroughChance => Math.Clamp(
+		PendingRealmBreakthroughBaseChance
+			+ PendingRealmBreakthroughRootModifier
+			+ PendingRealmBreakthroughPillModifier
+			+ PendingBreakthroughGradeChanceModifier
+			- HeartDemonBreakthroughPenalty,
+		10f, 95f);
+	public bool CanConfirmRealmBreakthrough =>
+		!HasBurnedQi && PendingRealmBreakthroughTargetRealm switch
+		{
+			2 => pendingFoundationQuality switch
+			{
+				FoundationQuality.Inferior or FoundationQuality.Stable =>
+					HasSelectedBreakthroughTreasure
+						|| HasSelectedBreakthroughPill,
+				FoundationQuality.Perfect =>
+					HasSelectedBreakthroughTreasure,
+				FoundationQuality.Heavenly =>
+					HasSelectedBreakthroughTreasure
+						&& HasSelectedBreakthroughPill,
+				_ => false
+			},
+			3 => HasSelectedBreakthroughTreasure
+				&& (pendingGoldenCoreTier != 1
+					|| HasSelectedBreakthroughPill),
+			_ => true
+		};
+	public bool HasSelectedBreakthroughTreasure =>
+		IsHeavenlyTreasureType(selectedBreakthroughTreasureType)
+		&& Player.CountItem(selectedBreakthroughTreasureType) > 0;
+	public bool HasSelectedBreakthroughPill =>
+		CanConsumeSelectedBreakthroughPill();
 	public string PendingTribulationRealmName => pendingTribulationRealm >= 0
 		? GetRealmName(pendingTribulationRealm)
 		: string.Empty;
 	public int PendingTribulationStrikeCount => pendingTribulationRealm >= TribulationStartingRealm
-		? 9 + (pendingTribulationRealm - TribulationStartingRealm) * 2
+		? GetTribulationStrikeCount(pendingTribulationRealm)
 		: 0;
+	public float PendingTribulationPowerBonusPercent =>
+		pendingTribulationRealm >= TribulationStartingRealm
+			? (GetTribulationPowerMultiplier(pendingTribulationRealm) - 1f)
+				* 100f
+			: 0f;
+	public int PendingTribulationGoldenCoreTier =>
+		pendingTribulationRealm >= TribulationStartingRealm
+			? GetTribulationGoldenCoreTier(pendingTribulationRealm)
+			: 9;
 	public bool NextBreakthroughRequiresTribulation =>
 		!IsCultivationMaxed && Stage == StagesPerRealm && RealmIndex + 1 >= TribulationStartingRealm;
 	public int NextBreakthroughTargetRealm => Math.Min(RealmIndex + (Stage == StagesPerRealm ? 1 : 0),
 		TotalRealms - 1);
 	public int NextBreakthroughTargetStage => Stage == StagesPerRealm ? 1 : Stage + 1;
 	public int NextBreakthroughTribulationStrikes => NextBreakthroughRequiresTribulation
-		? 9 + (NextBreakthroughTargetRealm - TribulationStartingRealm) * 2
+		? GetTribulationStrikeCount(NextBreakthroughTargetRealm)
 		: 0;
+	public bool NextAdvancementIsRealmBreakthrough =>
+		!IsCultivationMaxed && Stage == StagesPerRealm;
+	public bool NextBreakthroughRequiresHeavenlyTreasures =>
+		NextAdvancementIsRealmBreakthrough
+		&& NextBreakthroughTargetRealm is 2 or 3;
+	public int HeavenlyEyeEssenceCount =>
+		Player.CountItem(ModContent.ItemType<HeavenlyEyeEssence>());
+	public int HeavenlyRoyalNectarCount =>
+		Player.CountItem(ModContent.ItemType<HeavenlyRoyalNectar>());
+	public int HeavenlyBoneMarrowCount =>
+		Player.CountItem(ModContent.ItemType<HeavenlyBoneMarrow>());
+	public bool HasAnyHeavenlyTreasure =>
+		HeavenlyEyeEssenceCount + HeavenlyRoyalNectarCount
+			+ HeavenlyBoneMarrowCount >= HeavenlyTreasureRequired;
+	public bool HasFoundationBreakthroughCatalyst =>
+		Player.GetModPlayer<AlchemyPillEffectPlayer>().FoundationAscension
+		|| HasAnyHeavenlyTreasure;
+	public bool HasGoldenCoreHeavenlyTreasures => HasAnyHeavenlyTreasure;
+	public int HeavenlyEyeImprints => heavenlyEyeImprints;
+	public int HeavenlyRoyalNectarImprints => heavenlyRoyalNectarImprints;
+	public int HeavenlyBoneMarrowImprints => heavenlyBoneMarrowImprints;
+	public float HeavenlyEyeQiSenseRangeMultiplier =>
+		1f + heavenlyEyeImprints * 0.10f;
+	public int RealmBreakthroughAttempts => realmBreakthroughAttempts;
+	public int RealmBreakthroughSuccesses => realmBreakthroughSuccesses;
+	public int RealmBreakthroughFailures => realmBreakthroughFailures;
+	public int BreakthroughPillsConsumed => breakthroughPillsConsumed;
+	public float NextRealmBreakthroughBaseChance =>
+		GetBaseRealmBreakthroughChance(NextBreakthroughTargetRealm);
+	public float NextRealmBreakthroughRootModifier =>
+		Player.GetModPlayer<SpiritualRootPlayer>().BreakthroughChanceModifier;
+	public float NextRealmBreakthroughPillModifier =>
+		Player.GetModPlayer<AlchemyPillEffectPlayer>()
+			.GetBreakthroughChanceBonus(NextBreakthroughTargetRealm);
+	public float NextRealmBreakthroughChance => Math.Clamp(
+		NextRealmBreakthroughBaseChance
+			+ NextRealmBreakthroughRootModifier
+			+ NextRealmBreakthroughPillModifier
+			+ GetDefaultBreakthroughGradeChanceModifier(
+				NextBreakthroughTargetRealm)
+			- HeartDemonBreakthroughPenalty,
+		10f, 95f);
+	public int ActiveTechniqueLoadoutPreset =>
+		activeTechniqueLoadoutPreset;
+	public int SelectedTechniqueLoadoutSlot =>
+		selectedTechniqueLoadoutSlot;
+	public CultivationAbility SelectedTechnique =>
+		GetActiveTechniqueLoadoutAbility(selectedTechniqueLoadoutSlot);
+	public int AvailableTechniqueLoadoutPresets =>
+		RealmIndex >= 2 ? TechniqueLoadoutPresetCount : 1;
+	public int TechniqueLoadoutSlotCount => RealmIndex switch
+	{
+		<= 0 => 2,
+		1 => 3,
+		2 => 4,
+		3 => 5,
+		_ => MaximumTechniqueLoadoutSlots
+	};
 	public bool IsAbilityUnlocked(CultivationAbility ability) =>
 		RealmIndex >= CultivationAbilityInfo.RequiredRealm(ability)
 		&& Player.GetModPlayer<SectPlayer>().HasUnlockedTechnique(ability);
+	public CultivationAbility GetTechniqueLoadoutAbility(
+		int preset, int slot)
+	{
+		if (preset < 0 || preset >= TechniqueLoadoutPresetCount
+			|| slot < 0 || slot >= MaximumTechniqueLoadoutSlots)
+		{
+			return CultivationAbility.Count;
+		}
+		return techniqueLoadouts[preset, slot];
+	}
+	public CultivationAbility GetActiveTechniqueLoadoutAbility(int slot) =>
+		GetTechniqueLoadoutAbility(activeTechniqueLoadoutPreset, slot);
+	public bool IsTechniqueEquipped(CultivationAbility ability)
+	{
+		if (!CultivationAbilityInfo.IsTechniqueLoadoutAbility(ability))
+			return true;
+		for (int slot = 0; slot < TechniqueLoadoutSlotCount; slot++)
+		{
+			if (techniqueLoadouts[activeTechniqueLoadoutPreset, slot]
+				== ability)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	public int GetAbilityLevel(CultivationAbility ability) => abilityLevels[(int)ability];
 	public int GetAbilityExperience(CultivationAbility ability) => abilityExperience[(int)ability];
 	public int GetAbilityExperienceRequired(CultivationAbility ability) =>
@@ -201,6 +550,14 @@ public class CultivationPlayer : ModPlayer
 		if (pillEffects.NascentSoulAwakening
 			&& ability is CultivationAbility.NascentTeleport or CultivationAbility.SpiritualPressure)
 			multiplier *= 1.25f;
+		SpiritualElement elements = CultivationAbilityInfo.GetSpiritualElements(ability);
+		if (elements != SpiritualElement.None)
+		{
+			ElementalCultivationPlayer elemental =
+				Player.GetModPlayer<ElementalCultivationPlayer>();
+			multiplier *= elemental.GetPowerMultiplier(elements)
+				* (1f + elemental.GetAffinity(elements) * 0.0015f);
+		}
 		return multiplier;
 	}
 
@@ -212,6 +569,224 @@ public class CultivationPlayer : ModPlayer
 			&& ability is CultivationAbility.FlameStep or CultivationAbility.NascentTeleport)
 			multiplier *= 0.75f;
 		return multiplier;
+	}
+
+	public bool TrySetTechniqueLoadoutSlot(
+		int preset, int slot, CultivationAbility ability)
+	{
+		if (preset < 0 || preset >= AvailableTechniqueLoadoutPresets
+			|| slot < 0 || slot >= TechniqueLoadoutSlotCount)
+		{
+			return false;
+		}
+		if (ability != CultivationAbility.Count
+			&& (!CultivationAbilityInfo.IsTechniqueLoadoutAbility(ability)
+				|| !IsAbilityUnlocked(ability)))
+		{
+			return false;
+		}
+
+		if (ability != CultivationAbility.Count)
+		{
+			for (int otherSlot = 0;
+				otherSlot < TechniqueLoadoutSlotCount; otherSlot++)
+			{
+				if (otherSlot == slot
+					|| techniqueLoadouts[preset, otherSlot] != ability)
+				continue;
+				techniqueLoadouts[preset, otherSlot] =
+					techniqueLoadouts[preset, slot];
+				break;
+			}
+		}
+		techniqueLoadouts[preset, slot] = ability;
+		NormalizeTechniqueLoadout();
+		SyncTechniqueLoadout();
+		return true;
+	}
+
+	public bool TrySelectTechniqueLoadoutPreset(int preset)
+	{
+		if (preset < 0 || preset >= AvailableTechniqueLoadoutPresets)
+			return false;
+		activeTechniqueLoadoutPreset = preset;
+		selectedTechniqueLoadoutSlot = Math.Clamp(
+			selectedTechniqueLoadoutSlot, 0,
+			TechniqueLoadoutSlotCount - 1);
+		NormalizeTechniqueLoadout();
+		SyncTechniqueLoadout();
+		return true;
+	}
+
+	public bool TrySelectActiveTechniqueSlot(int slot)
+	{
+		if (slot < 0 || slot >= TechniqueLoadoutSlotCount
+			|| GetActiveTechniqueLoadoutAbility(slot)
+				== CultivationAbility.Count)
+		{
+			return false;
+		}
+		selectedTechniqueLoadoutSlot = slot;
+		return true;
+	}
+
+	internal byte[] GetTechniqueLoadoutSnapshot()
+	{
+		byte[] snapshot = new byte[
+			TechniqueLoadoutPresetCount * MaximumTechniqueLoadoutSlots];
+		for (int preset = 0; preset < TechniqueLoadoutPresetCount; preset++)
+		{
+			for (int slot = 0; slot < MaximumTechniqueLoadoutSlots; slot++)
+			{
+				snapshot[preset * MaximumTechniqueLoadoutSlots + slot] =
+					(byte)techniqueLoadouts[preset, slot];
+			}
+		}
+		return snapshot;
+	}
+
+	internal void ApplyTechniqueLoadoutState(
+		int preset, byte[] snapshot, bool validateUnlocks)
+	{
+		activeTechniqueLoadoutPreset = Math.Clamp(
+			preset, 0, AvailableTechniqueLoadoutPresets - 1);
+		for (int loadout = 0;
+			loadout < TechniqueLoadoutPresetCount; loadout++)
+		{
+			for (int slot = 0; slot < MaximumTechniqueLoadoutSlots; slot++)
+			{
+				int index = loadout * MaximumTechniqueLoadoutSlots + slot;
+				CultivationAbility ability = index < snapshot.Length
+					? (CultivationAbility)snapshot[index]
+					: CultivationAbility.Count;
+				bool valid = slot < TechniqueLoadoutSlotCount
+					&& CultivationAbilityInfo
+						.IsTechniqueLoadoutAbility(ability)
+					&& (!validateUnlocks || IsAbilityUnlocked(ability));
+				if (valid)
+				techniqueLoadouts[loadout, slot] = ability;
+				else
+					techniqueLoadouts[loadout, slot] =
+						CultivationAbility.Count;
+			}
+			RemoveDuplicateLoadoutAbilities(loadout);
+		}
+		NormalizeTechniqueLoadout();
+	}
+
+	private void RemoveDuplicateLoadoutAbilities(int preset)
+	{
+		for (int slot = 0; slot < MaximumTechniqueLoadoutSlots; slot++)
+		{
+			CultivationAbility ability = techniqueLoadouts[preset, slot];
+			if (ability == CultivationAbility.Count)
+				continue;
+			for (int previous = 0; previous < slot; previous++)
+			{
+				if (techniqueLoadouts[preset, previous] != ability)
+					continue;
+				techniqueLoadouts[preset, slot] =
+					CultivationAbility.Count;
+				break;
+			}
+		}
+	}
+
+	private void ResetTechniqueLoadouts()
+	{
+		activeTechniqueLoadoutPreset = 0;
+		selectedTechniqueLoadoutSlot = 0;
+		for (int preset = 0; preset < TechniqueLoadoutPresetCount; preset++)
+		{
+			for (int slot = 0; slot < MaximumTechniqueLoadoutSlots; slot++)
+				techniqueLoadouts[preset, slot] = CultivationAbility.Count;
+		}
+	}
+
+	private void FillEmptyTechniqueLoadoutSlots()
+	{
+		for (int preset = 0; preset < TechniqueLoadoutPresetCount; preset++)
+		{
+			foreach (CultivationAbility ability in DefaultLoadoutOrder)
+			{
+				if (!IsAbilityUnlocked(ability))
+					continue;
+				bool alreadyEquipped = false;
+				int emptySlot = -1;
+				for (int slot = 0; slot < TechniqueLoadoutSlotCount; slot++)
+				{
+					if (techniqueLoadouts[preset, slot] == ability)
+						alreadyEquipped = true;
+					if (emptySlot < 0
+						&& techniqueLoadouts[preset, slot]
+							== CultivationAbility.Count)
+					{
+						emptySlot = slot;
+					}
+				}
+				if (!alreadyEquipped && emptySlot >= 0)
+					techniqueLoadouts[preset, emptySlot] = ability;
+			}
+		}
+	}
+
+	private void NormalizeTechniqueLoadout()
+	{
+		activeTechniqueLoadoutPreset = Math.Clamp(
+			activeTechniqueLoadoutPreset,
+			0, AvailableTechniqueLoadoutPresets - 1);
+		selectedTechniqueLoadoutSlot = Math.Clamp(
+			selectedTechniqueLoadoutSlot,
+			0, TechniqueLoadoutSlotCount - 1);
+		if (SelectedTechnique == CultivationAbility.Count)
+		{
+			for (int slot = 0; slot < TechniqueLoadoutSlotCount; slot++)
+			{
+				if (GetActiveTechniqueLoadoutAbility(slot)
+					== CultivationAbility.Count)
+					continue;
+				selectedTechniqueLoadoutSlot = slot;
+				break;
+			}
+		}
+		if (!IsTechniqueEquipped(CultivationAbility.QiFlight))
+		{
+			QiFlightEnabled = false;
+			IsFlyingWithQi = false;
+			flightQiTimer = 0;
+		}
+		if (!IsTechniqueEquipped(CultivationAbility.QiSense))
+			SetQiSenseEnabled(false);
+		if (!IsTechniqueEquipped(CultivationAbility.QiProtection))
+			SetQiProtectionEnabled(false);
+		if (!IsTechniqueEquipped(CultivationAbility.SpiritualPressure))
+			DisableSpiritualPressure(showMessage: false);
+		if (!IsTechniqueEquipped(CultivationAbility.NightVision))
+			DisableNightVision(showMessage: false);
+		if (qiBurningEnabled
+			&& !IsTechniqueEquipped(CultivationAbility.QiBurning))
+		{
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				qiBurningEnabled = false;
+			else
+				DisableQiBurning(applyDeviation: true, showMessage: true);
+		}
+	}
+
+	private void SyncTechniqueLoadout()
+	{
+		if (Main.netMode == NetmodeID.MultiplayerClient
+			&& Player.whoAmI == Main.myPlayer)
+		{
+			Xianxia.SendTechniqueLoadoutRequest(
+				activeTechniqueLoadoutPreset,
+				GetTechniqueLoadoutSnapshot());
+		}
+		else if (Main.netMode == NetmodeID.Server)
+		{
+			Xianxia.SendTechniqueLoadoutState(
+				Player.whoAmI, this);
+		}
 	}
 
 	public override void Initialize()
@@ -234,12 +809,30 @@ public class CultivationPlayer : ModPlayer
 		nascentTeleportCooldown = 0;
 		spiritualPressureQiTimer = 0;
 		nightVisionQiTimer = 0;
+		qiBurningEnabled = false;
+		qiBurningPulseTimer = 0;
+		burnedQiCapacityBps = 0;
+		qiDeviationTimer = 0;
+		qiBurningCombatTimer = 0;
+		qiBurningExperienceWindowTimer = 0;
+		qiBurningExperienceThisWindow = 0;
+		burnedQiMeditationRepairTimer = 0;
+		heartDemonPoints = 0;
+		breakthroughFailuresTowardHeartDemon = 0;
+		deathsTowardHeartDemon = 0;
+		heartDemonTrialActive = false;
+		heartDemonTrialNpcIndex = -1;
+		heartDemonTrialCooldown = 0;
+		awaitingHeartDemonTrialConfirmation = false;
+		heartDemonVisualTimer = 0;
+		suppressRiskTracking = false;
 		spiritualRainCooldown = 0;
 		nascentSoulRegenerationTrainingTimer = 0;
 		qiProtectionDotQiAccumulator = 0f;
 		qiProtectionDotVisualCooldown = 0;
 		drowningProtectionTimer = 0;
 		stillnessWarningCooldown = 0;
+		breakthroughWarningCooldown = 0;
 		breakthroughEffectTimer = 0;
 		breakthroughEffectRealm = 0;
 		realmBreakthroughEffect = false;
@@ -248,6 +841,8 @@ public class CultivationPlayer : ModPlayer
 		tribulationStrikesRemaining = 0;
 		pendingTribulationRealm = -1;
 		deferredTribulationRealm = -1;
+		pendingRealmBreakthroughConfirmation = -1;
+		confirmedRealmBreakthrough = -1;
 		awaitingTribulationConfirmation = false;
 		IsMeditating = false;
 		meditationToggleRequested = false;
@@ -268,20 +863,80 @@ public class CultivationPlayer : ModPlayer
 		}
 		NearbySpiritCrystalCount = 0;
 		HasReceivedCultivatorManual = false;
+		heavenlyEyeImprints = 0;
+		heavenlyRoyalNectarImprints = 0;
+		heavenlyBoneMarrowImprints = 0;
+		realmBreakthroughAttempts = 0;
+		realmBreakthroughSuccesses = 0;
+		realmBreakthroughFailures = 0;
+		breakthroughPillsConsumed = 0;
+		successfulBreakthroughPillMask = 0;
+		successfulBreakthroughRecordedMask = 0;
+		pendingBreakthroughTreasure = 0;
+		pendingBreakthroughUsedPill = false;
+		pendingBreakthroughGoldenCoreTier = 9;
+		foundationQuality = FoundationQuality.Inferior;
+		goldenCoreTier = 9;
+		pendingFoundationQuality = FoundationQuality.Inferior;
+		pendingGoldenCoreTier = 9;
+		selectedBreakthroughTreasureType = 0;
+		selectedBreakthroughPillType = 0;
+		Array.Clear(successfulBreakthroughTreasures);
+		ResetTechniqueLoadouts();
 	}
 
 	public override void SaveData(TagCompound tag)
 	{
 		tag["qi"] = Qi;
 		tag["qiExp"] = QiExp;
+		tag["burnedQiCapacityBps"] = burnedQiCapacityBps;
+		tag["qiDeviationTimer"] = qiBurningEnabled
+			? Math.Max(qiDeviationTimer, GetQiDeviationDuration())
+			: qiDeviationTimer;
+		tag["heartDemonPoints"] = heartDemonPoints;
+		tag["heartDemonBreakthroughProgress"] =
+			breakthroughFailuresTowardHeartDemon;
+		tag["heartDemonDeathProgress"] = deathsTowardHeartDemon;
+		tag["heartDemonTrialCooldown"] = heartDemonTrialCooldown;
+		tag["foundationQuality"] = (byte)foundationQuality;
+		tag["goldenCoreTier"] = goldenCoreTier;
+		if (pendingTribulationRealm == 3 || deferredTribulationRealm == 3)
+			tag["pendingBreakthroughGoldenCoreTier"] =
+				pendingBreakthroughGoldenCoreTier;
 		tag["progressionVersion"] = ProgressionVersion;
 		tag["cultivationRequirementMultiplier"] =
 			appliedCultivationRequirementMultiplier;
 		tag["qiProtectionEnabled"] = QiProtectionEnabled;
 		tag["qiSenseEnabled"] = QiSenseEnabled;
 		tag["hasReceivedCultivatorManual"] = HasReceivedCultivatorManual;
+		tag["heavenlyEyeImprints"] = heavenlyEyeImprints;
+		tag["heavenlyRoyalNectarImprints"] = heavenlyRoyalNectarImprints;
+		tag["heavenlyBoneMarrowImprints"] = heavenlyBoneMarrowImprints;
+		tag["realmBreakthroughAttempts"] = realmBreakthroughAttempts;
+		tag["realmBreakthroughSuccesses"] = realmBreakthroughSuccesses;
+		tag["realmBreakthroughFailures"] = realmBreakthroughFailures;
+		tag["breakthroughPillsConsumed"] = breakthroughPillsConsumed;
+		tag["successfulBreakthroughPillMask"] = successfulBreakthroughPillMask;
+		tag["successfulBreakthroughRecordedMask"] =
+			successfulBreakthroughRecordedMask;
+		tag["successfulBreakthroughTreasures"] =
+			new System.Collections.Generic.List<int>(
+				successfulBreakthroughTreasures);
+		if (pendingBreakthroughTreasure > 0)
+			tag["pendingBreakthroughTreasure"] = pendingBreakthroughTreasure;
+		if (pendingBreakthroughUsedPill)
+			tag["pendingBreakthroughUsedPill"] = true;
 		tag["abilityExperience"] = new System.Collections.Generic.List<int>(abilityExperience);
 		tag["abilityLevels"] = new System.Collections.Generic.List<int>(abilityLevels);
+		tag["activeTechniqueLoadoutPreset"] =
+			activeTechniqueLoadoutPreset;
+		tag["selectedTechniqueLoadoutSlot"] =
+			selectedTechniqueLoadoutSlot;
+		tag["techniqueLoadoutVersion"] = TechniqueLoadoutSaveVersion;
+		byte[] loadoutSnapshot = GetTechniqueLoadoutSnapshot();
+		tag["techniqueLoadouts"] =
+			new System.Collections.Generic.List<int>(
+				Array.ConvertAll(loadoutSnapshot, value => (int)value));
 		if (pendingTribulationRealm >= TribulationStartingRealm)
 		{
 			tag["pendingTribulationRealm"] = pendingTribulationRealm;
@@ -289,6 +944,11 @@ public class CultivationPlayer : ModPlayer
 		}
 		if (deferredTribulationRealm >= TribulationStartingRealm)
 			tag["deferredTribulationRealm"] = deferredTribulationRealm;
+		if (IsAwaitingRealmBreakthroughConfirmation)
+		{
+			tag["pendingRealmBreakthroughConfirmation"] =
+				pendingRealmBreakthroughConfirmation;
+		}
 	}
 
 	public override void LoadData(TagCompound tag)
@@ -316,12 +976,77 @@ public class CultivationPlayer : ModPlayer
 		}
 		appliedCultivationRequirementMultiplier = configuredRequirementMultiplier;
 
+		burnedQiCapacityBps = Math.Clamp(
+			tag.GetInt("burnedQiCapacityBps"), 0, MaximumBurnedQiBps);
+		qiDeviationTimer = Math.Clamp(tag.GetInt("qiDeviationTimer"),
+			0, 3 * 60 * 60);
+		qiBurningEnabled = false;
+		qiBurningPulseTimer = 0;
+		heartDemonPoints = Math.Clamp(
+			tag.GetInt("heartDemonPoints"), 0, MaximumHeartDemonPoints);
+		breakthroughFailuresTowardHeartDemon = Math.Clamp(
+			tag.GetInt("heartDemonBreakthroughProgress"),
+			0, BreakthroughFailuresPerHeartDemonPoint - 1);
+		deathsTowardHeartDemon = Math.Clamp(
+			tag.GetInt("heartDemonDeathProgress"),
+			0, DeathsPerHeartDemonPoint - 1);
+		heartDemonTrialCooldown = Math.Max(
+			0, tag.GetInt("heartDemonTrialCooldown"));
+		foundationQuality = (FoundationQuality)Math.Clamp(
+			tag.GetByte("foundationQuality"),
+			(byte)FoundationQuality.Inferior,
+			(byte)FoundationQuality.Heavenly);
+		goldenCoreTier = Math.Clamp(
+			tag.ContainsKey("goldenCoreTier")
+				? tag.GetInt("goldenCoreTier") : 9, 1, 9);
+		pendingBreakthroughGoldenCoreTier = Math.Clamp(
+			tag.ContainsKey("pendingBreakthroughGoldenCoreTier")
+				? tag.GetInt("pendingBreakthroughGoldenCoreTier") : 9,
+			1, 9);
+		pendingFoundationQuality = FoundationQuality.Inferior;
+		pendingGoldenCoreTier = 9;
+		selectedBreakthroughTreasureType = 0;
+		selectedBreakthroughPillType = 0;
+		heartDemonTrialActive = false;
+		heartDemonTrialNpcIndex = -1;
+		awaitingHeartDemonTrialConfirmation = false;
+
 		QiExp = savedQiExp;
 		QiExp = Math.Clamp(QiExp, 0, GetGlobalStageThreshold(MaxGlobalStageIndex));
-		Qi = Math.Clamp(savedQi, 0, QiExp);
+		Qi = Math.Clamp(savedQi, 0, MaxQi);
 		QiProtectionEnabled = tag.GetBool("qiProtectionEnabled");
 		QiSenseEnabled = tag.GetBool("qiSenseEnabled");
 		HasReceivedCultivatorManual = tag.GetBool("hasReceivedCultivatorManual");
+		heavenlyEyeImprints = Math.Clamp(tag.GetInt("heavenlyEyeImprints"), 0, 10);
+		heavenlyRoyalNectarImprints =
+			Math.Clamp(tag.GetInt("heavenlyRoyalNectarImprints"), 0, 10);
+		heavenlyBoneMarrowImprints =
+			Math.Clamp(tag.GetInt("heavenlyBoneMarrowImprints"), 0, 10);
+		realmBreakthroughAttempts =
+			Math.Max(0, tag.GetInt("realmBreakthroughAttempts"));
+		realmBreakthroughSuccesses =
+			Math.Max(0, tag.GetInt("realmBreakthroughSuccesses"));
+		realmBreakthroughFailures =
+			Math.Max(0, tag.GetInt("realmBreakthroughFailures"));
+		breakthroughPillsConsumed =
+			Math.Max(0, tag.GetInt("breakthroughPillsConsumed"));
+		successfulBreakthroughPillMask =
+			Math.Clamp(tag.GetInt("successfulBreakthroughPillMask"), 0, 31);
+		successfulBreakthroughRecordedMask =
+			Math.Clamp(tag.GetInt("successfulBreakthroughRecordedMask"), 0, 31);
+		System.Collections.Generic.IList<int> savedBreakthroughTreasures =
+			tag.GetList<int>("successfulBreakthroughTreasures");
+		for (int i = 0; i < successfulBreakthroughTreasures.Length; i++)
+		{
+			successfulBreakthroughTreasures[i] =
+				i < savedBreakthroughTreasures.Count
+					? Math.Clamp(savedBreakthroughTreasures[i], 0, 3)
+					: 0;
+		}
+		pendingBreakthroughTreasure =
+			Math.Clamp(tag.GetInt("pendingBreakthroughTreasure"), 0, 3);
+		pendingBreakthroughUsedPill =
+			tag.GetBool("pendingBreakthroughUsedPill");
 		System.Collections.Generic.IList<int> savedAbilityExperience = tag.GetList<int>("abilityExperience");
 		System.Collections.Generic.IList<int> savedAbilityLevels = tag.GetList<int>("abilityLevels");
 		for (int i = 0; i < abilityLevels.Length; i++)
@@ -330,6 +1055,19 @@ public class CultivationPlayer : ModPlayer
 			abilityLevels[i] = i < savedAbilityLevels.Count
 				? Math.Clamp(savedAbilityLevels[i], 1, CultivationAbilityInfo.MaxLevel)
 				: 1;
+		}
+		System.Collections.Generic.IList<int> savedTechniqueLoadouts =
+			tag.GetList<int>("techniqueLoadouts");
+		int savedTechniqueLoadoutVersion =
+			tag.GetInt("techniqueLoadoutVersion");
+		byte[] techniqueLoadoutSnapshot = new byte[
+			TechniqueLoadoutPresetCount * MaximumTechniqueLoadoutSlots];
+		for (int i = 0; i < techniqueLoadoutSnapshot.Length; i++)
+		{
+			techniqueLoadoutSnapshot[i] = i < savedTechniqueLoadouts.Count
+				? (byte)Math.Clamp(savedTechniqueLoadouts[i], 0,
+					(int)CultivationAbility.Count)
+				: (byte)CultivationAbility.Count;
 		}
 		pendingTribulationRealm = tag.ContainsKey("pendingTribulationRealm")
 			? Math.Clamp(tag.GetInt("pendingTribulationRealm"), TribulationStartingRealm, TotalRealms - 1)
@@ -340,13 +1078,19 @@ public class CultivationPlayer : ModPlayer
 			? Math.Clamp(tag.GetInt("deferredTribulationRealm"),
 				TribulationStartingRealm, TotalRealms - 1)
 			: -1;
+		pendingRealmBreakthroughConfirmation =
+			tag.ContainsKey("pendingRealmBreakthroughConfirmation")
+				? Math.Clamp(tag.GetInt("pendingRealmBreakthroughConfirmation"),
+					1, TotalRealms - 1)
+				: -1;
+		confirmedRealmBreakthrough = -1;
 
 		if (pendingTribulationRealm >= TribulationStartingRealm)
 		{
 			RealmIndex = pendingTribulationRealm - 1;
 			Stage = StagesPerRealm;
 			QiExp = Math.Min(QiExp, GetGlobalStageThreshold(pendingTribulationRealm * StagesPerRealm));
-			Qi = Math.Min(Qi, QiExp);
+			Qi = Math.Min(Qi, MaxQi);
 		}
 		else if (deferredTribulationRealm >= TribulationStartingRealm)
 		{
@@ -355,11 +1099,36 @@ public class CultivationPlayer : ModPlayer
 			int threshold = GetGlobalStageThreshold(
 				deferredTribulationRealm * StagesPerRealm);
 			QiExp = Math.Min(QiExp, threshold);
-			Qi = Math.Min(Qi, QiExp);
+			Qi = Math.Min(Qi, MaxQi);
+		}
+		else if (IsAwaitingRealmBreakthroughConfirmation)
+		{
+			RealmIndex = pendingRealmBreakthroughConfirmation - 1;
+			Stage = StagesPerRealm;
+			int threshold = GetGlobalStageThreshold(
+				pendingRealmBreakthroughConfirmation * StagesPerRealm);
+			QiExp = Math.Min(QiExp, threshold);
+			Qi = Math.Min(Qi, MaxQi);
 		}
 		else
 		{
 			UpdateRealm(showMessage: false);
+		}
+		if (savedTechniqueLoadouts.Count > 0)
+		{
+			ApplyTechniqueLoadoutState(
+				tag.GetInt("activeTechniqueLoadoutPreset"),
+				techniqueLoadoutSnapshot, validateUnlocks: true);
+			if (savedTechniqueLoadoutVersion < TechniqueLoadoutSaveVersion)
+				FillEmptyTechniqueLoadoutSlots();
+			selectedTechniqueLoadoutSlot = Math.Clamp(
+				tag.GetInt("selectedTechniqueLoadoutSlot"),
+				0, TechniqueLoadoutSlotCount - 1);
+		}
+		else
+		{
+			ResetTechniqueLoadouts();
+			FillEmptyTechniqueLoadoutSlots();
 		}
 	}
 
@@ -381,6 +1150,8 @@ public class CultivationPlayer : ModPlayer
 		{
 			StartTribulation(pendingTribulationRealm);
 		}
+		if (Player.whoAmI == Main.myPlayer)
+			SyncTechniqueLoadout();
 	}
 
 	public override void ResetEffects()
@@ -396,6 +1167,19 @@ public class CultivationPlayer : ModPlayer
 		Player.moveSpeed += bonus.MoveSpeedPercent / 100f;
 		Player.GetCritChance(DamageClass.Generic) += bonus.CritChance;
 		Player.endurance += bonus.EndurancePercent / 100f;
+		Player.GetCritChance(DamageClass.Generic) += heavenlyEyeImprints * 5f;
+		Player.statLifeMax2 += heavenlyRoyalNectarImprints * 20;
+		Player.lifeRegen += heavenlyRoyalNectarImprints;
+		Player.statDefense += heavenlyBoneMarrowImprints * 4;
+		Player.endurance += heavenlyBoneMarrowImprints * 0.02f;
+		if (qiBurningEnabled)
+			ApplyQiBurningBonuses();
+		if (HasQiDeviation)
+		{
+			Player.GetDamage(DamageClass.Generic) -= 0.25f;
+			Player.statDefense *= 0.75f;
+			Player.moveSpeed *= 0.75f;
+		}
 		if (CanUseQiSense)
 		{
 			Player.findTreasure = true;
@@ -570,8 +1354,13 @@ public class CultivationPlayer : ModPlayer
 		return true;
 	}
 
-	private int GetQiProtectionCostPerDamage() => Math.Max(2,
-		QiProtectionCostPerDamage - (GetAbilityLevel(CultivationAbility.QiProtection) - 1) / 5);
+	private int GetQiProtectionCostPerDamage()
+	{
+		int baseCost = Math.Max(2, QiProtectionCostPerDamage
+			- (GetAbilityLevel(CultivationAbility.QiProtection) - 1) / 5);
+		return Math.Max(1, (int)MathF.Ceiling(baseCost
+			/ GetAbilityPowerMultiplier(CultivationAbility.QiProtection, 0f)));
+	}
 
 	public override void ProcessTriggers(TriggersSet triggersSet)
 	{
@@ -594,10 +1383,21 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		IsAbilityWheelOpen = Xianxia.AbilityWheelKeybind.Current && !Player.dead;
-		if (IsAbilityWheelOpen || IsAbilityTreeOpen || IsAwaitingTribulationConfirmation)
+		if (IsAbilityWheelOpen || IsAbilityTreeOpen
+			|| IsAwaitingTribulationConfirmation
+			|| IsAwaitingRealmBreakthroughConfirmation
+			|| IsAwaitingHeartDemonTrialConfirmation)
 		{
 			Player.controlUseItem = false;
 			Player.controlUseTile = false;
+		}
+		if (IsAwaitingTribulationConfirmation
+			|| IsAwaitingRealmBreakthroughConfirmation
+			|| IsAwaitingHeartDemonTrialConfirmation)
+		{
+			meditationToggleRequested = false;
+			StopMeditating(syncMultiplayer: true);
+			return;
 		}
 		if (IsAbilityTreeOpen)
 		{
@@ -661,7 +1461,7 @@ public class CultivationPlayer : ModPlayer
 
 	private void ProcessMeditationQiGain()
 	{
-		if (deferredTribulationRealm >= TribulationStartingRealm && Qi >= QiExp)
+		if (deferredTribulationRealm >= TribulationStartingRealm && Qi >= MaxQi)
 		{
 			int targetRealm = deferredTribulationRealm;
 			deferredTribulationRealm = -1;
@@ -670,7 +1470,22 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		float cultivationPerSecond = MeditationQiPerSecond;
-		int missingQi = Math.Max(0, QiExp - Qi);
+
+		// Meditation used to repair Qi Burning wounds must restore usable Qi
+		// without also advancing cultivation. QiEXP resumes after full repair.
+		if (HasBurnedQi)
+		{
+			int previousQi = Qi;
+			int recoveryGain = TakeWholeQiGain(
+				cultivationPerSecond * MeditationQiRecoveryMultiplier,
+				ref meditationQiRecoveryRemainder);
+			RestoreQi(recoveryGain);
+			if (Qi > previousQi)
+				AddAbilityExperience(CultivationAbility.Meditation, 5);
+			return;
+		}
+
+		int missingQi = Math.Max(0, MaxQi - Qi);
 		int totalGained = 0;
 
 		if (missingQi <= 0)
@@ -678,7 +1493,7 @@ public class CultivationPlayer : ModPlayer
 			int cultivationGain = TakeWholeQiGain(
 				cultivationPerSecond,
 				ref meditationQiGainRemainder);
-			AddQi(cultivationGain);
+			AddQi(ApplyHeartDemonCultivationPenalty(cultivationGain));
 			totalGained = cultivationGain;
 		}
 		else
@@ -709,8 +1524,10 @@ public class CultivationPlayer : ModPlayer
 				int cultivationGain = TakeWholeQiGain(
 					remainingCultivation,
 					ref meditationQiGainRemainder);
-				AddQi(cultivationGain);
-				totalGained += cultivationGain;
+				int adjustedGain =
+					ApplyHeartDemonCultivationPenalty(cultivationGain);
+				AddQi(adjustedGain);
+				totalGained += adjustedGain;
 			}
 		}
 
@@ -718,6 +1535,14 @@ public class CultivationPlayer : ModPlayer
 		{
 			AddAbilityExperience(CultivationAbility.Meditation, 5);
 		}
+	}
+
+	private int ApplyHeartDemonCultivationPenalty(int amount)
+	{
+		if (amount <= 0 || heartDemonPoints <= 0)
+			return amount;
+		return Math.Max(1,
+			(int)MathF.Floor(amount * HeartDemonCultivationGainMultiplier));
 	}
 
 	public void CloseAbilityTree() => IsAbilityTreeOpen = false;
@@ -728,7 +1553,7 @@ public class CultivationPlayer : ModPlayer
 		Stage = Math.Clamp(stage, 1, StagesPerRealm);
 		int globalStageIndex = RealmIndex * StagesPerRealm + Stage - 1;
 		QiExp = GetGlobalStageThreshold(globalStageIndex);
-		Qi = QiExp;
+		Qi = MaxQi;
 		ClearDebugTribulationState();
 		QiFlightEnabled = false;
 		QiProtectionEnabled = false;
@@ -739,7 +1564,7 @@ public class CultivationPlayer : ModPlayer
 
 	internal void DebugSetQi(int amount)
 	{
-		Qi = Math.Clamp(amount, 0, QiExp);
+		Qi = Math.Clamp(amount, 0, MaxQi);
 	}
 
 	internal bool DebugAdvanceStage()
@@ -749,14 +1574,16 @@ public class CultivationPlayer : ModPlayer
 			return false;
 		}
 
-		Qi = QiExp;
+		Qi = MaxQi;
 		int required = NextStageThreshold - QiExp;
 		if (required <= 0)
 		{
 			return false;
 		}
 
+		forceNextRealmBreakthrough = Stage == StagesPerRealm;
 		AddQi(required);
+		forceNextRealmBreakthrough = false;
 		return true;
 	}
 
@@ -784,7 +1611,7 @@ public class CultivationPlayer : ModPlayer
 		}
 		else
 		{
-			FailTribulation();
+			FailTribulation(recordHeartDemon: false);
 		}
 		return true;
 	}
@@ -835,6 +1662,16 @@ public class CultivationPlayer : ModPlayer
 		if (amount <= 0 || !IsAbilityUnlocked(ability))
 			return;
 
+		SpiritualElement elements = CultivationAbilityInfo.GetSpiritualElements(ability);
+		if (elements != SpiritualElement.None)
+		{
+			ElementalCultivationPlayer elemental =
+				Player.GetModPlayer<ElementalCultivationPlayer>();
+			float multiplier = elemental.GetMasteryGainMultiplier(elements)
+				* (1f + elemental.GetAffinity(elements) * 0.001f);
+			amount = Math.Max(1, (int)MathF.Round(amount * multiplier));
+		}
+
 		int index = (int)ability;
 		if (abilityLevels[index] >= CultivationAbilityInfo.MaxLevel)
 			return;
@@ -857,6 +1694,214 @@ public class CultivationPlayer : ModPlayer
 		}
 	}
 
+	private void TryUseSelectedTechnique()
+	{
+		CultivationAbility ability = SelectedTechnique;
+		if (ability == CultivationAbility.Count
+			|| !IsTechniqueEquipped(ability)
+			|| !IsAbilityUnlocked(ability))
+		{
+			Main.NewText(Mod.GetLocalization(
+				"TechniqueLoadout.NoSelected").Value,
+				Color.OrangeRed);
+			return;
+		}
+
+		switch (ability)
+		{
+			case CultivationAbility.QiResistance:
+				TryUseQiResistance();
+				break;
+			case CultivationAbility.Fireball:
+				TryCastFireball(
+					Main.MouseWorld - Player.Center,
+					Player.GetSource_Misc("XianxiaFireball"));
+				break;
+			case CultivationAbility.QiPalm:
+				TryUseQiPalm();
+				break;
+			case CultivationAbility.SpiritualRain:
+				SpiritualRainTechnique.TryCast(
+					Player,
+					Player.GetSource_Misc("XianxiaSpiritualRain"));
+				break;
+			case CultivationAbility.FlameStep:
+				TryUseFlameStep();
+				break;
+			case CultivationAbility.SpiritSwordRain:
+				Player.GetModPlayer<SectPlayer>()
+					.TryUseSpiritSwordRain();
+				break;
+			case CultivationAbility.NascentTeleport:
+				TryUseNascentTeleport();
+				break;
+			case CultivationAbility.SpiritualPressure:
+				ToggleSpiritualPressure();
+				break;
+			case CultivationAbility.SectProtectionFormation:
+				Player.GetModPlayer<SectPlayer>()
+					.TryUseSectProtectionFormation();
+				break;
+			case CultivationAbility.NightVision:
+				ToggleNightVision();
+				break;
+			case CultivationAbility.QiFlight:
+				ToggleQiFlight();
+				break;
+			case CultivationAbility.QiBurning:
+				RequestToggleQiBurning();
+				break;
+			case CultivationAbility.QiSense:
+				ToggleSelectedQiSense();
+				break;
+			case CultivationAbility.QiProtection:
+				ToggleSelectedQiProtection();
+				break;
+		}
+	}
+
+	private void TryUseDirectTechnique(CultivationAbility ability)
+	{
+		if (!IsAbilityUnlocked(ability))
+		{
+			Main.NewText(Mod.GetLocalization(
+				"TechniqueLoadout.DirectLocked").Format(
+					Mod.GetLocalization(
+						$"AbilityTree.Abilities.{ability}.Name").Value),
+				Color.OrangeRed);
+			return;
+		}
+
+		switch (ability)
+		{
+			case CultivationAbility.QiResistance:
+				TryUseQiResistance();
+				break;
+			case CultivationAbility.Fireball:
+				TryCastFireball(
+					Main.MouseWorld - Player.Center,
+					Player.GetSource_Misc("XianxiaFireball"));
+				break;
+			case CultivationAbility.QiPalm:
+				TryUseQiPalm();
+				break;
+			case CultivationAbility.FlameStep:
+				TryUseFlameStep();
+				break;
+			case CultivationAbility.NascentTeleport:
+				TryUseNascentTeleport();
+				break;
+			case CultivationAbility.SpiritualPressure:
+				ToggleSpiritualPressure();
+				break;
+			case CultivationAbility.NightVision:
+				ToggleNightVision();
+				break;
+			case CultivationAbility.QiFlight:
+				ToggleQiFlight();
+				break;
+			case CultivationAbility.QiBurning:
+				RequestToggleQiBurning();
+				break;
+		}
+	}
+
+	private void ToggleQiFlight()
+	{
+		if (QiFlightEnabled)
+		{
+			QiFlightEnabled = false;
+			Main.NewText(Mod.GetLocalization(
+				"Abilities.QiFlightDisabled").Value,
+				Color.LightGray);
+		}
+		else if (RealmIndex < 3)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Abilities.RequiresRealm").Format(
+					Mod.GetLocalization(
+						"Cultivation.Realms.CoreFormation").Value),
+				Color.OrangeRed);
+		}
+		else if (Qi <= 0)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Abilities.NotEnoughQi").Format(1),
+				Color.OrangeRed);
+		}
+		else
+		{
+			QiFlightEnabled = true;
+			Main.NewText(Mod.GetLocalization(
+				"Abilities.QiFlightEnabled").Value, Color.Cyan);
+		}
+	}
+
+	private void ToggleSelectedQiSense()
+	{
+		bool enabled = !QiSenseEnabled;
+		if (!SetQiSenseEnabled(enabled))
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Abilities.NotEnoughQi").Format(1),
+				Color.OrangeRed);
+			return;
+		}
+		Main.NewText(Mod.GetLocalization(enabled
+			? "Abilities.QiSenseEnabled"
+			: "Abilities.QiSenseDisabled").Value,
+			enabled ? Color.Cyan : Color.LightGray);
+	}
+
+	private void ToggleSelectedQiProtection()
+	{
+		bool enabled = !QiProtectionEnabled;
+		if (!SetQiProtectionEnabled(enabled))
+			return;
+		Main.NewText(Mod.GetLocalization(enabled
+			? "Abilities.QiProtectionEnabled"
+			: "Abilities.QiProtectionDisabled").Value,
+			enabled ? Color.Cyan : Color.LightGray);
+	}
+
+	public bool TryToggleTechniqueFromWheel(
+		CultivationAbility ability)
+	{
+		if (!CultivationAbilityInfo.IsToggleTechnique(ability)
+			|| !IsAbilityUnlocked(ability))
+		{
+			return false;
+		}
+		switch (ability)
+		{
+			case CultivationAbility.QiSense:
+				ToggleSelectedQiSense();
+				break;
+			case CultivationAbility.QiProtection:
+				ToggleSelectedQiProtection();
+				break;
+			case CultivationAbility.QiBurning:
+				RequestToggleQiBurning();
+				break;
+			case CultivationAbility.NightVision:
+				ToggleNightVision();
+				break;
+			case CultivationAbility.QiFlight:
+				ToggleQiFlight();
+				break;
+			case CultivationAbility.SpiritualPressure:
+				ToggleSpiritualPressure();
+				break;
+			case CultivationAbility.SectProtectionFormation:
+				Player.GetModPlayer<SectPlayer>()
+					.TryUseSectProtectionFormation();
+				break;
+			default:
+				return false;
+		}
+		return true;
+	}
+
 	private void ProcessAbilityTriggers()
 	{
 		IsFlyingWithQi = false;
@@ -869,66 +1914,27 @@ public class CultivationPlayer : ModPlayer
 			return;
 		}
 
-		if (Xianxia.QiResistanceKeybind.JustPressed)
-		{
-			TryUseQiResistance();
-		}
-
 		if (Xianxia.FireballKeybind.JustPressed)
-		{
-			TryCastFireball(
-				Main.MouseWorld - Player.Center,
-				Player.GetSource_Misc("XianxiaFireball")
-			);
-		}
+			TryUseSelectedTechnique();
 
+		if (Xianxia.QiResistanceKeybind.JustPressed)
+			TryUseDirectTechnique(CultivationAbility.QiResistance);
+		if (Xianxia.DirectFireballKeybind.JustPressed)
+			TryUseDirectTechnique(CultivationAbility.Fireball);
 		if (Xianxia.QiPalmKeybind.JustPressed)
-		{
-			TryUseQiPalm();
-		}
-
+			TryUseDirectTechnique(CultivationAbility.QiPalm);
 		if (Xianxia.FlameStepKeybind.JustPressed)
-		{
-			TryUseFlameStep();
-		}
-
+			TryUseDirectTechnique(CultivationAbility.FlameStep);
 		if (Xianxia.NascentTeleportKeybind.JustPressed)
-		{
-			TryUseNascentTeleport();
-		}
-
+			TryUseDirectTechnique(CultivationAbility.NascentTeleport);
 		if (Xianxia.SpiritualPressureKeybind.JustPressed)
-		{
-			ToggleSpiritualPressure();
-		}
-
+			TryUseDirectTechnique(CultivationAbility.SpiritualPressure);
 		if (Xianxia.NightVisionKeybind.JustPressed)
-		{
-			ToggleNightVision();
-		}
-
+			TryUseDirectTechnique(CultivationAbility.NightVision);
 		if (Xianxia.QiFlightKeybind.JustPressed)
-		{
-			if (QiFlightEnabled)
-			{
-				QiFlightEnabled = false;
-				Main.NewText(Mod.GetLocalization("Abilities.QiFlightDisabled").Value, Color.LightGray);
-			}
-			else if (RealmIndex < 3)
-			{
-				Main.NewText(Mod.GetLocalization("Abilities.RequiresRealm").Format(
-					Mod.GetLocalization("Cultivation.Realms.CoreFormation").Value), Color.OrangeRed);
-			}
-			else if (Qi <= 0)
-			{
-				Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(1), Color.OrangeRed);
-			}
-			else
-			{
-				QiFlightEnabled = true;
-				Main.NewText(Mod.GetLocalization("Abilities.QiFlightEnabled").Value, Color.Cyan);
-			}
-		}
+			TryUseDirectTechnique(CultivationAbility.QiFlight);
+		if (Xianxia.QiBurningKeybind.JustPressed)
+			TryUseDirectTechnique(CultivationAbility.QiBurning);
 
 		if (!QiFlightEnabled)
 		{
@@ -1034,7 +2040,9 @@ public class CultivationPlayer : ModPlayer
 	private void UpdateQiFlightConsumption()
 	{
 		flightQiTimer++;
-		if (flightQiTimer < QiFlightCostInterval)
+		int costInterval = (int)MathF.Ceiling(QiFlightCostInterval
+			* GetAbilityPowerMultiplier(CultivationAbility.QiFlight, 0f));
+		if (flightQiTimer < costInterval)
 		{
 			return;
 		}
@@ -1104,10 +2112,12 @@ public class CultivationPlayer : ModPlayer
 		int baseDamage = (int)((35 + RealmIndex * 15 + (Stage - 1) * 2)
 			* GetAbilityPowerMultiplier(CultivationAbility.Fireball, 0.04f));
 		int damage = (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(baseDamage);
-		int qiCost = Math.Max(MinimumFireballQiCost, (int)Math.Ceiling(damage / FireballDamagePerQi));
+		int baseQiCost = Math.Max(MinimumFireballQiCost,
+			(int)Math.Ceiling(damage / FireballDamagePerQi));
+		int qiCost = GetAbilityQiCost(baseQiCost, CultivationAbility.Fireball);
 		float projectileScale = MathHelper.Clamp(0.8f + damage / 100f, 1.15f, 2.5f);
 
-		if (!SpendQi(qiCost))
+		if (!SpendAbilityQi(baseQiCost, CultivationAbility.Fireball))
 		{
 			Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(qiCost), Color.OrangeRed);
 			return false;
@@ -1222,8 +2232,9 @@ public class CultivationPlayer : ModPlayer
 		int baseDamage = (int)((30 + RealmIndex * 12 + (Stage - 1) * 2)
 			* GetAbilityPowerMultiplier(CultivationAbility.FlameStep, 0.04f));
 		int damage = (int)Player.GetTotalDamage(DamageClass.Magic).ApplyTo(baseDamage);
-		int qiCost = Math.Max(18, (int)Math.Ceiling(damage / 5f));
-		if (!SpendQi(qiCost))
+		int baseQiCost = Math.Max(18, (int)Math.Ceiling(damage / 5f));
+		int qiCost = GetAbilityQiCost(baseQiCost, CultivationAbility.FlameStep);
+		if (!SpendAbilityQi(baseQiCost, CultivationAbility.FlameStep))
 		{
 			Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(qiCost), Color.OrangeRed);
 			return;
@@ -1274,12 +2285,14 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		float distanceBlocks = Vector2.Distance(Player.Center, destination + Player.Size * 0.5f) / 16f;
-		int qiCost = NascentTeleportBaseQiCost
+		int baseQiCost = NascentTeleportBaseQiCost
 			+ (int)MathF.Ceiling(distanceBlocks / NascentTeleportBlocksPerQi)
 				* NascentTeleportQiCostPerDistanceStep;
-		qiCost = Math.Max(NascentTeleportBaseQiCost,
-			(int)MathF.Ceiling(qiCost / GetAbilityPowerMultiplier(CultivationAbility.NascentTeleport, 0.025f)));
-		if (!SpendQi(qiCost))
+		baseQiCost = Math.Max(NascentTeleportBaseQiCost,
+			(int)MathF.Ceiling(baseQiCost
+				/ GetAbilityPowerMultiplier(CultivationAbility.NascentTeleport, 0.025f)));
+		int qiCost = GetAbilityQiCost(baseQiCost, CultivationAbility.NascentTeleport);
+		if (!SpendAbilityQi(baseQiCost, CultivationAbility.NascentTeleport))
 		{
 			Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(qiCost), Color.OrangeRed);
 			return;
@@ -1475,6 +2488,7 @@ public class CultivationPlayer : ModPlayer
 	private void StopMeditating(bool syncMultiplayer)
 	{
 		meditationTimer = 0;
+		burnedQiMeditationRepairTimer = 0;
 		if (!IsMeditating)
 		{
 			return;
@@ -1509,18 +2523,47 @@ public class CultivationPlayer : ModPlayer
 		if (Main.netMode == NetmodeID.Server)
 		{
 			Xianxia.SendMeditationState(Player.whoAmI, IsMeditating, toWho, fromWho);
+			Xianxia.SendQiBurningState(Player.whoAmI, qiBurningEnabled,
+				toWho, fromWho);
+			Xianxia.SendCultivationRiskState(Player.whoAmI, this,
+				toWho, fromWho);
+			Xianxia.SendTechniqueLoadoutState(
+				Player.whoAmI, this, toWho, fromWho);
 		}
 	}
 
 	public override void PostUpdate()
 	{
 		UpdateCultivationRequirementMultiplier();
+		UpdateQiBurning();
+		if (!Player.dead
+			&& (Main.netMode != NetmodeID.MultiplayerClient
+				|| Player.whoAmI == Main.myPlayer))
+		{
+			UpdateSpiritualQiZone();
+		}
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			UpdateBurnedQiMeditationRepair();
+		if (Main.netMode != NetmodeID.MultiplayerClient
+			&& heartDemonTrialActive
+			&& (heartDemonTrialNpcIndex < 0
+				|| heartDemonTrialNpcIndex >= Main.maxNPCs
+				|| !Main.npc[heartDemonTrialNpcIndex].active
+				|| Main.npc[heartDemonTrialNpcIndex].type
+					!= ModContent.NPCType<HeartDemon>()))
+		{
+			FailHeartDemonTrial(showMessage: true);
+		}
+		if (HasQiDeviation)
+			Player.AddBuff(ModContent.BuffType<QiDeviationDebuff>(),
+				qiDeviationTimer);
+		if (HasBurnedQi)
+			Player.AddBuff(ModContent.BuffType<DamagedOriginDebuff>(), 2);
 		if (spiritualRainCooldown > 0)
 			spiritualRainCooldown--;
 
 		if (Player.whoAmI == Main.myPlayer && !Player.dead)
 		{
-			UpdateSpiritualQiZone();
 			UpdatePassiveQiRecovery();
 			UpdateQiSense();
 			UpdateNightVision();
@@ -1553,6 +2596,8 @@ public class CultivationPlayer : ModPlayer
 		{
 			stillnessWarningCooldown--;
 		}
+		if (breakthroughWarningCooldown > 0)
+			breakthroughWarningCooldown--;
 
 		if (IsMeditating && Main.netMode != NetmodeID.Server)
 		{
@@ -1573,6 +2618,7 @@ public class CultivationPlayer : ModPlayer
 		if (Main.netMode != NetmodeID.Server)
 		{
 			UpdateBreakthroughEffect();
+			UpdateCultivationRiskVisuals();
 		}
 
 		if (Player.whoAmI == Main.myPlayer)
@@ -1591,10 +2637,43 @@ public class CultivationPlayer : ModPlayer
 		{
 			FailTribulation();
 		}
+		if (qiBurningEnabled)
+			DisableQiBurning(applyDeviation: true, showMessage: false);
+		if (heartDemonTrialActive)
+			FailHeartDemonTrial(showMessage: true);
 
 		tribulationRealm = -1;
 		tribulationTimer = 0;
 		tribulationStrikesRemaining = 0;
+	}
+
+	public override void OnHurt(Player.HurtInfo info)
+	{
+		if (info.Damage > 0)
+			qiBurningCombatTimer = QiBurnCombatWindow;
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		if (damageDone > 0)
+			qiBurningCombatTimer = QiBurnCombatWindow;
+	}
+
+	public override void Kill(double damage, int hitDirection, bool pvp,
+		PlayerDeathReason damageSource)
+	{
+		if (pvp || heartDemonTrialActive
+			|| tribulationRealm >= TribulationStartingRealm
+			|| resolvingTribulationLightning)
+			return;
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			if (Player.whoAmI == Main.myPlayer)
+				Xianxia.SendHeartDemonDeathRequest();
+			return;
+		}
+		if (Main.netMode == NetmodeID.SinglePlayer)
+			RecordHeartDemonDeath();
 	}
 
 	public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
@@ -1634,6 +2713,46 @@ public class CultivationPlayer : ModPlayer
 		);
 		dust.noGravity = true;
 		dust.fadeIn = 0.7f;
+	}
+
+	private void UpdateCultivationRiskVisuals()
+	{
+		float intensity = CultivationClientConfig.VisualEffectIntensity;
+		if (qiBurningEnabled)
+		{
+			Lighting.AddLight(Player.Center,
+				0.7f * intensity, 0.18f * intensity, 0.1f * intensity);
+			int frequency = burnedQiCapacityBps >= 4000 ? 1 : 2;
+			if (Main.rand.NextBool(frequency)
+				&& CultivationClientConfig.ShouldSpawnParticle())
+			{
+				Vector2 direction =
+					Main.rand.NextVector2CircularEdge(1f, 0.8f);
+				Color color = Main.rand.NextBool()
+					? Color.OrangeRed : Color.MediumPurple;
+				Dust dust = Dust.NewDustPerfect(
+					Player.Center + direction * Main.rand.NextFloat(12f, 28f),
+					DustID.Torch,
+					direction * Main.rand.NextFloat(1.8f, 4.2f),
+					40, color,
+					Main.rand.NextFloat(0.9f, 1.45f) * intensity);
+				dust.noGravity = true;
+			}
+		}
+		if (heartDemonVisualTimer > 0)
+		{
+			heartDemonVisualTimer--;
+			if (Main.rand.NextBool(2)
+				&& CultivationClientConfig.ShouldSpawnParticle())
+			{
+				Dust dust = Dust.NewDustPerfect(
+					Player.Center + Main.rand.NextVector2Circular(45f, 70f),
+					DustID.Shadowflame,
+					Main.rand.NextVector2Circular(1.2f, 1.2f),
+					50, Color.MediumPurple, 1.1f * intensity);
+				dust.noGravity = true;
+			}
+		}
 	}
 
 	private void ShowQiProtectionEffect(int consumedQi, bool fullyBlocked)
@@ -1792,6 +2911,47 @@ public class CultivationPlayer : ModPlayer
 		breakthroughEffectTimer--;
 	}
 
+	private int GetTribulationGoldenCoreTier(int targetRealm)
+	{
+		if (targetRealm == TribulationStartingRealm)
+			return Math.Clamp(pendingBreakthroughGoldenCoreTier, 1, 9);
+		return Math.Clamp(goldenCoreTier, 1, 9);
+	}
+
+	private int GetTribulationStrikeCount(int targetRealm)
+	{
+		int baseStrikes =
+			9 + (targetRealm - TribulationStartingRealm) * 2;
+		int foundationStrikes = foundationQuality switch
+		{
+			FoundationQuality.Stable => 1,
+			FoundationQuality.Perfect => 2,
+			FoundationQuality.Heavenly => 3,
+			_ => 0
+		};
+		int goldenCoreStrikes =
+			(10 - GetTribulationGoldenCoreTier(targetRealm)) / 2;
+		return baseStrikes + foundationStrikes + goldenCoreStrikes;
+	}
+
+	private float GetTribulationPowerMultiplier(int targetRealm)
+	{
+		float foundationMultiplier = foundationQuality switch
+		{
+			FoundationQuality.Stable => 1.08f,
+			FoundationQuality.Perfect => 1.18f,
+			FoundationQuality.Heavenly => 1.30f,
+			_ => 1f
+		};
+		int tier = GetTribulationGoldenCoreTier(targetRealm);
+		float goldenCoreMultiplier = 1f + (9 - tier) * 0.04f;
+		return foundationMultiplier * goldenCoreMultiplier;
+	}
+
+	private int GetTribulationStrikeInterval(int targetRealm) =>
+		Math.Max(55, (int)MathF.Round(TribulationStrikeInterval
+			/ MathF.Sqrt(GetTribulationPowerMultiplier(targetRealm))));
+
 	private void StartTribulation(int targetRealm)
 	{
 		if (Main.netMode == NetmodeID.Server || Player.whoAmI != Main.myPlayer)
@@ -1802,7 +2962,7 @@ public class CultivationPlayer : ModPlayer
 		pendingTribulationRealm = targetRealm;
 		awaitingTribulationConfirmation = false;
 		tribulationRealm = targetRealm;
-		tribulationStrikesRemaining = 9 + (targetRealm - TribulationStartingRealm) * 2;
+		tribulationStrikesRemaining = GetTribulationStrikeCount(targetRealm);
 		tribulationTimer = TribulationInitialDelay;
 		Main.NewText(Mod.GetLocalization("Cultivation.TribulationBegins").Format(
 			GetRealmName(targetRealm), tribulationStrikesRemaining), Color.OrangeRed);
@@ -1825,6 +2985,125 @@ public class CultivationPlayer : ModPlayer
 		Main.NewText(Mod.GetLocalization("Cultivation.TribulationReady").Format(
 			GetRealmName(targetRealm)), Color.Gold);
 		SoundEngine.PlaySound(SoundID.MenuOpen);
+	}
+
+	private void RequestRealmBreakthroughConfirmation(int targetRealm)
+	{
+		if (Main.netMode == NetmodeID.Server || Player.whoAmI != Main.myPlayer)
+			return;
+		if (pendingRealmBreakthroughConfirmation == targetRealm)
+			return;
+
+		int threshold =
+			GetGlobalStageThreshold(targetRealm * StagesPerRealm);
+		QiExp = Math.Min(QiExp, threshold);
+		Qi = Math.Min(Qi, MaxQi);
+		RealmIndex = targetRealm - 1;
+		Stage = StagesPerRealm;
+		pendingRealmBreakthroughConfirmation = targetRealm;
+		confirmedRealmBreakthrough = -1;
+		pendingFoundationQuality = FoundationQuality.Inferior;
+		pendingGoldenCoreTier = 9;
+		selectedBreakthroughTreasureType = 0;
+		selectedBreakthroughPillType = 0;
+		StopMeditating(syncMultiplayer: true);
+		SoundEngine.PlaySound(SoundID.MenuOpen);
+	}
+
+	public void ConfirmRealmBreakthrough()
+	{
+		if (!IsAwaitingRealmBreakthroughConfirmation
+			|| !CanConfirmRealmBreakthrough)
+		{
+			return;
+		}
+
+		int targetRealm = pendingRealmBreakthroughConfirmation;
+		pendingRealmBreakthroughConfirmation = -1;
+		confirmedRealmBreakthrough = targetRealm;
+		UpdateRealm(showMessage: true);
+		confirmedRealmBreakthrough = -1;
+	}
+
+	public void CancelRealmBreakthrough()
+	{
+		if (!IsAwaitingRealmBreakthroughConfirmation)
+			return;
+
+		int targetRealm = pendingRealmBreakthroughConfirmation;
+		int threshold =
+			GetGlobalStageThreshold(targetRealm * StagesPerRealm);
+		pendingRealmBreakthroughConfirmation = -1;
+		confirmedRealmBreakthrough = -1;
+		ClearPendingBreakthroughSelections();
+		QiExp = Math.Min(QiExp, Math.Max(0, threshold - 1));
+		Qi = Math.Min(Qi, MaxQi);
+		RealmIndex = targetRealm - 1;
+		Stage = StagesPerRealm;
+		SoundEngine.PlaySound(SoundID.MenuClose);
+	}
+
+	public void SelectPendingFoundationQuality(FoundationQuality quality)
+	{
+		if (PendingRealmBreakthroughTargetRealm != 2)
+			return;
+		pendingFoundationQuality = (FoundationQuality)Math.Clamp(
+			(byte)quality, (byte)FoundationQuality.Inferior,
+			(byte)FoundationQuality.Heavenly);
+	}
+
+	public void SelectPendingGoldenCoreTier(int tier)
+	{
+		if (PendingRealmBreakthroughTargetRealm != 3)
+			return;
+		pendingGoldenCoreTier = Math.Clamp(tier, 1, 9);
+	}
+
+	public void CycleSelectedBreakthroughTreasure()
+	{
+		int[] types =
+		[
+			ModContent.ItemType<HeavenlyEyeEssence>(),
+			ModContent.ItemType<HeavenlyRoyalNectar>(),
+			ModContent.ItemType<HeavenlyBoneMarrow>()
+		];
+		int start = Array.IndexOf(types, selectedBreakthroughTreasureType);
+		for (int step = 1; step <= types.Length; step++)
+		{
+			int candidate = types[(start + step + types.Length)
+				% types.Length];
+			if (Player.CountItem(candidate) <= 0)
+				continue;
+			selectedBreakthroughTreasureType = candidate;
+			return;
+		}
+		selectedBreakthroughTreasureType = 0;
+	}
+
+	public void ClearSelectedBreakthroughTreasure() =>
+		selectedBreakthroughTreasureType = 0;
+
+	public void ToggleSelectedBreakthroughPill()
+	{
+		int pillType = GetBreakthroughPillItemType(
+			PendingRealmBreakthroughTargetRealm);
+		if (pillType <= 0
+			|| Player.GetModPlayer<AlchemyPillEffectPlayer>()
+				.GetBreakthroughChanceBonus(
+					PendingRealmBreakthroughTargetRealm) > 0f)
+			return;
+		selectedBreakthroughPillType =
+			selectedBreakthroughPillType == pillType
+				? 0
+				: Player.CountItem(pillType) > 0 ? pillType : 0;
+	}
+
+	public void ClearSelectedBreakthroughPill()
+	{
+		if (Player.GetModPlayer<AlchemyPillEffectPlayer>()
+			.GetBreakthroughChanceBonus(
+				PendingRealmBreakthroughTargetRealm) <= 0f)
+			selectedBreakthroughPillType = 0;
 	}
 
 	public void ConfirmTribulation()
@@ -1892,12 +3171,13 @@ public class CultivationPlayer : ModPlayer
 			return;
 		}
 
-		tribulationTimer = TribulationStrikeInterval;
+		tribulationTimer = GetTribulationStrikeInterval(tribulationRealm);
 	}
 
 	private void SpawnTribulationWarningDust()
 	{
-		float intensity = 1f + tribulationRealm * 0.15f;
+		float intensity = (1f + tribulationRealm * 0.15f)
+			* MathF.Sqrt(GetTribulationPowerMultiplier(tribulationRealm));
 		if (Main.rand.NextBool(2) && CultivationClientConfig.ShouldSpawnParticle())
 		{
 			Vector2 position = Player.Top + new Vector2(Main.rand.NextFloat(-45f, 45f), Main.rand.NextFloat(-180f, -45f));
@@ -1962,12 +3242,17 @@ public class CultivationPlayer : ModPlayer
 		int damage = 220 + realmOffset * 300;
 		damage = Math.Max(damage,
 			(int)MathF.Ceiling(Player.statLifeMax2 * (0.45f + realmOffset * 0.1f)));
+		float tribulationPower =
+			GetTribulationPowerMultiplier(tribulationRealm);
+		damage = Math.Max(1,
+			(int)MathF.Ceiling(damage * tribulationPower));
 		PermanentFormationCoreEntity.TryProtectFromTribulation(
 			Player, damage, realmOffset, out damage);
 		damage = ApplyTribulationQiShield(damage, realmOffset);
 		damage = Math.Max(1, (int)MathF.Ceiling(damage
 			* Player.GetModPlayer<AlchemyPillEffectPlayer>().TribulationDamageMultiplier));
-		float armorPenetration = 45f + realmOffset * 55f;
+		float armorPenetration = (45f + realmOffset * 55f)
+			* MathF.Sqrt(tribulationPower);
 		PlayerDeathReason deathReason = PlayerDeathReason.ByCustomReason(
 			Mod.GetLocalization("Cultivation.TribulationDeath").ToNetworkText(Player.name)
 		);
@@ -2026,6 +3311,12 @@ public class CultivationPlayer : ModPlayer
 		tribulationStrikesRemaining = 0;
 		RealmIndex = reachedRealm;
 		Stage = 1;
+		RecordSuccessfulRealmBreakthrough(
+			reachedRealm, pendingBreakthroughTreasure,
+			pendingBreakthroughUsedPill);
+		FillEmptyTechniqueLoadoutSlots();
+		NormalizeTechniqueLoadout();
+		SyncTechniqueLoadout();
 		Player.GetModPlayer<SectPlayer>().RecordTribulationSurvived();
 
 		Main.NewText(Mod.GetLocalization("Cultivation.TribulationSurvived").Format(
@@ -2042,12 +3333,18 @@ public class CultivationPlayer : ModPlayer
 		StartBreakthroughEffect(isRealmBreakthrough: true);
 	}
 
-	private void FailTribulation()
+	private void FailTribulation(bool recordHeartDemon = true)
 	{
 		int failedRealm = pendingTribulationRealm;
+		realmBreakthroughFailures++;
+		if (recordHeartDemon)
+			RecordHeartDemonBreakthroughFailure();
+		pendingBreakthroughTreasure = 0;
+		pendingBreakthroughUsedPill = false;
+		pendingBreakthroughGoldenCoreTier = 9;
 		int previousGlobalStage = failedRealm * StagesPerRealm - 1;
 		QiExp = Math.Min(QiExp, GetGlobalStageThreshold(previousGlobalStage));
-		Qi = Math.Min(Qi, QiExp);
+		Qi = Math.Min(Qi, MaxQi);
 		RealmIndex = failedRealm - 1;
 		Stage = StagesPerRealm;
 		pendingTribulationRealm = -1;
@@ -2063,9 +3360,200 @@ public class CultivationPlayer : ModPlayer
 		}
 	}
 
+	public string GetSuccessfulBreakthroughCatalystSummary(int targetRealm)
+	{
+		if (targetRealm <= 0 || targetRealm >= TotalRealms
+			|| targetRealm > RealmIndex)
+		{
+			return Mod.GetLocalization(
+				"CharacterStats.NotCompleted").Value;
+		}
+		if ((successfulBreakthroughRecordedMask & 1 << targetRealm) == 0)
+		{
+			return Mod.GetLocalization(
+				"CharacterStats.LegacyUnknown").Value;
+		}
+
+		bool usedPill =
+			(successfulBreakthroughPillMask & 1 << targetRealm) != 0;
+		int treasure = successfulBreakthroughTreasures[targetRealm];
+		string pill = targetRealm switch
+		{
+			1 => Lang.GetItemNameValue(
+				ModContent.ItemType<MeridianOpeningPill>()),
+			2 => Lang.GetItemNameValue(
+				ModContent.ItemType<FoundationAscensionPill>()),
+			3 => Lang.GetItemNameValue(
+				ModContent.ItemType<GoldenCoreCondensationPill>()),
+			4 => Lang.GetItemNameValue(
+				ModContent.ItemType<NascentSoulIntegrationPill>()),
+			_ => string.Empty
+		};
+		string treasureName = treasure switch
+		{
+			1 => Lang.GetItemNameValue(
+				ModContent.ItemType<HeavenlyEyeEssence>()),
+			2 => Lang.GetItemNameValue(
+				ModContent.ItemType<HeavenlyRoyalNectar>()),
+			3 => Lang.GetItemNameValue(
+				ModContent.ItemType<HeavenlyBoneMarrow>()),
+			_ => string.Empty
+		};
+		if (usedPill && treasure > 0)
+			return Mod.GetLocalization(
+				"CharacterStats.PillAndTreasure").Format(
+					pill, treasureName);
+		if (usedPill)
+			return pill;
+		if (treasure > 0)
+			return treasureName;
+		return Mod.GetLocalization("CharacterStats.NoCatalyst").Value;
+	}
+
+	public string GetSelectedHeavenlyTreasureName()
+	{
+		return HasSelectedBreakthroughTreasure
+			? Lang.GetItemNameValue(selectedBreakthroughTreasureType)
+			: string.Empty;
+	}
+
+	public string GetPendingBreakthroughGradeName() =>
+		PendingRealmBreakthroughTargetRealm switch
+		{
+			2 => Mod.GetLocalization(
+				$"BreakthroughGrades.Foundation.{pendingFoundationQuality}")
+				.Value,
+			3 => Mod.GetLocalization("BreakthroughGrades.GoldenCoreTier")
+				.Format(pendingGoldenCoreTier),
+			_ => string.Empty
+		};
+
+	public string GetFoundationQualityName() => Mod.GetLocalization(
+		$"BreakthroughGrades.Foundation.{foundationQuality}").Value;
+
+	private float GetBreakthroughGradeChanceModifier(int targetRealm)
+	{
+		if (targetRealm == 2)
+		{
+			return pendingFoundationQuality switch
+			{
+				FoundationQuality.Inferior => 10f,
+				FoundationQuality.Stable => 0f,
+				FoundationQuality.Perfect => -15f,
+				FoundationQuality.Heavenly => -30f,
+				_ => 0f
+			};
+		}
+		if (targetRealm == 3)
+		{
+			float tierModifier = pendingGoldenCoreTier switch
+			{
+				9 => 15f, 8 => 10f, 7 => 5f, 6 => 0f,
+				5 => -5f, 4 => -10f, 3 => -15f,
+				2 => -20f, 1 => -25f, _ => 0f
+			};
+			float foundationModifier = foundationQuality switch
+			{
+				FoundationQuality.Inferior => -5f,
+				FoundationQuality.Perfect => 10f,
+				FoundationQuality.Heavenly => 15f,
+				_ => 0f
+			};
+			return tierModifier + foundationModifier;
+		}
+		return 0f;
+	}
+
+	private float GetDefaultBreakthroughGradeChanceModifier(
+		int targetRealm) => targetRealm switch
+	{
+		2 => 10f,
+		3 => 15f + (foundationQuality switch
+		{
+			FoundationQuality.Inferior => -5f,
+			FoundationQuality.Perfect => 10f,
+			FoundationQuality.Heavenly => 15f,
+			_ => 0f
+		}),
+		_ => 0f
+	};
+
+	private float GetSelectedBreakthroughPillChanceBonus()
+	{
+		float activeBonus = Player.GetModPlayer<AlchemyPillEffectPlayer>()
+			.GetBreakthroughChanceBonus(PendingRealmBreakthroughTargetRealm);
+		if (activeBonus > 0f)
+			return activeBonus;
+		return selectedBreakthroughPillType > 0
+			&& Player.CountItem(selectedBreakthroughPillType) > 0
+			? PendingRealmBreakthroughTargetRealm switch
+			{
+				2 => 12f,
+				3 => 15f,
+				_ => 0f
+			}
+			: 0f;
+	}
+
+	private int GetEffectiveSelectedBreakthroughPillType()
+	{
+		int targetRealm = PendingRealmBreakthroughTargetRealm;
+		if (Player.GetModPlayer<AlchemyPillEffectPlayer>()
+			.GetBreakthroughChanceBonus(targetRealm) > 0f)
+			return GetBreakthroughPillItemType(targetRealm);
+		return selectedBreakthroughPillType > 0
+			&& Player.CountItem(selectedBreakthroughPillType) > 0
+			? selectedBreakthroughPillType : 0;
+	}
+
+	private bool CanConsumeSelectedBreakthroughPill()
+	{
+		int targetRealm = PendingRealmBreakthroughTargetRealm;
+		if (Player.GetModPlayer<AlchemyPillEffectPlayer>()
+			.GetBreakthroughChanceBonus(targetRealm) > 0f)
+			return true;
+		int pillType = GetEffectiveSelectedBreakthroughPillType();
+		if (pillType <= 0)
+			return false;
+		foreach (Item item in Player.inventory)
+		{
+			if (item.type != pillType
+				|| item.ModItem is not IAlchemyPill pill)
+				continue;
+			int saturation = AlchemyGlobalItem.GetAdjustedSaturationCost(
+				item, pill);
+			return Player.GetModPlayer<AlchemyPlayer>()
+				.CanConsumePill(saturation);
+		}
+		return false;
+	}
+
+	private static int GetBreakthroughPillItemType(int targetRealm) =>
+		targetRealm switch
+		{
+			1 => ModContent.ItemType<MeridianOpeningPill>(),
+			2 => ModContent.ItemType<FoundationAscensionPill>(),
+			3 => ModContent.ItemType<GoldenCoreCondensationPill>(),
+			4 => ModContent.ItemType<NascentSoulIntegrationPill>(),
+			_ => 0
+		};
+
+	private static bool IsHeavenlyTreasureType(int type) =>
+		type == ModContent.ItemType<HeavenlyEyeEssence>()
+		|| type == ModContent.ItemType<HeavenlyRoyalNectar>()
+		|| type == ModContent.ItemType<HeavenlyBoneMarrow>();
+
+	private void ClearPendingBreakthroughSelections()
+	{
+		pendingFoundationQuality = FoundationQuality.Inferior;
+		pendingGoldenCoreTier = 9;
+		selectedBreakthroughTreasureType = 0;
+		selectedBreakthroughPillType = 0;
+	}
+
 	private void UpdatePassiveQiRecovery()
 	{
-		if (Qi >= QiExp)
+		if (Qi >= MaxQi)
 		{
 			passiveQiRecoveryTimer = 0;
 			passiveQiGainRemainder = 0f;
@@ -2149,8 +3637,10 @@ public class CultivationPlayer : ModPlayer
 		}
 
 		qiSenseCostTimer++;
-		int qiSenseInterval = QiSenseCostInterval
-			+ (GetAbilityLevel(CultivationAbility.QiSense) - 1) * 3;
+		int qiSenseInterval = (int)MathF.Ceiling(
+			(QiSenseCostInterval
+				+ (GetAbilityLevel(CultivationAbility.QiSense) - 1) * 3)
+			* GetAbilityPowerMultiplier(CultivationAbility.QiSense, 0f));
 		if (qiSenseCostTimer >= qiSenseInterval)
 		{
 			qiSenseCostTimer = 0;
@@ -2278,13 +3768,13 @@ public class CultivationPlayer : ModPlayer
 
 	public void RestoreQi(int amount)
 	{
-		if (amount <= 0 || Qi >= QiExp)
+		if (amount <= 0 || Qi >= MaxQi)
 		{
 			return;
 		}
 
 		int previousQi = Qi;
-		Qi = Math.Min(Qi + amount, QiExp);
+		Qi = Math.Min(Qi + amount, MaxQi);
 		ShowQiGain(Qi - previousQi);
 	}
 
@@ -2302,7 +3792,7 @@ public class CultivationPlayer : ModPlayer
 			: GetGlobalStageThreshold(MaxGlobalStageIndex);
 
 		QiExp = Math.Min(QiExp + amount, maximumExperience);
-		Qi = Math.Min(Qi + amount, QiExp);
+		Qi = Math.Min(Qi + amount, MaxQi);
 
 		ShowQiGain(Qi - previousQi);
 
@@ -2343,6 +3833,34 @@ public class CultivationPlayer : ModPlayer
 		return true;
 	}
 
+	public int GetAbilityQiCost(int amount, CultivationAbility ability)
+	{
+		int cost = GetFinalQiCost(amount);
+		SpiritualElement elements = CultivationAbilityInfo.GetSpiritualElements(ability);
+		if (elements == SpiritualElement.None)
+			return cost;
+
+		ElementalCultivationPlayer elemental =
+			Player.GetModPlayer<ElementalCultivationPlayer>();
+		float affinityReduction = elemental.GetAffinity(elements) * 0.08f;
+		float totalReduction = Math.Clamp(
+			elemental.GetQiCostReductionPercent(elements) + affinityReduction,
+			0f, ElementalCultivationPlayer.MaximumQiCostReductionPercent);
+		return Math.Max(1, (int)MathF.Ceiling(cost * (1f - totalReduction / 100f)));
+	}
+
+	public bool SpendAbilityQi(int amount, CultivationAbility ability)
+	{
+		int actualAmount = GetAbilityQiCost(amount, ability);
+		if (Qi < actualAmount)
+			return false;
+		Qi -= actualAmount;
+		if (IsAbilityUnlocked(CultivationAbility.GoldenCoreCirculation))
+			AddAbilityExperience(CultivationAbility.GoldenCoreCirculation,
+				Math.Max(2, actualAmount / 5));
+		return true;
+	}
+
 	public int GetFinalQiCost(int amount)
 	{
 		if (amount <= 0)
@@ -2365,7 +3883,9 @@ public class CultivationPlayer : ModPlayer
 
 	public bool SetQiProtectionEnabled(bool enabled)
 	{
-		if (enabled && RealmIndex < 2)
+		if (enabled && (RealmIndex < 2
+			|| !IsTechniqueEquipped(
+				CultivationAbility.QiProtection)))
 		{
 			return false;
 		}
@@ -2380,7 +3900,8 @@ public class CultivationPlayer : ModPlayer
 
 	public bool SetQiSenseEnabled(bool enabled)
 	{
-		if (enabled && !HasUnlockedQiSense)
+		if (enabled && (!HasUnlockedQiSense
+			|| !IsTechniqueEquipped(CultivationAbility.QiSense)))
 		{
 			return false;
 		}
@@ -2393,6 +3914,546 @@ public class CultivationPlayer : ModPlayer
 		QiSenseEnabled = enabled;
 		qiSenseCostTimer = 0;
 		return true;
+	}
+
+	private void ApplyQiBurningBonuses()
+	{
+		int level = GetAbilityLevel(CultivationAbility.QiBurning);
+		float progress = (level - 1f) / (CultivationAbilityInfo.MaxLevel - 1f);
+		Player.GetDamage(DamageClass.Generic) += MathHelper.Lerp(0.30f, 0.45f, progress);
+		Player.GetAttackSpeed(DamageClass.Generic) += MathHelper.Lerp(0.10f, 0.20f, progress);
+		Player.GetCritChance(DamageClass.Generic) += MathHelper.Lerp(8f, 12f, progress);
+		Player.moveSpeed += MathHelper.Lerp(0.15f, 0.22f, progress);
+		Player.endurance = Math.Min(0.9f,
+			Player.endurance + MathHelper.Lerp(0.08f, 0.12f, progress));
+		Player.noKnockback = true;
+	}
+
+	private int GetQiDeviationDuration()
+	{
+		int level = GetAbilityLevel(CultivationAbility.QiBurning);
+		float progress = (level - 1f) / (CultivationAbilityInfo.MaxLevel - 1f);
+		float foundationMultiplier =
+			RealmIndex >= 2
+				&& foundationQuality == FoundationQuality.Heavenly
+				? 0.85f : 1f;
+		return (int)MathF.Round(
+			MathHelper.Lerp(180f, 90f, progress)
+				* foundationMultiplier * 60f);
+	}
+
+	public void RequestToggleQiBurning()
+	{
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			Xianxia.SendQiBurningToggleRequest();
+			return;
+		}
+		TryToggleQiBurningAuthoritative();
+	}
+
+	internal void TryToggleQiBurningAuthoritative()
+	{
+		if (qiBurningEnabled)
+		{
+			DisableQiBurning(applyDeviation: true, showMessage: true);
+			return;
+		}
+
+		string failureKey = GetQiBurningActivationFailureKey();
+		if (!string.IsNullOrEmpty(failureKey))
+		{
+			if (Main.netMode != NetmodeID.Server)
+				Main.NewText(Mod.GetLocalization(failureKey).Value, Color.OrangeRed);
+			return;
+		}
+
+		StopMeditating(syncMultiplayer: true);
+		qiBurningEnabled = true;
+		qiBurningPulseTimer = 0;
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BurnedQi.Enabled").Value, Color.OrangeRed);
+			SoundEngine.PlaySound(SoundID.Item74, Player.Center);
+		}
+		SyncQiBurningState();
+	}
+
+	private string GetQiBurningActivationFailureKey()
+	{
+		if (!(CultivationServerConfig.Instance?.EnableQiBurning ?? true))
+			return "Cultivation.BurnedQi.DisabledByServer";
+		if (!IsTechniqueEquipped(CultivationAbility.QiBurning))
+			return "Cultivation.BurnedQi.NotEquipped";
+		if (Player.dead)
+			return "Cultivation.BurnedQi.Dead";
+		if (!IsAbilityUnlocked(CultivationAbility.QiBurning))
+			return "Cultivation.BurnedQi.RequiresFoundation";
+		if (IsMeditating)
+			return "Cultivation.BurnedQi.WhileMeditating";
+		if (BaseMaxQi <= 0)
+			return "Cultivation.BurnedQi.NoCapacity";
+		if (HasQiDeviation)
+			return "Cultivation.BurnedQi.DeviationBlocked";
+		if (burnedQiCapacityBps >= MaximumBurnedQiBps)
+			return "Cultivation.BurnedQi.LimitBlocked";
+		if (IsAwaitingRealmBreakthroughConfirmation
+			|| IsAwaitingTribulationConfirmation)
+			return "Cultivation.BurnedQi.ConfirmationBlocked";
+		if (heartDemonTrialActive)
+			return "Cultivation.BurnedQi.TrialBlocked";
+		return string.Empty;
+	}
+
+	private void DisableQiBurning(bool applyDeviation, bool showMessage)
+	{
+		if (!qiBurningEnabled)
+			return;
+		qiBurningEnabled = false;
+		qiBurningPulseTimer = 0;
+		if (applyDeviation)
+			qiDeviationTimer = Math.Max(qiDeviationTimer,
+				GetQiDeviationDuration());
+		if (showMessage && Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BurnedQi.Disabled").Format(
+					MathF.Round(BurnedQiCapacityPercent, 2)),
+				Color.MediumPurple);
+			SoundEngine.PlaySound(SoundID.Item8, Player.Center);
+		}
+		SyncQiBurningState();
+	}
+
+	private void UpdateQiBurning()
+	{
+		if (qiDeviationTimer > 0)
+			qiDeviationTimer--;
+		if (heartDemonTrialCooldown > 0)
+			heartDemonTrialCooldown--;
+		if (qiBurningCombatTimer > 0)
+			qiBurningCombatTimer--;
+		if (++qiBurningExperienceWindowTimer >= 60 * 60)
+		{
+			qiBurningExperienceWindowTimer = 0;
+			qiBurningExperienceThisWindow = 0;
+		}
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+
+		if (!qiBurningEnabled)
+			return;
+		if (Player.dead || RealmIndex < 2
+			|| !(CultivationServerConfig.Instance?.EnableQiBurning ?? true)
+			|| heartDemonTrialActive)
+		{
+			DisableQiBurning(applyDeviation: true, showMessage: true);
+			return;
+		}
+
+		qiBurningPulseTimer++;
+		if (qiBurningPulseTimer < QiBurnPulseInterval)
+			return;
+		qiBurningPulseTimer = 0;
+		burnedQiCapacityBps = Math.Min(MaximumBurnedQiBps,
+			burnedQiCapacityBps + QiBurnPerPulseBps);
+		Qi = Math.Min(Qi, MaxQi);
+
+		bool combatQualified = qiBurningCombatTimer > 0;
+		for (int i = 0; !combatQualified && i < Main.maxNPCs; i++)
+			combatQualified = Main.npc[i].active && Main.npc[i].boss;
+		if (combatQualified
+			&& qiBurningExperienceThisWindow + 5
+				<= QiBurnExperiencePerMinute)
+		{
+			AddAbilityExperience(CultivationAbility.QiBurning, 5);
+			qiBurningExperienceThisWindow += 5;
+		}
+
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BurnedQi.Pulse").Format(
+					MathF.Round(BurnedQiCapacityPercent, 2)),
+				burnedQiCapacityBps >= 4000 ? Color.Red : Color.OrangeRed);
+			SoundEngine.PlaySound(burnedQiCapacityBps >= 4000
+				? SoundID.Item122 : SoundID.Item74, Player.Center);
+		}
+		SyncRiskState();
+		if (burnedQiCapacityBps >= MaximumBurnedQiBps)
+		{
+			if (Main.netMode != NetmodeID.Server)
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BurnedQi.LimitReached").Value, Color.Red);
+			DisableQiBurning(applyDeviation: true, showMessage: false);
+		}
+	}
+
+	private void UpdateBurnedQiMeditationRepair()
+	{
+		if (!HasBurnedQi || !IsMeditating)
+		{
+			burnedQiMeditationRepairTimer = 0;
+			return;
+		}
+		if (++burnedQiMeditationRepairTimer < BurnedQiMeditationRepairInterval)
+			return;
+		burnedQiMeditationRepairTimer = 0;
+		int repaired = BurnedQiMeditationRepairBps
+			* (SpiritualQiZoneTier + 1)
+			* (PermanentFormationQiMultiplier > 1f ? 2 : 1);
+		RepairBurnedQiCapacity(repaired, showMessage: true);
+	}
+
+	public int RepairBurnedQiCapacity(int basisPoints, bool showMessage)
+	{
+		if (basisPoints <= 0 || burnedQiCapacityBps <= 0)
+			return 0;
+		int repaired = Math.Min(basisPoints, burnedQiCapacityBps);
+		burnedQiCapacityBps -= repaired;
+		Qi = Math.Min(Qi, MaxQi);
+		if (showMessage && Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BurnedQi.Repaired").Format(repaired / 100f,
+					BurnedQiCapacityPercent), Color.LightGreen);
+		}
+		SyncRiskState();
+		return repaired;
+	}
+
+	private void SyncQiBurningState()
+	{
+		Xianxia.SendQiBurningState(Player.whoAmI, qiBurningEnabled);
+		SyncRiskState();
+	}
+
+	private void SyncRiskState()
+	{
+		Xianxia.SendCultivationRiskState(Player.whoAmI, this);
+	}
+
+	internal void SetQiBurningFromNetwork(bool enabled)
+	{
+		bool changed = qiBurningEnabled != enabled;
+		qiBurningEnabled = enabled;
+		if (!enabled)
+			qiBurningPulseTimer = 0;
+		if (changed && Player.whoAmI == Main.myPlayer)
+		{
+			Main.NewText(Mod.GetLocalization(enabled
+				? "Cultivation.BurnedQi.Enabled"
+				: "Cultivation.BurnedQi.DisabledNetwork").Value,
+				enabled ? Color.OrangeRed : Color.MediumPurple);
+			SoundEngine.PlaySound(enabled ? SoundID.Item74 : SoundID.Item8,
+				Player.Center);
+		}
+	}
+
+	internal void SetRiskStateFromNetwork(int burnedBps, int deviationTicks,
+		int demonPoints, int breakthroughProgress, int deathProgress,
+		bool trialActive, int trialNpcIndex, int trialCooldown)
+	{
+		int previousBurnedBps = burnedQiCapacityBps;
+		int previousDemonPoints = heartDemonPoints;
+		int previousBreakthroughProgress =
+			breakthroughFailuresTowardHeartDemon;
+		int previousDeathProgress = deathsTowardHeartDemon;
+		bool previousTrialActive = heartDemonTrialActive;
+		burnedQiCapacityBps = Math.Clamp(burnedBps, 0, MaximumBurnedQiBps);
+		qiDeviationTimer = Math.Max(0, deviationTicks);
+		heartDemonPoints = Math.Clamp(demonPoints, 0, MaximumHeartDemonPoints);
+		breakthroughFailuresTowardHeartDemon = Math.Clamp(
+			breakthroughProgress, 0, BreakthroughFailuresPerHeartDemonPoint - 1);
+		deathsTowardHeartDemon = Math.Clamp(
+			deathProgress, 0, DeathsPerHeartDemonPoint - 1);
+		heartDemonTrialActive = trialActive;
+		heartDemonTrialNpcIndex = trialActive ? trialNpcIndex : -1;
+		heartDemonTrialCooldown = Math.Max(0, trialCooldown);
+		Qi = Math.Min(Qi, MaxQi);
+		if (Player.whoAmI == Main.myPlayer)
+		{
+			if (burnedQiCapacityBps > previousBurnedBps)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BurnedQi.Pulse").Format(
+						MathF.Round(BurnedQiCapacityPercent, 2)),
+					burnedQiCapacityBps >= 4000 ? Color.Red : Color.OrangeRed);
+			}
+			else if (burnedQiCapacityBps < previousBurnedBps)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BurnedQi.Repaired").Format(
+						(previousBurnedBps - burnedQiCapacityBps) / 100f,
+						BurnedQiCapacityPercent), Color.LightGreen);
+			}
+			if (heartDemonPoints > previousDemonPoints)
+			{
+				heartDemonVisualTimer = 180;
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.HeartDemons.PointGained").Format(
+						heartDemonPoints, MaximumHeartDemonPoints),
+					Color.MediumPurple);
+			}
+			else if (deathsTowardHeartDemon != previousDeathProgress)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.HeartDemons.DeathCounted").Format(
+						deathsTowardHeartDemon, DeathsPerHeartDemonPoint),
+					Color.MediumPurple);
+			}
+			else if (breakthroughFailuresTowardHeartDemon
+				!= previousBreakthroughProgress)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.HeartDemons.FailureCounted").Format(
+						breakthroughFailuresTowardHeartDemon,
+						BreakthroughFailuresPerHeartDemonPoint),
+					Color.MediumPurple);
+			}
+			if (!previousTrialActive && heartDemonTrialActive)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.HeartDemonTrial.Started").Value,
+					Color.OrangeRed);
+			}
+			else if (previousTrialActive && !heartDemonTrialActive)
+			{
+				Main.NewText(Mod.GetLocalization(heartDemonPoints == 0
+					? "Cultivation.HeartDemonTrial.Purified"
+					: "Cultivation.HeartDemonTrial.Failed").Value,
+					heartDemonPoints == 0 ? Color.LightGreen : Color.MediumPurple);
+			}
+		}
+	}
+
+	private void RecordHeartDemonBreakthroughFailure()
+	{
+		if (suppressRiskTracking
+			|| !(CultivationServerConfig.Instance?.EnableHeartDemons ?? true))
+			return;
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			if (Player.whoAmI == Main.myPlayer)
+				Xianxia.SendHeartDemonBreakthroughFailureRequest();
+			return;
+		}
+		breakthroughFailuresTowardHeartDemon++;
+		bool gainedPoint = false;
+		if (breakthroughFailuresTowardHeartDemon
+			>= BreakthroughFailuresPerHeartDemonPoint)
+		{
+			breakthroughFailuresTowardHeartDemon -=
+				BreakthroughFailuresPerHeartDemonPoint;
+			GainHeartDemonPoint();
+			gainedPoint = true;
+		}
+		if (!gainedPoint && Main.netMode == NetmodeID.SinglePlayer)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemons.FailureCounted").Format(
+					breakthroughFailuresTowardHeartDemon,
+					BreakthroughFailuresPerHeartDemonPoint),
+				Color.MediumPurple);
+		}
+		SyncRiskState();
+	}
+
+	internal void RecordHeartDemonBreakthroughFailureAuthoritative()
+	{
+		if (Main.netMode == NetmodeID.Server)
+			RecordHeartDemonBreakthroughFailure();
+	}
+
+	private void RecordHeartDemonDeath()
+	{
+		if (suppressRiskTracking
+			|| !(CultivationServerConfig.Instance?.EnableHeartDemons ?? true))
+			return;
+		deathsTowardHeartDemon++;
+		bool gainedPoint = false;
+		if (deathsTowardHeartDemon >= DeathsPerHeartDemonPoint)
+		{
+			deathsTowardHeartDemon -= DeathsPerHeartDemonPoint;
+			GainHeartDemonPoint();
+			gainedPoint = true;
+		}
+		if (!gainedPoint && Main.netMode == NetmodeID.SinglePlayer)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemons.DeathCounted").Format(
+					deathsTowardHeartDemon, DeathsPerHeartDemonPoint),
+				Color.MediumPurple);
+		}
+		SyncRiskState();
+	}
+
+	internal void RecordHeartDemonDeathAuthoritative()
+	{
+		if (Main.netMode == NetmodeID.Server)
+			RecordHeartDemonDeath();
+	}
+
+	private void GainHeartDemonPoint()
+	{
+		if (heartDemonPoints >= MaximumHeartDemonPoints)
+			return;
+		heartDemonPoints++;
+		heartDemonVisualTimer = 180;
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemons.PointGained").Format(
+					heartDemonPoints, MaximumHeartDemonPoints),
+				Color.MediumPurple);
+			if (heartDemonPoints >= MaximumHeartDemonPoints)
+			{
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.HeartDemons.MaximumReached").Value,
+					Color.Red);
+			}
+			SoundEngine.PlaySound(SoundID.Item103, Player.Center);
+		}
+	}
+
+	public bool CanStartHeartDemonTrial(out string failureKey)
+	{
+		failureKey = string.Empty;
+		if (!(CultivationServerConfig.Instance?.EnableHeartDemons ?? true))
+			failureKey = "Cultivation.HeartDemonTrial.DisabledByServer";
+		else if (heartDemonPoints <= 0)
+			failureKey = "Cultivation.HeartDemonTrial.NoPoints";
+		else if (Player.dead)
+			failureKey = "Cultivation.HeartDemonTrial.Dead";
+		else if (heartDemonTrialCooldown > 0)
+			failureKey = "Cultivation.HeartDemonTrial.Cooldown";
+		else if (qiBurningEnabled)
+			failureKey = "Cultivation.HeartDemonTrial.QiBurningBlocked";
+		else if (heartDemonTrialActive)
+			failureKey = "Cultivation.HeartDemonTrial.AlreadyActive";
+		else if (pendingTribulationRealm >= TribulationStartingRealm
+			|| tribulationRealm >= TribulationStartingRealm)
+			failureKey = "Cultivation.HeartDemonTrial.TribulationBlocked";
+		else if (Main.invasionType > 0 || Main.pumpkinMoon
+			|| Main.snowMoon || Main.eclipse)
+			failureKey = "Cultivation.HeartDemonTrial.EventBlocked";
+		else
+		{
+			for (int i = 0; i < Main.maxNPCs; i++)
+			{
+				if (Main.npc[i].active && Main.npc[i].boss)
+				{
+					failureKey = "Cultivation.HeartDemonTrial.BossBlocked";
+					break;
+				}
+			}
+		}
+		return string.IsNullOrEmpty(failureKey);
+	}
+
+	public void RequestHeartDemonTrialConfirmation()
+	{
+		if (!CanStartHeartDemonTrial(out string failureKey))
+		{
+			if (Main.netMode != NetmodeID.Server)
+			{
+				Main.NewText(Mod.GetLocalization(failureKey).Format(
+					Math.Max(1, heartDemonTrialCooldown / 60)),
+					Color.OrangeRed);
+			}
+			return;
+		}
+		awaitingHeartDemonTrialConfirmation = true;
+		IsAbilityTreeOpen = false;
+		StopMeditating(syncMultiplayer: true);
+		SoundEngine.PlaySound(SoundID.MenuOpen);
+	}
+
+	public void CancelHeartDemonTrialConfirmation()
+	{
+		awaitingHeartDemonTrialConfirmation = false;
+		SoundEngine.PlaySound(SoundID.MenuClose);
+	}
+
+	public void ConfirmHeartDemonTrial()
+	{
+		if (!awaitingHeartDemonTrialConfirmation)
+			return;
+		awaitingHeartDemonTrialConfirmation = false;
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			Xianxia.SendHeartDemonTrialRequest();
+			return;
+		}
+		StartHeartDemonTrialAuthoritative();
+	}
+
+	internal void StartHeartDemonTrialAuthoritative()
+	{
+		if (!CanStartHeartDemonTrial(out _))
+			return;
+		Vector2 spawn = Player.Center + new Vector2(
+			Player.direction == 0 ? 320f : Player.direction * 320f, -80f);
+		int npcIndex = NPC.NewNPC(
+			Player.GetSource_Misc("XianxiaHeartDemonTrial"),
+			(int)spawn.X, (int)spawn.Y,
+			ModContent.NPCType<HeartDemon>(),
+			ai0: Player.whoAmI,
+			ai1: RealmIndex,
+			ai2: Stage,
+			ai3: heartDemonPoints);
+		if (npcIndex < 0 || npcIndex >= Main.maxNPCs)
+			return;
+		heartDemonTrialActive = true;
+		heartDemonTrialNpcIndex = npcIndex;
+		Main.npc[npcIndex].netUpdate = true;
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemonTrial.Started").Value,
+				Color.MediumPurple);
+			SoundEngine.PlaySound(SoundID.Roar, Player.Center);
+		}
+		SyncRiskState();
+	}
+
+	internal void CompleteHeartDemonTrial(int npcIndex)
+	{
+		if (!heartDemonTrialActive || heartDemonTrialNpcIndex != npcIndex)
+			return;
+		heartDemonPoints = 0;
+		breakthroughFailuresTowardHeartDemon = 0;
+		deathsTowardHeartDemon = 0;
+		heartDemonTrialActive = false;
+		heartDemonTrialNpcIndex = -1;
+		heartDemonTrialCooldown = 0;
+		heartDemonVisualTimer = 240;
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemonTrial.Purified").Value,
+				Color.LightGreen);
+			SoundEngine.PlaySound(SoundID.Item29, Player.Center);
+			StartBreakthroughEffect(isRealmBreakthrough: false);
+		}
+		SyncRiskState();
+	}
+
+	internal void FailHeartDemonTrial(bool showMessage)
+	{
+		if (!heartDemonTrialActive)
+			return;
+		heartDemonTrialActive = false;
+		heartDemonTrialNpcIndex = -1;
+		heartDemonTrialCooldown = HeartDemonTrialRetryCooldown;
+		if (showMessage && Main.netMode != NetmodeID.Server)
+		{
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.HeartDemonTrial.Failed").Value,
+				Color.OrangeRed);
+		}
+		SyncRiskState();
 	}
 
 	public string GetRealmName()
@@ -2418,6 +4479,25 @@ public class CultivationPlayer : ModPlayer
 			MathF.Round(bonus.EndurancePercent, 1),
 			(int)MathF.Round(bonus.LifeRegen)
 		);
+	}
+
+	public string GetRealmBonusPrimarySummary()
+	{
+		CultivationBonus bonus = CalculateCultivationBonus();
+		return Mod.GetLocalization("CharacterStats.CultivationBonusPrimary").Format(
+			(int)MathF.Round(bonus.MaxLife),
+			(int)MathF.Round(bonus.Defense),
+			MathF.Round(bonus.DamagePercent, 1),
+			MathF.Round(bonus.MoveSpeedPercent, 1));
+	}
+
+	public string GetRealmBonusSecondarySummary()
+	{
+		CultivationBonus bonus = CalculateCultivationBonus();
+		return Mod.GetLocalization("CharacterStats.CultivationBonusSecondary").Format(
+			MathF.Round(bonus.CritChance, 1),
+			MathF.Round(bonus.EndurancePercent, 1),
+			MathF.Round(bonus.LifeRegen, 1));
 	}
 
 	public string GetNextStageBonusSummary()
@@ -2476,6 +4556,10 @@ public class CultivationPlayer : ModPlayer
 			float multiplier = stageRealm > 0 && globalStage % StagesPerRealm == 0
 				? 3f
 				: 1f;
+			if (stageRealm == 2)
+				multiplier *= FoundationStatMultiplier;
+			else if (stageRealm == 3)
+				multiplier *= GoldenCoreStatMultiplier;
 
 			maxLife += growth.MaxLife * multiplier;
 			defense += growth.Defense * multiplier;
@@ -2495,6 +4579,248 @@ public class CultivationPlayer : ModPlayer
 			endurancePercent,
 			lifeRegen
 		);
+	}
+
+	private static float GetBaseRealmBreakthroughChance(int targetRealm) =>
+		targetRealm switch
+		{
+			1 => 90f,
+			2 => 75f,
+			3 => 55f,
+			4 => 35f,
+			_ => 100f
+		};
+
+	private bool TryRealmBreakthrough(int targetRealm)
+	{
+		if (forceNextRealmBreakthrough)
+			return true;
+
+		int realmThreshold =
+			GetGlobalStageThreshold(targetRealm * StagesPerRealm);
+		if (HasBurnedQi)
+		{
+			QiExp = Math.Min(QiExp, Math.Max(0, realmThreshold - 1));
+			Qi = Math.Min(Qi, MaxQi);
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BurnedQi.BreakthroughBlocked").Value,
+				Color.OrangeRed);
+			return false;
+		}
+		AlchemyPillEffectPlayer pillEffects =
+			Player.GetModPlayer<AlchemyPillEffectPlayer>();
+		bool usesPill = GetSelectedBreakthroughPillChanceBonus() > 0f;
+		bool needsTreasure = targetRealm switch
+		{
+			2 => pendingFoundationQuality
+				is FoundationQuality.Perfect
+				or FoundationQuality.Heavenly
+				|| !usesPill,
+			3 => true,
+			_ => false
+		};
+		bool foundationRequirementsMet = targetRealm != 2
+			|| pendingFoundationQuality switch
+			{
+				FoundationQuality.Inferior or FoundationQuality.Stable =>
+					HasSelectedBreakthroughTreasure || usesPill,
+				FoundationQuality.Perfect =>
+					HasSelectedBreakthroughTreasure,
+				FoundationQuality.Heavenly =>
+					HasSelectedBreakthroughTreasure && usesPill,
+				_ => false
+			};
+		if (!foundationRequirementsMet)
+		{
+			QiExp = Math.Min(QiExp, Math.Max(0, realmThreshold - 1));
+			Qi = Math.Min(Qi, MaxQi);
+			if (breakthroughWarningCooldown <= 0)
+			{
+				breakthroughWarningCooldown = 300;
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BreakthroughChance.MissingFoundationCatalyst").Value,
+					Color.OrangeRed);
+			}
+			return false;
+		}
+		if (targetRealm == 3
+			&& (!HasSelectedBreakthroughTreasure
+				|| pendingGoldenCoreTier == 1 && !usesPill))
+		{
+			QiExp = Math.Min(QiExp, Math.Max(0, realmThreshold - 1));
+			Qi = Math.Min(Qi, MaxQi);
+			if (breakthroughWarningCooldown <= 0)
+			{
+				breakthroughWarningCooldown = 300;
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BreakthroughChance.MissingGoldenCoreTreasure").Value,
+					Color.OrangeRed);
+			}
+			return false;
+		}
+
+		float chance = Math.Clamp(
+			GetBaseRealmBreakthroughChance(targetRealm)
+				+ Player.GetModPlayer<SpiritualRootPlayer>().BreakthroughChanceModifier
+				+ Player.GetModPlayer<AlchemyPillEffectPlayer>()
+					.GetBreakthroughChanceBonus(targetRealm)
+				+ (pillEffects.GetBreakthroughChanceBonus(targetRealm) > 0f
+					? 0f : GetSelectedBreakthroughPillChanceBonus())
+				+ GetBreakthroughGradeChanceModifier(targetRealm)
+				- HeartDemonBreakthroughPenalty,
+			10f, 95f);
+		bool usedPill = usesPill;
+		realmBreakthroughAttempts++;
+		if (usedPill)
+			breakthroughPillsConsumed++;
+		ConsumeSelectedBreakthroughPill(targetRealm);
+		if (Main.rand.NextFloat(100f) >= chance)
+		{
+			realmBreakthroughFailures++;
+			RecordHeartDemonBreakthroughFailure();
+			int previousThreshold =
+				GetGlobalStageThreshold(targetRealm * StagesPerRealm - 1);
+			int finalStepCost = Math.Max(1, realmThreshold - previousThreshold);
+			int lostProgress = Math.Max(1,
+				(int)MathF.Ceiling(finalStepCost * 0.25f));
+			QiExp = Math.Max(previousThreshold, realmThreshold - lostProgress);
+			Qi = Math.Min(Qi, MaxQi);
+			Main.NewText(Mod.GetLocalization(
+				"Cultivation.BreakthroughChance.Failed").Format(
+					MathF.Round(chance, 1), lostProgress), Color.OrangeRed);
+			ClearPendingBreakthroughSelections();
+			return false;
+		}
+
+		int consumedTreasure = 0;
+		if (needsTreasure)
+			consumedTreasure = ConsumeHeavenlyTreasureAndApplyImprint(
+				selectedBreakthroughTreasureType);
+		if (targetRealm >= TribulationStartingRealm)
+		{
+			pendingBreakthroughTreasure = consumedTreasure;
+			pendingBreakthroughUsedPill = usedPill;
+			if (targetRealm == 3)
+				pendingBreakthroughGoldenCoreTier =
+					pendingGoldenCoreTier;
+			ClearPendingBreakthroughSelections();
+		}
+		else
+		{
+			RecordSuccessfulRealmBreakthrough(
+				targetRealm, consumedTreasure, usedPill);
+		}
+		Main.NewText(Mod.GetLocalization(
+			"Cultivation.BreakthroughChance.Succeeded").Format(
+				MathF.Round(chance, 1)), Color.LightGreen);
+		return true;
+	}
+
+	private void ConsumeSelectedBreakthroughPill(int targetRealm)
+	{
+		AlchemyPillEffectPlayer pillEffects =
+			Player.GetModPlayer<AlchemyPillEffectPlayer>();
+		if (pillEffects.GetBreakthroughChanceBonus(targetRealm) > 0f)
+		{
+			pillEffects.ConsumeBreakthroughPill(targetRealm);
+			return;
+		}
+		int pillType = GetEffectiveSelectedBreakthroughPillType();
+		if (pillType <= 0)
+			return;
+		foreach (Item item in Player.inventory)
+		{
+			if (item.type != pillType)
+				continue;
+			if (item.ModItem is IAlchemyPill pill)
+			{
+				Player.GetModPlayer<AlchemyPlayer>().AddSaturation(
+					AlchemyGlobalItem.GetAdjustedSaturationCost(item, pill));
+			}
+			item.stack--;
+			if (item.stack <= 0)
+				item.TurnToAir();
+			return;
+		}
+	}
+
+	private int ConsumeHeavenlyTreasureAndApplyImprint(int selectedType)
+	{
+		for (int slot = 0; slot < Player.inventory.Length; slot++)
+		{
+			Item item = Player.inventory[slot];
+			if (item.type != selectedType)
+				continue;
+			string boonKey;
+			if (item.type == ModContent.ItemType<HeavenlyEyeEssence>())
+			{
+				heavenlyEyeImprints++;
+				boonKey = "HeavenlyEyeImprint";
+				pendingBreakthroughTreasure = 1;
+			}
+			else if (item.type == ModContent.ItemType<HeavenlyRoyalNectar>())
+			{
+				heavenlyRoyalNectarImprints++;
+				boonKey = "HeavenlyRoyalNectarImprint";
+				pendingBreakthroughTreasure = 2;
+			}
+			else if (item.type == ModContent.ItemType<HeavenlyBoneMarrow>())
+			{
+				heavenlyBoneMarrowImprints++;
+				boonKey = "HeavenlyBoneMarrowImprint";
+				pendingBreakthroughTreasure = 3;
+			}
+			else
+			{
+				continue;
+			}
+
+			item.stack--;
+			if (item.stack <= 0)
+				item.TurnToAir();
+			Main.NewText(Mod.GetLocalization(
+				$"Cultivation.BreakthroughChance.{boonKey}").Value,
+				Color.LightGoldenrodYellow);
+			return pendingBreakthroughTreasure;
+		}
+		return 0;
+	}
+
+	private void RecordSuccessfulRealmBreakthrough(
+		int targetRealm, int treasure, bool usedPill)
+	{
+		realmBreakthroughSuccesses++;
+		if (targetRealm == 2)
+		{
+			foundationQuality = pendingFoundationQuality;
+			if (Main.netMode != NetmodeID.Server)
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BreakthroughGradeAchieved").Format(
+						GetFoundationQualityName()), Color.Gold);
+		}
+		else if (targetRealm == 3)
+		{
+			goldenCoreTier = Math.Clamp(
+				pendingBreakthroughGoldenCoreTier, 1, 9);
+			if (Main.netMode != NetmodeID.Server)
+				Main.NewText(Mod.GetLocalization(
+					"Cultivation.BreakthroughGradeAchieved").Format(
+						Mod.GetLocalization(
+							"BreakthroughGrades.GoldenCoreTier")
+							.Format(goldenCoreTier)), Color.Gold);
+		}
+		if (targetRealm >= 0 && targetRealm < successfulBreakthroughTreasures.Length)
+		{
+			successfulBreakthroughTreasures[targetRealm] =
+				Math.Clamp(treasure, 0, 3);
+			if (usedPill)
+				successfulBreakthroughPillMask |= 1 << targetRealm;
+			successfulBreakthroughRecordedMask |= 1 << targetRealm;
+		}
+		pendingBreakthroughTreasure = 0;
+		pendingBreakthroughUsedPill = false;
+		pendingBreakthroughGoldenCoreTier = 9;
+		ClearPendingBreakthroughSelections();
 	}
 
 	private void UpdateRealm(bool showMessage)
@@ -2526,12 +4852,36 @@ public class CultivationPlayer : ModPlayer
 		int targetRealm = globalStageIndex / StagesPerRealm;
 		int targetStage = globalStageIndex % StagesPerRealm + 1;
 
+		if (showMessage && targetRealm > previousRealm)
+		{
+			// Keep meditation running while burned Qi capacity is being repaired.
+			// Opening the confirmation here would stop meditation and reopen again
+			// on every cultivation gain while QiEXP remains above the threshold.
+			if (HasBurnedQi)
+			{
+				RealmIndex = previousRealm;
+				Stage = StagesPerRealm;
+				return;
+			}
+
+			int realmToAttempt = previousRealm + 1;
+			if (!forceNextRealmBreakthrough
+				&& confirmedRealmBreakthrough != realmToAttempt)
+			{
+				RequestRealmBreakthroughConfirmation(realmToAttempt);
+				return;
+			}
+			confirmedRealmBreakthrough = -1;
+			if (!TryRealmBreakthrough(realmToAttempt))
+				return;
+		}
+
 		if (showMessage && targetRealm > previousRealm && targetRealm >= TribulationStartingRealm)
 		{
 			int realmToChallenge = previousRealm + 1;
 			int realmThreshold = GetGlobalStageThreshold(realmToChallenge * StagesPerRealm);
 			QiExp = Math.Min(QiExp, realmThreshold);
-			Qi = Math.Min(Qi, QiExp);
+			Qi = Math.Min(Qi, MaxQi);
 			RealmIndex = previousRealm;
 			Stage = StagesPerRealm;
 			RequestTribulationConfirmation(realmToChallenge);
@@ -2543,6 +4893,9 @@ public class CultivationPlayer : ModPlayer
 
 		if (showMessage && RealmIndex > previousRealm)
 		{
+			FillEmptyTechniqueLoadoutSlots();
+			NormalizeTechniqueLoadout();
+			SyncTechniqueLoadout();
 			Main.NewText(Mod.GetLocalization("Cultivation.Breakthrough").Format(GetRealmName()), Color.Gold);
 			Main.NewText(GetRealmBonusSummary(), new Color(120, 240, 255));
 			StartBreakthroughEffect(isRealmBreakthrough: true);
@@ -2607,7 +4960,7 @@ public class CultivationPlayer : ModPlayer
 		RebaseProgressionForRequirementMultiplier(ref rebasedQiExp, ref rebasedQi,
 			appliedCultivationRequirementMultiplier, configuredMultiplier);
 		QiExp = rebasedQiExp;
-		Qi = rebasedQi;
+		Qi = Math.Min(rebasedQi, MaxQi);
 		appliedCultivationRequirementMultiplier = configuredMultiplier;
 		UpdateRealm(showMessage: false);
 	}

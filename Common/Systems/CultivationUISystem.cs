@@ -6,10 +6,12 @@ using Microsoft.Xna.Framework.Input;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Xianxia.Common.Players;
+using Xianxia.Common.Elements;
 using Xianxia.Common.Config;
 using Xianxia.Content.Buffs;
 using Xianxia.Common.Abilities;
@@ -27,7 +29,8 @@ public class CultivationUISystem : ModSystem
 	{
 		Abilities,
 		Paths,
-		Sect
+		Sect,
+		Character
 	}
 
 	private static AbilityMenuPage abilityMenuPage;
@@ -38,16 +41,24 @@ public class CultivationUISystem : ModSystem
 		Forging
 	}
 	private static PathMenuPage pathMenuPage;
+	private static float abilityTreeScrollOffset;
+	private static bool draggingAbilityTreeScrollBar;
+	private static int abilityTreeScrollBarGrabOffset;
+	private static int selectedTechniqueLoadoutSlot;
+	private static bool toggleWheelExpanded;
 	private const int BarWidth = 300;
 	private const int BarHeight = 22;
 	private const int BorderSize = 2;
 	private const float WheelInnerRadius = 72f;
 	private const float WheelOuterRadius = 205f;
-	private const int WheelSegmentCount = 10;
+	private const float ToggleWheelInnerRadius = 218f;
+	private const float ToggleWheelOuterRadius = 315f;
 	private const float WheelStartAngle = -MathHelper.PiOver2;
 
 	private enum AbilityWheelId
 	{
+		Empty,
+		ToggleMenu,
 		QiProtection,
 		QiSense,
 		QiFlight,
@@ -57,7 +68,11 @@ public class CultivationUISystem : ModSystem
 		Fireball,
 		QiPalm,
 		QiResistance,
-		NightVision
+		NightVision,
+		QiBurning,
+		SpiritualRain,
+		SpiritSwordRain,
+		SectProtectionFormation
 	}
 
 	private readonly record struct AbilityWheelEntry(
@@ -154,9 +169,10 @@ public class CultivationUISystem : ModSystem
 		Main.spriteBatch.Draw(pixel, inner, new Color(10, 17, 29, 250));
 		DrawCenteredText(Mod.GetLocalization("AbilityTree.Title").Value,
 			new Vector2(panel.Center.X, panel.Y + 27), Color.White, 1.05f);
-		Rectangle abilitiesTab = new(panel.Center.X - 270, panel.Y + 47, 170, 31);
-		Rectangle pathsTab = new(panel.Center.X - 85, panel.Y + 47, 170, 31);
-		Rectangle sectTab = new(panel.Center.X + 100, panel.Y + 47, 170, 31);
+		Rectangle abilitiesTab = new(panel.Center.X - 310, panel.Y + 47, 145, 31);
+		Rectangle pathsTab = new(panel.Center.X - 155, panel.Y + 47, 145, 31);
+		Rectangle sectTab = new(panel.Center.X, panel.Y + 47, 145, 31);
+		Rectangle characterTab = new(panel.Center.X + 155, panel.Y + 47, 145, 31);
 		Point mouse = Main.MouseScreen.ToPoint();
 		DrawAbilityMenuTab(pixel, abilitiesTab,
 			Mod.GetLocalization("AbilityTree.Tabs.Abilities").Value,
@@ -167,6 +183,9 @@ public class CultivationUISystem : ModSystem
 		DrawAbilityMenuTab(pixel, sectTab,
 			Mod.GetLocalization("AbilityTree.Tabs.Sect").Value,
 			abilityMenuPage == AbilityMenuPage.Sect, sectTab.Contains(mouse));
+		DrawAbilityMenuTab(pixel, characterTab,
+			Mod.GetLocalization("AbilityTree.Tabs.Character").Value,
+			abilityMenuPage == AbilityMenuPage.Character, characterTab.Contains(mouse));
 		if (Main.mouseLeft && Main.mouseLeftRelease)
 		{
 			if (abilitiesTab.Contains(mouse))
@@ -187,6 +206,12 @@ public class CultivationUISystem : ModSystem
 				Main.mouseLeftRelease = false;
 				SoundEngine.PlaySound(SoundID.MenuTick);
 			}
+			else if (characterTab.Contains(mouse))
+			{
+				abilityMenuPage = AbilityMenuPage.Character;
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
 		}
 
 		if (abilityMenuPage == AbilityMenuPage.Paths)
@@ -199,6 +224,11 @@ public class CultivationUISystem : ModSystem
 			DrawSectPage(pixel, panel, mouse);
 			return true;
 		}
+		if (abilityMenuPage == AbilityMenuPage.Character)
+		{
+			DrawSpiritualRootPage(pixel, panel);
+			return true;
+		}
 
 		CultivationAbility[][] abilityGroups =
 		[
@@ -207,63 +237,129 @@ public class CultivationUISystem : ModSystem
 				CultivationAbility.QiResistance, CultivationAbility.Fireball,
 				CultivationAbility.QiPalm, CultivationAbility.SpiritualRain],
 			[CultivationAbility.QiProtection, CultivationAbility.FlameStep,
-				CultivationAbility.NightVision, CultivationAbility.SpiritSwordRain],
+				CultivationAbility.NightVision, CultivationAbility.SpiritSwordRain,
+				CultivationAbility.QiBurning],
 			[CultivationAbility.GoldenCoreCirculation, CultivationAbility.QiFlight,
 				CultivationAbility.SectProtectionFormation],
 			[CultivationAbility.NascentSoulRegeneration,
 				CultivationAbility.NascentTeleport, CultivationAbility.SpiritualPressure]
 		];
 
+		DrawTechniqueLoadoutEditor(
+			pixel, panel, mouse, cultivation);
 		CultivationAbility? hovered = null;
-		Rectangle listArea = new(panel.X + 14, panel.Y + 84, panel.Width - 28, panel.Height - 168);
-		const int realmColumnWidth = 170;
-		int rowHeight = listArea.Height / abilityGroups.Length;
+		Rectangle details = new(panel.X + 18, panel.Bottom - 102,
+			panel.Width - 36, 82);
+		Rectangle listArea = new(panel.X + 14, panel.Y + 166,
+			panel.Width - 48, details.Y - panel.Y - 173);
+		const int cardsPerLine = 4;
+		const int realmHeaderHeight = 19;
+		const int cardHeight = 52;
+		const int cardGap = 7;
+		const int lineGap = 4;
+		const int realmGap = 3;
+		int cardWidth = (listArea.Width - cardGap * (cardsPerLine - 1))
+			/ cardsPerLine;
+		int contentHeight = 0;
+		foreach (CultivationAbility[] group in abilityGroups)
+		{
+			int groupLines = (group.Length + cardsPerLine - 1) / cardsPerLine;
+			contentHeight += realmHeaderHeight
+				+ groupLines * cardHeight
+				+ (groupLines - 1) * lineGap
+				+ realmGap;
+		}
+		float maximumScroll = Math.Max(0f, contentHeight - listArea.Height);
+		abilityTreeScrollOffset = MathHelper.Clamp(
+			abilityTreeScrollOffset, 0f, maximumScroll);
+		Rectangle scrollTrack = new(listArea.Right + 8, listArea.Y, 9, listArea.Height);
+		int scrollHandleHeight = maximumScroll <= 0f
+			? scrollTrack.Height
+			: Math.Max(42, (int)MathF.Round(scrollTrack.Height
+				* (listArea.Height / (float)contentHeight)));
+		int scrollHandleTravel = Math.Max(0, scrollTrack.Height - scrollHandleHeight);
+		int scrollHandleY = scrollTrack.Y + (maximumScroll <= 0f
+			? 0
+			: (int)MathF.Round(abilityTreeScrollOffset / maximumScroll
+				* scrollHandleTravel));
+		Rectangle scrollHandle = new(scrollTrack.X, scrollHandleY,
+			scrollTrack.Width, scrollHandleHeight);
+		HandleAbilityTreeScrollInput(listArea, scrollTrack, scrollHandle,
+			mouse, maximumScroll, scrollHandleTravel);
+		int currentY = listArea.Y - (int)MathF.Round(abilityTreeScrollOffset);
+		ElementalCultivationPlayer elemental =
+			player.GetModPlayer<ElementalCultivationPlayer>();
+		SpiritualRootPlayer root =
+			player.GetModPlayer<SpiritualRootPlayer>();
+
 		for (int realm = 0; realm < abilityGroups.Length; realm++)
 		{
-			Rectangle row = new(listArea.X, listArea.Y + realm * rowHeight,
-				listArea.Width, rowHeight - 3);
 			bool realmUnlocked = cultivation.RealmIndex >= realm;
-			Main.spriteBatch.Draw(pixel, row, realm % 2 == 0
-				? new Color(18, 29, 45, 245)
-				: new Color(14, 24, 39, 245));
-			Rectangle realmPanel = new(row.X + 3, row.Y + 3, realmColumnWidth - 7, row.Height - 6);
-			Main.spriteBatch.Draw(pixel, realmPanel, realmUnlocked
-				? new Color(38, 104, 103, 235)
-				: new Color(31, 34, 43, 235));
+			CultivationAbility[] abilities = abilityGroups[realm];
+			int lines = (abilities.Length + cardsPerLine - 1) / cardsPerLine;
+			Rectangle realmHeader = new(listArea.X, currentY,
+				listArea.Width, realmHeaderHeight);
 			string realmName = Mod.GetLocalization(
 				$"Cultivation.Realms.{GetRealmLocalizationKey(realm)}").Value;
-			DrawCenteredText(realmName, realmPanel.Center.ToVector2(),
-				realmUnlocked ? Color.White : Color.Gray, 0.68f);
+			if (realmHeader.Top >= listArea.Top
+				&& realmHeader.Bottom <= listArea.Bottom)
+			{
+				Main.spriteBatch.Draw(pixel, realmHeader, realmUnlocked
+					? new Color(31, 91, 94, 235)
+					: new Color(31, 34, 43, 235));
+				DrawCenteredText(realmName, realmHeader.Center.ToVector2(),
+					realmUnlocked ? Color.White : new Color(145, 145, 155), 0.58f);
+			}
 
-			CultivationAbility[] abilities = abilityGroups[realm];
-			int cardsAreaX = row.X + realmColumnWidth + 6;
-			int cardsAreaWidth = row.Right - cardsAreaX - 6;
-			int cardGap = 8;
-			int cardWidth = Math.Min(184,
-				(cardsAreaWidth - cardGap * (abilities.Length - 1)) / abilities.Length);
 			for (int i = 0; i < abilities.Length; i++)
 			{
 				CultivationAbility ability = abilities[i];
-				Rectangle card = new(cardsAreaX + i * (cardWidth + cardGap), row.Y + 7,
-					cardWidth, row.Height - 14);
+				int column = i % cardsPerLine;
+				int line = i / cardsPerLine;
+				Rectangle card = new(
+					listArea.X + column * (cardWidth + cardGap),
+					currentY + realmHeaderHeight + line * (cardHeight + lineGap),
+					cardWidth, cardHeight);
+				if (card.Top < listArea.Top || card.Bottom > listArea.Bottom)
+					continue;
 				bool unlocked = cultivation.IsAbilityUnlocked(ability);
 				bool isHovered = card.Contains(mouse);
+				bool equipped = CultivationAbilityInfo
+					.IsTechniqueLoadoutAbility(ability)
+					&& cultivation.IsTechniqueEquipped(ability);
 				if (isHovered)
 					hovered = ability;
+				SpiritualElement elements =
+					CultivationAbilityInfo.GetSpiritualElements(ability);
+				Color elementColor = elements == SpiritualElement.None
+					? new Color(68, 211, 210)
+					: SpiritualElementInfo.GetColor(elements);
+				bool rootMatched = root.IsRevealed
+					&& elemental.GetAffinity(elements) > 0f;
 				Color border = unlocked
-					? (isHovered ? Color.White : new Color(68, 211, 210))
-					: (isHovered ? new Color(120, 120, 132) : new Color(67, 69, 79));
+					? (isHovered ? Color.White
+						: equipped ? Color.Gold
+						: rootMatched ? Color.Lerp(elementColor, Color.Gold, 0.3f)
+						: elementColor)
+					: (isHovered ? new Color(145, 145, 155) : new Color(76, 78, 88));
 				Main.spriteBatch.Draw(pixel, card, border);
 				Main.spriteBatch.Draw(pixel,
 					new Rectangle(card.X + 3, card.Y + 3, card.Width - 6, card.Height - 6),
-					unlocked ? new Color(21, 67, 73) : new Color(24, 27, 34));
+					unlocked
+						? Color.Lerp(new Color(18, 49, 58), elementColor, 0.1f)
+						: new Color(27, 30, 38));
+				if (elements != SpiritualElement.None)
+				Main.spriteBatch.Draw(pixel,
+					new Rectangle(card.X + 3, card.Y + 3, 3, card.Height - 6),
+					elementColor);
 
-				Vector2 iconCenter = new(card.X + 25f, card.Center.Y - 2f);
-				DrawTreeAbilityIcon(iconCenter, ability, unlocked, 32f);
+				Vector2 iconCenter = new(card.X + 25f, card.Center.Y - 1f);
+				DrawTreeAbilityIcon(iconCenter, ability, unlocked, 28f);
 				float textCenterX = card.X + 48f + (card.Width - 51f) * 0.5f;
 				string name = Mod.GetLocalization($"AbilityTree.Abilities.{ability}.Name").Value;
-				DrawCenteredTextFitted(name, new Vector2(textCenterX, card.Y + 18f),
-					Math.Max(40f, card.Width - 55f), unlocked ? Color.LightCyan : Color.Gray, 0.56f);
+				DrawCenteredTextFitted(name, new Vector2(textCenterX, card.Y + 14f),
+					Math.Max(40f, card.Width - 55f),
+					unlocked ? Color.White : new Color(165, 165, 175), 0.56f);
 				bool passive = ability is CultivationAbility.QiSense
 					or CultivationAbility.QiProtection
 					or CultivationAbility.SpiritBreathing
@@ -273,14 +369,24 @@ public class CultivationUISystem : ModSystem
 				string abilityType = Mod.GetLocalization(passive
 					? "AbilityTree.Passive"
 					: "AbilityTree.Active").Value;
-				string level = unlocked
-					? $"{abilityType}  |  Lv.{cultivation.GetAbilityLevel(ability)}"
-					: $"{abilityType}  |  {Mod.GetLocalization("AbilityTree.Locked").Value}";
-				DrawCenteredText(level, new Vector2(textCenterX, card.Y + 39f),
-					unlocked ? Color.White : Color.Gray, 0.53f);
+				string elementName = elements == SpiritualElement.None
+					? string.Empty
+					: SpiritualElementInfo.GetDisplayName(Mod, elements);
+				string status = unlocked
+					? string.IsNullOrEmpty(elementName)
+						? $"{abilityType}  •  Lv.{cultivation.GetAbilityLevel(ability)}"
+						: $"Lv.{cultivation.GetAbilityLevel(ability)}  •  {elementName}"
+					: Mod.GetLocalization("AbilityTree.Locked").Value;
+				if (equipped)
+				status = Mod.GetLocalization(
+					"TechniqueLoadout.Equipped").Value
+					+ "  •  " + status;
+				DrawCenteredTextFitted(status, new Vector2(textCenterX, card.Y + 32f),
+					Math.Max(40f, card.Width - 55f),
+					unlocked ? elementColor : new Color(135, 135, 145), 0.5f);
 
-				Rectangle experienceBar = new(card.X + 48, card.Bottom - 10,
-					Math.Max(8, card.Width - 56), 5);
+				Rectangle experienceBar = new(card.X + 48, card.Bottom - 11,
+					Math.Max(8, card.Width - 56), 4);
 				Main.spriteBatch.Draw(pixel, experienceBar, new Color(10, 15, 24));
 				if (unlocked)
 				{
@@ -289,25 +395,75 @@ public class CultivationUISystem : ModSystem
 						: cultivation.GetAbilityExperience(ability) / (float)required;
 					Rectangle fill = new(experienceBar.X, experienceBar.Y,
 						(int)(experienceBar.Width * MathHelper.Clamp(progress, 0f, 1f)), experienceBar.Height);
-					Main.spriteBatch.Draw(pixel, fill, new Color(174, 92, 238));
+					Main.spriteBatch.Draw(pixel, fill,
+						required <= 0 ? Color.Gold : new Color(174, 92, 238));
+				}
+				if (isHovered && Main.mouseLeft
+					&& Main.mouseLeftRelease && unlocked
+					&& CultivationAbilityInfo
+						.IsTechniqueLoadoutAbility(ability))
+				{
+					Main.mouseLeftRelease = false;
+					bool assigned =
+						cultivation.TrySetTechniqueLoadoutSlot(
+							cultivation.ActiveTechniqueLoadoutPreset,
+							selectedTechniqueLoadoutSlot, ability);
+					if (assigned)
+						cultivation.TrySelectActiveTechniqueSlot(
+							selectedTechniqueLoadoutSlot);
+					SoundEngine.PlaySound(assigned
+						? SoundID.MenuTick : SoundID.MenuClose);
 				}
 			}
+
+			currentY += realmHeaderHeight
+				+ lines * cardHeight
+				+ (lines - 1) * lineGap
+				+ realmGap;
 		}
 
-		Rectangle details = new(panel.X + 18, panel.Bottom - 72, panel.Width - 36, 52);
+		DrawAbilityTreeScrollBar(pixel, scrollTrack, scrollHandle, mouse,
+			maximumScroll > 0f);
+
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(details.X - 2, details.Y - 2, details.Width + 4, details.Height + 4),
+			new Color(76, 65, 99));
 		Main.spriteBatch.Draw(pixel, details, new Color(18, 27, 43, 245));
 		if (hovered.HasValue)
 		{
 			CultivationAbility ability = hovered.Value;
 			bool unlocked = cultivation.IsAbilityUnlocked(ability);
 			bool realmReached = cultivation.RealmIndex >= CultivationAbilityInfo.RequiredRealm(ability);
-			string text = unlocked
+			SpiritualElement elements =
+				CultivationAbilityInfo.GetSpiritualElements(ability);
+			Color headingColor = elements == SpiritualElement.None
+				? Color.LightCyan
+				: SpiritualElementInfo.GetColor(elements);
+			string heading = Mod.GetLocalization(
+				$"AbilityTree.Abilities.{ability}.Name").Value;
+			if (elements != SpiritualElement.None)
+				heading += $"  •  {SpiritualElementInfo.GetDisplayName(Mod, elements)}";
+			DrawCenteredTextFitted(heading,
+				new Vector2(details.Center.X, details.Y + 15),
+				details.Width - 20, headingColor, 0.67f);
+
+			string effect = unlocked
 				? GetAbilityTreeDetails(cultivation, ability)
 				: realmReached
 					? Mod.GetLocalization("Sect.RequiresManual").Value
 					: Mod.GetLocalization("AbilityTree.RequiresRealm").Format(
 						Mod.GetLocalization($"Cultivation.Realms.{GetRealmLocalizationKey(CultivationAbilityInfo.RequiredRealm(ability))}").Value);
-			DrawCenteredText(text, details.Center.ToVector2(), unlocked ? Color.White : Color.Gray, 0.66f);
+			DrawCenteredTextFitted(effect,
+				new Vector2(details.Center.X, details.Y + 40),
+				details.Width - 22, unlocked ? Color.White : Color.Gray, 0.57f);
+			string synergy = GetRootSynergyText(elemental, root, elements);
+			DrawCenteredTextFitted(synergy,
+				new Vector2(details.Center.X, details.Y + 65),
+				details.Width - 22,
+				elements == SpiritualElement.None ? Color.LightGray
+					: elemental.GetAffinity(elements) > 0f && root.IsRevealed
+						? Color.LightGreen : Color.Gray,
+				0.53f);
 		}
 		else
 		{
@@ -315,6 +471,323 @@ public class CultivationUISystem : ModSystem
 				details.Center.ToVector2(), Color.LightGray, 0.66f);
 		}
 		return true;
+	}
+
+	private static void HandleAbilityTreeScrollInput(
+		Rectangle listArea,
+		Rectangle track,
+		Rectangle handle,
+		Point mouse,
+		float maximumScroll,
+		int handleTravel)
+	{
+		if (listArea.Contains(mouse) || track.Contains(mouse))
+		{
+			PlayerInput.LockVanillaMouseScroll("Xianxia: Ability Tree");
+			Main.LocalPlayer.mouseInterface = true;
+			if (PlayerInput.ScrollWheelDeltaForUI != 0)
+			{
+				abilityTreeScrollOffset = MathHelper.Clamp(
+					abilityTreeScrollOffset
+						- PlayerInput.ScrollWheelDeltaForUI * 0.25f,
+					0f, maximumScroll);
+			}
+		}
+
+		if (!Main.mouseLeft)
+			draggingAbilityTreeScrollBar = false;
+
+		if (maximumScroll > 0f && Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			if (handle.Contains(mouse))
+			{
+				draggingAbilityTreeScrollBar = true;
+				abilityTreeScrollBarGrabOffset = mouse.Y - handle.Y;
+				Main.mouseLeftRelease = false;
+			}
+			else if (track.Contains(mouse))
+			{
+				draggingAbilityTreeScrollBar = true;
+				abilityTreeScrollBarGrabOffset = handle.Height / 2;
+				Main.mouseLeftRelease = false;
+			}
+		}
+
+		if (draggingAbilityTreeScrollBar && Main.mouseLeft
+			&& handleTravel > 0)
+		{
+			float handleTop = MathHelper.Clamp(
+				mouse.Y - abilityTreeScrollBarGrabOffset,
+				track.Y, track.Bottom - handle.Height);
+			abilityTreeScrollOffset =
+				(handleTop - track.Y) / handleTravel * maximumScroll;
+			Main.LocalPlayer.mouseInterface = true;
+		}
+	}
+
+	private static void DrawAbilityTreeScrollBar(
+		Texture2D pixel,
+		Rectangle track,
+		Rectangle handle,
+		Point mouse,
+		bool enabled)
+	{
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(track.X - 2, track.Y - 2,
+				track.Width + 4, track.Height + 4),
+			new Color(78, 62, 103, 210));
+		Main.spriteBatch.Draw(pixel, track, new Color(20, 28, 43, 245));
+		Main.spriteBatch.Draw(pixel, handle,
+			enabled
+				? handle.Contains(mouse) || draggingAbilityTreeScrollBar
+					? new Color(83, 230, 222)
+					: new Color(50, 154, 158)
+				: new Color(55, 58, 70));
+	}
+
+	private void DrawSpiritualRootPage(Texture2D pixel, Rectangle panel)
+	{
+		Player player = Main.LocalPlayer;
+		SpiritualRootPlayer root =
+			player.GetModPlayer<SpiritualRootPlayer>();
+		CultivationPlayer cultivation =
+			player.GetModPlayer<CultivationPlayer>();
+		Rectangle content = new(panel.X + 18, panel.Y + 88,
+			panel.Width - 36, panel.Height - 112);
+		Main.spriteBatch.Draw(pixel, content, new Color(18, 29, 45, 245));
+		int gap = 12;
+		int leftWidth = (content.Width - gap - 24) / 2;
+		Rectangle rootPanel = new(content.X + 8, content.Y + 8,
+			leftWidth, content.Height - 16);
+		Rectangle statsPanel = new(rootPanel.Right + gap, rootPanel.Y,
+			content.Right - rootPanel.Right - gap - 8, rootPanel.Height);
+		Main.spriteBatch.Draw(pixel, rootPanel, new Color(20, 35, 52, 245));
+		Main.spriteBatch.Draw(pixel, statsPanel, new Color(23, 32, 48, 245));
+		DrawCenteredText(Mod.GetLocalization("SpiritualRoots.UI.Title").Value,
+			new Vector2(rootPanel.Center.X, rootPanel.Y + 27),
+			new Color(185, 135, 255), 0.82f);
+
+		if (!root.IsRevealed)
+		{
+			DrawCenteredText(Mod.GetLocalization("SpiritualRoots.UI.Hidden").Value,
+				new Vector2(rootPanel.Center.X, rootPanel.Center.Y - 18),
+				Color.LightGray, 0.8f);
+			DrawCenteredTextFitted(
+				Mod.GetLocalization("SpiritualRoots.UI.AppraisalHint").Value,
+				new Vector2(rootPanel.Center.X, rootPanel.Center.Y + 25),
+				rootPanel.Width - 30, Color.LightCyan, 0.62f);
+		}
+		else
+		{
+			string quality = Mod.GetLocalization(
+				$"SpiritualRoots.Qualities.{root.GetQualityLocalizationKey()}").Value;
+			DrawCenteredTextFitted(Mod.GetLocalization("SpiritualRoots.UI.Summary").Format(
+					quality, SpiritualElementInfo.GetDisplayName(Mod, root.PrimaryElement),
+					root.Purity),
+				new Vector2(rootPanel.Center.X, rootPanel.Y + 64),
+				rootPanel.Width - 24, Color.Gold, 0.65f);
+			DrawCenteredTextFitted(
+				Mod.GetLocalization("SpiritualRoots.UI.CultivationBonus").Format(
+					MathF.Round(root.CultivationGainBonusPercent, 1)),
+				new Vector2(rootPanel.Center.X, rootPanel.Y + 94),
+				rootPanel.Width - 24, Color.LightGreen, 0.58f);
+
+			string resonanceText = root.TryGetBiomeMeditationResonance(
+				out SpiritualElement resonanceElement,
+				out float resonanceBonus,
+				out string resonanceBiome)
+				? Mod.GetLocalization(
+					"SpiritualRoots.UI.BiomeResonanceActive").Format(
+						SpiritualElementInfo.GetDisplayName(
+							Mod, resonanceElement),
+						Mod.GetLocalization(
+							$"SpiritualRoots.Biomes.{resonanceBiome}").Value,
+						MathF.Round(resonanceBonus, 1))
+				: Mod.GetLocalization(
+					"SpiritualRoots.UI.BiomeResonanceInactive").Value;
+			DrawCenteredTextFitted(resonanceText,
+				new Vector2(rootPanel.Center.X, rootPanel.Y + 119),
+				rootPanel.Width - 24,
+				resonanceBonus > 0f ? Color.LightGreen : Color.Gray, 0.53f);
+
+			int row = 0;
+			foreach (SpiritualElement element in root.Elements.Enumerate())
+			{
+				int affinity = root.GetAffinity(element);
+				int y = rootPanel.Y + 145 + row * 42;
+				Rectangle bar = new(rootPanel.X + 16, y,
+					rootPanel.Width - 32, 20);
+				Main.spriteBatch.Draw(pixel, bar, new Color(35, 40, 55));
+				Rectangle fill = new(bar.X + 2, bar.Y + 2,
+					(int)((bar.Width - 4) * affinity / 100f), bar.Height - 4);
+				Main.spriteBatch.Draw(pixel, fill,
+					SpiritualElementInfo.GetColor(element));
+				DrawCenteredText(Mod.GetLocalization("SpiritualRoots.UI.Affinity").Format(
+						SpiritualElementInfo.GetDisplayName(Mod, element), affinity),
+					bar.Center.ToVector2(), Color.White, 0.54f);
+				row++;
+			}
+		}
+
+		string foundationGrade = cultivation.RealmIndex >= 2
+			? cultivation.GetFoundationQualityName()
+			: Mod.GetLocalization("CharacterStats.NotReached").Value;
+		string coreGrade = cultivation.RealmIndex >= 3
+			? Mod.GetLocalization("BreakthroughGrades.GoldenCoreTier")
+				.Format(cultivation.GoldenCoreTier)
+			: Mod.GetLocalization("CharacterStats.NotReached").Value;
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("CharacterStats.BreakthroughGrades").Format(
+				foundationGrade, coreGrade),
+			new Vector2(rootPanel.Center.X, rootPanel.Bottom - 207),
+			rootPanel.Width - 24, Color.Gold, 0.56f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("CharacterStats.GradeQiGathering").Format(
+				MathF.Round(
+					(cultivation.BreakthroughGradeQiGatheringMultiplier - 1f)
+						* 100f, 1)),
+			new Vector2(rootPanel.Center.X, rootPanel.Bottom - 184),
+			rootPanel.Width - 24, Color.LightGreen, 0.53f);
+
+		DrawHeartDemonPanel(pixel, rootPanel, cultivation);
+		DrawCharacterStats(pixel, statsPanel, player, cultivation);
+	}
+
+	private void DrawHeartDemonPanel(Texture2D pixel, Rectangle rootPanel,
+		CultivationPlayer cultivation)
+	{
+		Rectangle panel = new(rootPanel.X + 14, rootPanel.Bottom - 165,
+			rootPanel.Width - 28, 148);
+		Main.spriteBatch.Draw(pixel, panel, new Color(31, 22, 48, 245));
+		DrawCenteredText(Mod.GetLocalization(
+				"CharacterStats.HeartDemonsTitle").Value,
+			new Vector2(panel.Center.X, panel.Y + 18),
+			Color.MediumPurple, 0.7f);
+		DrawCenteredTextFitted(Mod.GetLocalization(
+				"CharacterStats.HeartDemonsPoints").Format(
+					cultivation.HeartDemonPoints, 9,
+					MathF.Round(cultivation.HeartDemonBreakthroughPenalty, 1),
+					MathF.Round(
+						(1f - cultivation.HeartDemonCultivationGainMultiplier)
+							* 100f, 1)),
+			new Vector2(panel.Center.X, panel.Y + 45),
+			panel.Width - 16, Color.OrangeRed, 0.58f);
+		DrawCenteredTextFitted(Mod.GetLocalization(
+				"CharacterStats.HeartDemonsProgress").Format(
+					cultivation.BreakthroughFailuresTowardHeartDemon, 2,
+					cultivation.DeathsTowardHeartDemon, 5),
+			new Vector2(panel.Center.X, panel.Y + 70),
+			panel.Width - 16, Color.LightGray, 0.54f);
+		Rectangle button = new(panel.X + 38, panel.Bottom - 49,
+			panel.Width - 76, 36);
+		bool canStart = cultivation.CanStartHeartDemonTrial(out _);
+		bool hovered = button.Contains(Main.MouseScreen.ToPoint());
+		DrawButton(pixel, button,
+			Mod.GetLocalization("CharacterStats.ConfrontHeartDemon").Value,
+			hovered && canStart,
+			canStart ? new Color(91, 45, 125)
+				: new Color(62, 58, 70));
+		if (hovered && Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			Main.mouseLeftRelease = false;
+			cultivation.RequestHeartDemonTrialConfirmation();
+		}
+	}
+
+	private void DrawCharacterStats(Texture2D pixel, Rectangle panel,
+		Player player, CultivationPlayer cultivation)
+	{
+		DrawCenteredText(Mod.GetLocalization("CharacterStats.Title").Value,
+			new Vector2(panel.Center.X, panel.Y + 27),
+			new Color(105, 235, 205), 0.9f);
+		int x = panel.X + 10;
+		int width = panel.Width - 20;
+		int y = panel.Y + 48;
+
+		DrawCharacterStatBox(pixel, new Rectangle(x, y, width, 58),
+			Mod.GetLocalization("CharacterStats.Progression").Value,
+			Mod.GetLocalization("CharacterStats.ProgressionRealmValue").Format(
+				cultivation.GetRealmName(), cultivation.Stage),
+			Mod.GetLocalization("CharacterStats.ProgressionQiValue").Format(
+				cultivation.Qi, cultivation.MaxQi,
+				cultivation.QiExp, cultivation.NextStageThreshold),
+			Color.LightCyan);
+		y += 62;
+		DrawCharacterStatBox(pixel, new Rectangle(x, y, width, 58),
+			Mod.GetLocalization("CharacterStats.CurrentStats").Value,
+			Mod.GetLocalization("CharacterStats.CurrentStatsPrimary").Format(
+				player.statLife, player.statLifeMax2, player.statDefense),
+			Mod.GetLocalization("CharacterStats.CurrentStatsSecondary").Format(
+				MathF.Round(player.GetCritChance(DamageClass.Generic), 1),
+				MathF.Round(player.endurance * 100f, 1)),
+			Color.White);
+		y += 62;
+		DrawCharacterStatBox(pixel, new Rectangle(x, y, width, 66),
+			Mod.GetLocalization("CharacterStats.CultivationBonuses").Value,
+			cultivation.GetRealmBonusPrimarySummary(),
+			cultivation.GetRealmBonusSecondarySummary(),
+			new Color(145, 230, 255));
+		y += 70;
+		DrawCharacterStatBox(pixel, new Rectangle(x, y, width, 58),
+			Mod.GetLocalization("CharacterStats.BreakthroughRecord").Value,
+			Mod.GetLocalization("CharacterStats.BreakthroughRecordPrimary").Format(
+				cultivation.RealmBreakthroughAttempts,
+				cultivation.RealmBreakthroughSuccesses),
+			Mod.GetLocalization("CharacterStats.BreakthroughRecordSecondary").Format(
+				cultivation.RealmBreakthroughFailures,
+				cultivation.BreakthroughPillsConsumed),
+			Color.Gold);
+		y += 62;
+		DrawCharacterStatBox(pixel, new Rectangle(x, y, width, 48),
+			Mod.GetLocalization("CharacterStats.TreasureImprints").Value,
+			Mod.GetLocalization("CharacterStats.TreasureImprintsValue").Format(
+				cultivation.HeavenlyEyeImprints,
+				cultivation.HeavenlyRoyalNectarImprints,
+				cultivation.HeavenlyBoneMarrowImprints),
+			null,
+			new Color(255, 205, 125));
+		y += 55;
+		DrawCenteredText(
+			Mod.GetLocalization("CharacterStats.BreakthroughHistory").Value,
+			new Vector2(panel.Center.X, y), new Color(185, 135, 255), 0.68f);
+		y += 18;
+		for (int realm = 1; realm <= 4; realm++)
+		{
+			Rectangle history = new(x, y, width, 30);
+			Main.spriteBatch.Draw(pixel, history,
+				realm % 2 == 0
+					? new Color(27, 39, 55, 245)
+					: new Color(31, 44, 61, 245));
+			DrawCenteredTextFitted(
+				Mod.GetLocalization("CharacterStats.HistoryEntry").Format(
+					cultivation.GetRealmName(realm),
+					cultivation.GetSuccessfulBreakthroughCatalystSummary(realm)),
+				history.Center.ToVector2(), history.Width - 12,
+				realm <= cultivation.RealmIndex ? Color.LightGreen : Color.Gray,
+				0.56f);
+			y += 33;
+		}
+	}
+
+	private void DrawCharacterStatBox(Texture2D pixel, Rectangle box,
+		string title, string value, string secondValue, Color valueColor)
+	{
+		Main.spriteBatch.Draw(pixel, box, new Color(29, 42, 59, 245));
+		DrawCenteredTextFitted(title,
+			new Vector2(box.Center.X, box.Y + 12), box.Width - 12,
+			Color.LightGray, 0.54f);
+		float valueY = secondValue is null
+			? box.Center.Y + 8
+			: box.Y + 33;
+		DrawCenteredTextFitted(value,
+			new Vector2(box.Center.X, valueY), box.Width - 14,
+			valueColor, 0.62f);
+		if (secondValue is not null)
+		{
+			DrawCenteredTextFitted(secondValue,
+				new Vector2(box.Center.X, box.Bottom - 10), box.Width - 14,
+				valueColor, 0.59f);
+		}
 	}
 
 	private void DrawSectPage(Texture2D pixel, Rectangle panel, Point mouse)
@@ -396,12 +869,17 @@ public class CultivationUISystem : ModSystem
 			? new Color(78, 226, 215)
 			: (hovered ? new Color(151, 125, 190) : new Color(76, 65, 99));
 		Color background = selected
-			? new Color(24, 91, 91, 245)
+			? new Color(25, 55, 66, 245)
 			: new Color(20, 25, 39, 245);
 		Main.spriteBatch.Draw(pixel, rectangle, border);
 		Main.spriteBatch.Draw(pixel,
 			new Rectangle(rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4),
 			background);
+		if (selected)
+			Main.spriteBatch.Draw(pixel,
+				new Rectangle(rectangle.X + 2, rectangle.Bottom - 4,
+					rectangle.Width - 4, 3),
+				new Color(78, 226, 215));
 		DrawCenteredText(label, rectangle.Center.ToVector2(), selected ? Color.White : Color.LightGray, 0.7f);
 	}
 
@@ -566,6 +1044,7 @@ public class CultivationUISystem : ModSystem
 				(ModContent.ItemType<BeastBloodTemperingPill>(), 0),
 				(ModContent.ItemType<SpiritBeastLurePill>(), 0),
 				(ModContent.ItemType<MeridianCleansingPill>(), 1),
+				(ModContent.ItemType<MeridianMendingPill>(), 1),
 				(ModContent.ItemType<FoundationStabilizationPill>(), 2),
 				(ModContent.ItemType<ConcealmentPill>(), 2)
 			],
@@ -923,6 +1402,129 @@ public class CultivationUISystem : ModSystem
 		}
 	}
 
+	private void DrawTechniqueLoadoutEditor(
+		Texture2D pixel, Rectangle panel, Point mouse,
+		CultivationPlayer cultivation)
+	{
+		selectedTechniqueLoadoutSlot = Math.Clamp(
+			selectedTechniqueLoadoutSlot, 0,
+			cultivation.TechniqueLoadoutSlotCount - 1);
+		Rectangle editor = new(panel.X + 14, panel.Y + 84,
+			panel.Width - 28, 74);
+		Main.spriteBatch.Draw(pixel, editor,
+			new Color(15, 29, 45, 245));
+		DrawCenteredText(
+			Mod.GetLocalization("TechniqueLoadout.Title").Value,
+			new Vector2(editor.X + 108, editor.Y + 14),
+			Color.LightCyan, 0.59f);
+
+		const int presetWidth = 62;
+		const int presetGap = 6;
+		for (int preset = 0;
+			preset < CultivationPlayer.TechniqueLoadoutPresetCount;
+			preset++)
+		{
+			Rectangle button = new(
+				editor.X + 10 + preset * (presetWidth + presetGap),
+				editor.Y + 31, presetWidth, 31);
+			bool available =
+				preset < cultivation.AvailableTechniqueLoadoutPresets;
+			bool selected =
+				preset == cultivation.ActiveTechniqueLoadoutPreset;
+			DrawButton(pixel, button,
+				available ? $"{preset + 1}"
+					: Mod.GetLocalization(
+						"TechniqueLoadout.LockedPreset").Value,
+				available && button.Contains(mouse),
+				selected ? new Color(35, 145, 135)
+					: available ? new Color(54, 48, 72)
+					: new Color(38, 39, 47));
+			if (available && button.Contains(mouse)
+				&& Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				Main.mouseLeftRelease = false;
+				cultivation.TrySelectTechniqueLoadoutPreset(preset);
+				selectedTechniqueLoadoutSlot = Math.Min(
+					selectedTechniqueLoadoutSlot,
+					cultivation.TechniqueLoadoutSlotCount - 1);
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+		}
+
+		int slotsX = editor.X + 226;
+		int slotsWidth = editor.Right - slotsX - 9;
+		const int slotGap = 6;
+		int slotWidth = (slotsWidth - slotGap
+			* (CultivationPlayer.MaximumTechniqueLoadoutSlots - 1))
+			/ CultivationPlayer.MaximumTechniqueLoadoutSlots;
+		for (int slot = 0;
+			slot < CultivationPlayer.MaximumTechniqueLoadoutSlots; slot++)
+		{
+			Rectangle slotBox = new(
+				slotsX + slot * (slotWidth + slotGap),
+				editor.Y + 10, slotWidth, 53);
+			bool available =
+				slot < cultivation.TechniqueLoadoutSlotCount;
+			bool selected =
+				available && slot == selectedTechniqueLoadoutSlot;
+			Color border = !available ? new Color(65, 66, 74)
+				: selected ? Color.Gold : new Color(64, 195, 200);
+			Main.spriteBatch.Draw(pixel, slotBox, border);
+			Rectangle inner = new(slotBox.X + 3, slotBox.Y + 3,
+				slotBox.Width - 6, slotBox.Height - 6);
+			Main.spriteBatch.Draw(pixel, inner,
+				available ? new Color(17, 46, 55)
+					: new Color(27, 29, 35));
+
+			CultivationAbility ability =
+				cultivation.GetTechniqueLoadoutAbility(
+					cultivation.ActiveTechniqueLoadoutPreset, slot);
+			if (available && ability != CultivationAbility.Count)
+			{
+				DrawTreeAbilityIcon(
+					new Vector2(slotBox.X + 22, slotBox.Center.Y),
+					ability, true, 26f);
+				DrawCenteredTextFitted(
+					Mod.GetLocalization(
+						$"AbilityTree.Abilities.{ability}.Name").Value,
+					new Vector2(
+						slotBox.X + 43 + (slotBox.Width - 46) * 0.5f,
+						slotBox.Center.Y),
+					Math.Max(28, slotBox.Width - 50),
+					Color.White, 0.47f);
+			}
+			else
+			{
+				DrawCenteredText(
+					available ? $"{slot + 1}"
+						: Mod.GetLocalization(
+							"TechniqueLoadout.LockedSlot").Value,
+					slotBox.Center.ToVector2(),
+					available ? Color.Gray : new Color(95, 95, 105),
+					0.48f);
+			}
+
+			if (available && slotBox.Contains(mouse)
+				&& Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				Main.mouseLeftRelease = false;
+				selectedTechniqueLoadoutSlot = slot;
+				cultivation.TrySelectActiveTechniqueSlot(slot);
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+			if (available && slotBox.Contains(mouse)
+				&& Main.mouseRight && Main.mouseRightRelease)
+			{
+				Main.mouseRightRelease = false;
+				selectedTechniqueLoadoutSlot = slot;
+				cultivation.TrySetTechniqueLoadoutSlot(
+					cultivation.ActiveTechniqueLoadoutPreset,
+					slot, CultivationAbility.Count);
+				SoundEngine.PlaySound(SoundID.MenuClose);
+			}
+		}
+	}
+
 	private string GetAbilityTreeDetails(CultivationPlayer cultivation, CultivationAbility ability)
 	{
 		int level = cultivation.GetAbilityLevel(ability);
@@ -931,6 +1533,21 @@ public class CultivationUISystem : ModSystem
 		string progress = level >= CultivationAbilityInfo.MaxLevel
 			? Mod.GetLocalization("AbilityTree.MaxLevel").Value
 			: $"EXP {experience}/{required}";
+		if (ability == CultivationAbility.QiBurning)
+		{
+			string state = cultivation.QiBurningEnabled
+				? Mod.GetLocalization("Abilities.StateEnabled").Value
+				: cultivation.HasQiDeviation
+					? Mod.GetLocalization("Abilities.QiBurningDeviationState")
+						.Format(cultivation.QiDeviationSecondsRemaining)
+					: Mod.GetLocalization("Abilities.StateDisabled").Value;
+			return Mod.GetLocalization("AbilityTree.QiBurningEffect").Format(
+				level,
+				MathF.Round(cultivation.QiBurningDamageBonusPercent, 1),
+				MathF.Round(cultivation.QiBurningAttackSpeedBonusPercent, 1),
+				MathF.Round(cultivation.BurnedQiCapacityPercent, 2),
+				state, progress);
+		}
 		string effectKey = ability switch
 		{
 			CultivationAbility.Meditation => "MeditationEffect",
@@ -947,9 +1564,37 @@ public class CultivationUISystem : ModSystem
 			CultivationAbility.SpiritSwordRain => "SwordRainEffect",
 			CultivationAbility.SectProtectionFormation => "FormationEffect",
 			CultivationAbility.SpiritualRain => "SpiritualRainEffect",
+			CultivationAbility.QiBurning => "QiBurningEffect",
 			_ => "CombatEffect"
 		};
-		return Mod.GetLocalization($"AbilityTree.{effectKey}").Format(level, progress);
+		return Mod.GetLocalization($"AbilityTree.{effectKey}")
+			.Format(level, progress);
+	}
+
+	private string GetRootSynergyText(ElementalCultivationPlayer elemental,
+		SpiritualRootPlayer root, SpiritualElement elements)
+	{
+		if (elements == SpiritualElement.None)
+			return Mod.GetLocalization("AbilityTree.RootSynergy.Neutral").Value;
+		if (!root.IsRevealed)
+			return Mod.GetLocalization("AbilityTree.RootSynergy.Hidden").Value;
+
+		float affinity = elemental.GetAffinity(elements);
+		if (affinity <= 0f)
+			return Mod.GetLocalization("AbilityTree.RootSynergy.NoAffinity").Value;
+
+		float power = (elemental.GetPowerMultiplier(elements)
+			* (1f + affinity * 0.0015f) - 1f) * 100f;
+		float qiReduction = Math.Clamp(
+			elemental.GetQiCostReductionPercent(elements) + affinity * 0.08f,
+			0f, ElementalCultivationPlayer.MaximumQiCostReductionPercent);
+		float mastery = (elemental.GetMasteryGainMultiplier(elements)
+			* (1f + affinity * 0.001f) - 1f) * 100f;
+		return Mod.GetLocalization("AbilityTree.RootSynergy.Match").Format(
+			(int)MathF.Round(affinity),
+			MathF.Round(power, 1),
+			MathF.Round(qiReduction, 1),
+			MathF.Round(mastery, 1));
 	}
 
 	private static string GetRealmLocalizationKey(int realm) => realm switch
@@ -981,6 +1626,7 @@ public class CultivationUISystem : ModSystem
 				(ModContent.ItemType<SectProtectionFormationManual>(), string.Empty),
 			CultivationAbility.SpiritualRain =>
 				(ModContent.ItemType<SpiritualRainTechnique>(), string.Empty),
+			CultivationAbility.QiBurning => (ItemID.Hellstone, string.Empty),
 			_ => (ItemID.SoulCake, string.Empty)
 		};
 		Texture2D icon;
@@ -1029,10 +1675,20 @@ public class CultivationUISystem : ModSystem
 			barHeight - borderSize * 2
 		);
 
-		float qiProgress = cultivation.MaxQi > 0 ? cultivation.Qi / (float)cultivation.MaxQi : 0f;
+		float qiProgress = cultivation.BaseMaxQi > 0
+			? cultivation.Qi / (float)cultivation.BaseMaxQi : 0f;
+		float availableProgress = cultivation.BaseMaxQi > 0
+			? cultivation.MaxQi / (float)cultivation.BaseMaxQi : 0f;
 		float cultivationProgress = GetCultivationProgress(cultivation);
 		Rectangle fill = new(background.X, background.Y,
 			(int)(background.Width * MathHelper.Clamp(qiProgress, 0f, 1f)), background.Height);
+		Rectangle burnedFill = new(
+			background.X + (int)(background.Width
+				* MathHelper.Clamp(availableProgress, 0f, 1f)),
+			background.Y,
+			(int)(background.Width
+				* MathHelper.Clamp(1f - availableProgress, 0f, 1f)),
+			background.Height);
 		Rectangle experienceBackground = new(background.X, background.Bottom - 4, background.Width, 4);
 		Rectangle experienceFill = new(experienceBackground.X, experienceBackground.Y,
 			(int)(experienceBackground.Width * cultivationProgress), experienceBackground.Height);
@@ -1041,6 +1697,15 @@ public class CultivationUISystem : ModSystem
 		Main.spriteBatch.Draw(pixel, new Rectangle(x - 2, y - 2, barWidth + 4, barHeight + 4), new Color(14, 8, 28, 180));
 		Main.spriteBatch.Draw(pixel, border, new Color(103, 65, 142));
 		Main.spriteBatch.Draw(pixel, background, new Color(19, 23, 36));
+		if (burnedFill.Width > 0)
+		{
+			Main.spriteBatch.Draw(pixel, burnedFill,
+				new Color(92, 27, 38));
+			Main.spriteBatch.Draw(pixel,
+				new Rectangle(burnedFill.X, burnedFill.Y,
+					burnedFill.Width, 4),
+				new Color(175, 48, 48));
+		}
 		if (fill.Width > 0)
 		{
 			Main.spriteBatch.Draw(pixel, fill, new Color(55, 214, 224));
@@ -1112,7 +1777,59 @@ public class CultivationUISystem : ModSystem
 			int remaining = Math.Max(0, cultivation.NextStageThreshold - cultivation.QiExp);
 			lines.Add((Mod.GetLocalization("Cultivation.BreakthroughTooltip.Progress").Format(
 				cultivation.QiExp, cultivation.NextStageThreshold, remaining), Color.White));
+			lines.Add((Mod.GetLocalization(
+				"Cultivation.BreakthroughTooltip.QiCapacity").Format(
+					cultivation.Qi, cultivation.MaxQi,
+					cultivation.BaseMaxQi,
+					MathF.Round(cultivation.BurnedQiCapacityPercent, 2)),
+				cultivation.HasBurnedQi ? Color.OrangeRed : Color.LightCyan));
 			lines.Add((cultivation.GetNextStageBonusSummary(), new Color(150, 235, 205)));
+			if (cultivation.NextAdvancementIsRealmBreakthrough)
+			{
+				lines.Add((Mod.GetLocalization(
+					"Cultivation.BreakthroughTooltip.SuccessChance").Format(
+						MathF.Round(cultivation.NextRealmBreakthroughChance, 1),
+						MathF.Round(cultivation.NextRealmBreakthroughBaseChance, 1),
+						MathF.Round(cultivation.NextRealmBreakthroughRootModifier, 1),
+						MathF.Round(cultivation.NextRealmBreakthroughPillModifier, 1),
+						MathF.Round(cultivation.HeartDemonBreakthroughPenalty, 1)),
+					cultivation.NextRealmBreakthroughChance >= 75f
+						? Color.LightGreen : Color.Gold));
+				lines.Add((Mod.GetLocalization(
+					"Cultivation.BreakthroughTooltip.FailurePenalty").Value,
+					new Color(255, 155, 125)));
+			}
+			if (cultivation.NextBreakthroughRequiresHeavenlyTreasures)
+			{
+				bool foundation = cultivation.NextBreakthroughTargetRealm == 2;
+				string requirement = foundation
+					? Mod.GetLocalization(
+						"Cultivation.BreakthroughTooltip.FoundationCatalyst").Format(
+							cultivation.NextRealmBreakthroughPillModifier > 0f
+								? Mod.GetLocalization(
+									"Cultivation.BreakthroughTooltip.Ready").Value
+								: Mod.GetLocalization(
+									"Cultivation.BreakthroughTooltip.Absent").Value,
+							cultivation.HeavenlyEyeEssenceCount,
+							cultivation.HeavenlyRoyalNectarCount,
+							cultivation.HeavenlyBoneMarrowCount)
+					: Mod.GetLocalization(
+						"Cultivation.BreakthroughTooltip.GoldenCoreTreasure").Format(
+							cultivation.HeavenlyEyeEssenceCount,
+							cultivation.HeavenlyRoyalNectarCount,
+							cultivation.HeavenlyBoneMarrowCount);
+				bool ready = foundation
+					? cultivation.HasFoundationBreakthroughCatalyst
+					: cultivation.HasGoldenCoreHeavenlyTreasures;
+				lines.Add((requirement,
+					ready ? Color.LightGreen : Color.OrangeRed));
+				lines.Add((Mod.GetLocalization(
+					"Cultivation.BreakthroughTooltip.PermanentImprints").Format(
+						cultivation.HeavenlyEyeImprints,
+						cultivation.HeavenlyRoyalNectarImprints,
+						cultivation.HeavenlyBoneMarrowImprints),
+					new Color(255, 220, 135)));
+			}
 
 			string nextUnlock = GetNextAbilityUnlockText(cultivation);
 			if (!string.IsNullOrEmpty(nextUnlock))
@@ -1254,15 +1971,23 @@ public class CultivationUISystem : ModSystem
 			return true;
 		}
 
+		if (cultivation.IsAwaitingRealmBreakthroughConfirmation)
+		{
+			return DrawRealmBreakthroughConfirmation(player, cultivation);
+		}
+
 		if (cultivation.IsAwaitingTribulationConfirmation)
 		{
 			return DrawTribulationConfirmation(player, cultivation);
 		}
 
-		if (!cultivation.IsAbilityWheelOpen)
+		if (cultivation.IsAwaitingHeartDemonTrialConfirmation)
 		{
-			return true;
+			return DrawHeartDemonTrialConfirmation(player, cultivation);
 		}
+
+		if (!cultivation.IsAbilityWheelOpen)
+			return true;
 
 		player.mouseInterface = true;
 		Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
@@ -1270,20 +1995,38 @@ public class CultivationUISystem : ModSystem
 		Vector2 mousePosition = new(Main.mouseX, Main.mouseY);
 		Vector2 mouseOffset = mousePosition - center;
 		float mouseDistance = mouseOffset.Length();
-		int hoveredSegment = GetHoveredSegment(mouseOffset, mouseDistance);
 		AbilityWheelEntry[] entries = BuildAbilityWheelEntries(player, cultivation);
+		int segmentCount = Math.Max(1, entries.Length);
+		int hoveredSegment = GetHoveredSegment(
+			mouseOffset, mouseDistance, entries.Length);
+		AbilityWheelEntry[] toggleEntries = toggleWheelExpanded
+			? BuildToggleWheelEntries(player, cultivation)
+			: [];
+		int hoveredToggle = toggleWheelExpanded
+			? GetHoveredToggleSegment(
+				mouseOffset, mouseDistance, toggleEntries.Length)
+			: -1;
 		Texture2D pixel = TextureAssets.MagicPixel.Value;
 
 		Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y),
 			new Color(3, 5, 12, 215));
 
-		for (int i = 0; i < WheelSegmentCount; i++)
+		for (int i = 0; i < entries.Length; i++)
 		{
 			AbilityWheelEntry entry = entries[i];
-			Color segmentColor = GetSegmentColor(entry, hoveredSegment == i);
-			float centerAngle = WheelStartAngle + i * MathHelper.TwoPi / WheelSegmentCount;
-			DrawWheelSector(pixel, center, centerAngle, segmentColor);
+			Color segmentColor = GetSegmentColor(
+				entry, hoveredSegment == i,
+				cultivation.SelectedTechniqueLoadoutSlot == i);
+			float centerAngle =
+				WheelStartAngle + i * MathHelper.TwoPi / segmentCount;
+			DrawWheelSector(
+				pixel, center, centerAngle, segmentColor, segmentCount);
 			DrawAbilityLabel(center, centerAngle, entry);
+		}
+		if (toggleWheelExpanded)
+		{
+			DrawToggleSubWheel(pixel, center, toggleEntries,
+				hoveredToggle);
 		}
 
 		DrawFilledCircle(pixel, center, WheelInnerRadius - 5f, new Color(13, 18, 30, 245));
@@ -1291,9 +2034,30 @@ public class CultivationUISystem : ModSystem
 		DrawCircleOutline(pixel, center, WheelOuterRadius, new Color(94, 64, 135), 3f);
 
 		string title = Mod.GetLocalization("AbilityWheel.Title").Value;
-		DrawCenteredText(title, center - new Vector2(0f, WheelOuterRadius + 34f), Color.White, 1f);
+		float titleRadius = toggleWheelExpanded
+			? ToggleWheelOuterRadius
+			: WheelOuterRadius;
+		Vector2 titlePosition = new(
+			center.X,
+			Math.Max(26f, center.Y - titleRadius - 22f));
+		DrawCenteredText(title, titlePosition, Color.White, 0.9f);
 
-		if (hoveredSegment >= 0)
+		if (hoveredToggle >= 0)
+		{
+			AbilityWheelEntry hoveredEntry =
+				toggleEntries[hoveredToggle];
+			DrawAbilityIcon(center - new Vector2(0f, 13f),
+				hoveredEntry, 28f);
+			DrawCenteredText(hoveredEntry.Name,
+				center + new Vector2(0f, 22f),
+				Color.White, 0.67f);
+			DrawWheelDetailPanel(pixel,
+				center + new Vector2(0f, WheelOuterRadius + 38f),
+				hoveredEntry);
+			HandleToggleWheelClick(
+				cultivation, hoveredEntry);
+		}
+		else if (hoveredSegment >= 0)
 		{
 			AbilityWheelEntry hoveredEntry = entries[hoveredSegment];
 			DrawAbilityIcon(center - new Vector2(0f, 13f), hoveredEntry, 28f);
@@ -1310,6 +2074,339 @@ public class CultivationUISystem : ModSystem
 		return true;
 	}
 
+	private bool DrawHeartDemonTrialConfirmation(
+		Player player, CultivationPlayer cultivation)
+	{
+		player.mouseInterface = true;
+		Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
+		Vector2 center = screenSize * 0.5f;
+		Point mouse = Main.MouseScreen.ToPoint();
+		Texture2D pixel = TextureAssets.MagicPixel.Value;
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y),
+			new Color(3, 1, 8, 220));
+		Rectangle outer = new((int)center.X - 275,
+			(int)center.Y - 155, 550, 310);
+		Rectangle panel = new(outer.X + 3, outer.Y + 3,
+			outer.Width - 6, outer.Height - 6);
+		Main.spriteBatch.Draw(pixel, outer,
+			new Color(105, 45, 135));
+		Main.spriteBatch.Draw(pixel, panel,
+			new Color(18, 12, 29, 252));
+		DrawCenteredText(Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Title").Value,
+			center - new Vector2(0f, 112f),
+			Color.MediumPurple, 1.05f);
+		DrawCenteredTextFitted(Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Message").Format(
+					cultivation.HeartDemonPoints),
+			center - new Vector2(0f, 59f),
+			panel.Width - 30, Color.White, 0.75f);
+		DrawCenteredTextFitted(Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Warning").Value,
+			center - new Vector2(0f, 14f),
+			panel.Width - 36, Color.OrangeRed, 0.65f);
+		DrawCenteredTextFitted(Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Reward").Value,
+			center + new Vector2(0f, 24f),
+			panel.Width - 36, Color.LightGreen, 0.65f);
+		Rectangle confirm = new((int)center.X - 225,
+			(int)center.Y + 70, 200, 48);
+		Rectangle cancel = new((int)center.X + 25,
+			(int)center.Y + 70, 200, 48);
+		bool confirmHovered = confirm.Contains(mouse);
+		bool cancelHovered = cancel.Contains(mouse);
+		DrawButton(pixel, confirm,
+			Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Confirm").Value,
+			confirmHovered, new Color(95, 40, 125));
+		DrawButton(pixel, cancel,
+			Mod.GetLocalization(
+				"HeartDemonTrialConfirmation.Cancel").Value,
+			cancelHovered, new Color(105, 55, 70));
+		if (Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			if (confirmHovered)
+			{
+				Main.mouseLeftRelease = false;
+				cultivation.ConfirmHeartDemonTrial();
+			}
+			else if (cancelHovered)
+			{
+				Main.mouseLeftRelease = false;
+				cultivation.CancelHeartDemonTrialConfirmation();
+			}
+		}
+		return true;
+	}
+
+	private bool DrawRealmBreakthroughConfirmation(
+		Player player, CultivationPlayer cultivation)
+	{
+		player.mouseInterface = true;
+		Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
+		Vector2 center = screenSize * 0.5f;
+		Point mouse = new(Main.mouseX, Main.mouseY);
+		Texture2D pixel = TextureAssets.MagicPixel.Value;
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y),
+			new Color(2, 4, 10, 205));
+
+		Rectangle outerPanel = new((int)center.X - 360,
+			(int)center.Y - 285, 720, 570);
+		Rectangle panel = new(outerPanel.X + 3, outerPanel.Y + 3,
+			outerPanel.Width - 6, outerPanel.Height - 6);
+		Main.spriteBatch.Draw(pixel, outerPanel,
+			new Color(125, 78, 175, 245));
+		Main.spriteBatch.Draw(pixel, panel,
+			new Color(13, 17, 30, 250));
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(panel.X, panel.Y, panel.Width, 7),
+			new Color(95, 225, 240));
+
+		DrawCenteredText(
+			Mod.GetLocalization("BreakthroughConfirmation.Title").Value,
+			center - new Vector2(0f, 252f), Color.Gold, 1.08f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("BreakthroughConfirmation.Message").Format(
+				cultivation.PendingRealmBreakthroughTargetName),
+			center - new Vector2(0f, 218f), panel.Width - 30,
+			Color.White, 0.78f);
+
+		int targetRealm = cultivation.PendingRealmBreakthroughTargetRealm;
+		DrawCenteredText(
+			Mod.GetLocalization("BreakthroughConfirmation.QualityTarget").Value,
+			center - new Vector2(0f, 187f), Color.LightCyan, 0.67f);
+		List<Rectangle> qualityButtons = [];
+		if (targetRealm == 2)
+		{
+			FoundationQuality[] qualities =
+			[
+				FoundationQuality.Inferior,
+				FoundationQuality.Stable,
+				FoundationQuality.Perfect,
+				FoundationQuality.Heavenly
+			];
+			const int qualityWidth = 156;
+			const int qualityGap = 8;
+			int qualityStart = (int)center.X
+				- (qualityWidth * qualities.Length
+					+ qualityGap * (qualities.Length - 1)) / 2;
+			for (int i = 0; i < qualities.Length; i++)
+			{
+				Rectangle card = new(
+					qualityStart + i * (qualityWidth + qualityGap),
+					(int)center.Y - 169, qualityWidth, 42);
+				qualityButtons.Add(card);
+				bool selected =
+					cultivation.PendingFoundationQuality == qualities[i];
+				DrawButton(pixel, card,
+					Mod.GetLocalization(
+						$"BreakthroughGrades.Foundation.{qualities[i]}")
+						.Value,
+					card.Contains(mouse),
+					selected ? new Color(45, 145, 130)
+						: new Color(54, 48, 72));
+			}
+		}
+		else if (targetRealm == 3)
+		{
+			const int tierWidth = 63;
+			const int tierGap = 6;
+			int start = (int)center.X
+				- (tierWidth * 9 + tierGap * 8) / 2;
+			for (int i = 0; i < 9; i++)
+			{
+				int tier = 9 - i;
+				Rectangle card = new(start + i * (tierWidth + tierGap),
+					(int)center.Y - 169, tierWidth, 42);
+				qualityButtons.Add(card);
+				bool selected =
+					cultivation.PendingGoldenCoreTier == tier;
+				DrawButton(pixel, card, $"Tier {tier}",
+					card.Contains(mouse),
+					selected ? new Color(142, 101, 35)
+						: new Color(54, 48, 72));
+			}
+		}
+
+		float chance = cultivation.PendingRealmBreakthroughChance;
+		Color chanceColor = chance >= 75f
+			? Color.LightGreen : chance >= 50f ? Color.Gold : Color.OrangeRed;
+		DrawCenteredText(
+			Mod.GetLocalization("BreakthroughConfirmation.Chance").Format(
+				MathF.Round(chance, 1)),
+			center - new Vector2(0f, 102f), chanceColor, 1.12f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("BreakthroughConfirmation.Breakdown").Format(
+				MathF.Round(cultivation.PendingRealmBreakthroughBaseChance, 1),
+				MathF.Round(cultivation.PendingRealmBreakthroughRootModifier, 1),
+				MathF.Round(cultivation.PendingRealmBreakthroughPillModifier, 1),
+				MathF.Round(cultivation.HeartDemonBreakthroughPenalty, 1),
+				MathF.Round(
+					cultivation.PendingBreakthroughGradeChanceModifier, 1)),
+			center - new Vector2(0f, 73f), panel.Width - 36,
+			Color.LightCyan, 0.67f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("BreakthroughConfirmation.QualityBonuses")
+				.Format(cultivation.GetPendingBreakthroughGradeName(),
+					MathF.Round(
+						cultivation.PendingBreakthroughStatMultiplier, 2),
+					MathF.Round(
+						cultivation.PendingBreakthroughQiGatheringBonusPercent,
+						1)),
+			center - new Vector2(0f, 45f), panel.Width - 36,
+			Color.LightGreen, 0.65f);
+
+		Rectangle treasureSlot = new((int)center.X - 116,
+			(int)center.Y - 11, 74, 74);
+		Rectangle pillSlot = new((int)center.X + 42,
+			(int)center.Y - 11, 74, 74);
+		DrawBreakthroughItemSlot(pixel, treasureSlot,
+			cultivation.SelectedBreakthroughTreasureType,
+			Mod.GetLocalization(
+				"BreakthroughConfirmation.TreasureSlot").Value,
+			mouse);
+		DrawBreakthroughItemSlot(pixel, pillSlot,
+			cultivation.SelectedBreakthroughPillType,
+			Mod.GetLocalization(
+				"BreakthroughConfirmation.PillSlot").Value,
+			mouse);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("BreakthroughConfirmation.SlotHint").Value,
+			center + new Vector2(0f, 82f), panel.Width - 40,
+			Color.Gray, 0.54f);
+
+		string requirementKey = targetRealm switch
+		{
+			2 when cultivation.PendingFoundationQuality
+				is FoundationQuality.Inferior
+				or FoundationQuality.Stable =>
+				"InferiorStableRequirement",
+			2 when cultivation.PendingFoundationQuality
+				== FoundationQuality.Perfect =>
+				"PerfectRequirement",
+			2 => "HeavenlyRequirement",
+			3 when cultivation.PendingGoldenCoreTier == 1 =>
+				"GoldenTierOneRequirement",
+			3 => "GoldenRequirement",
+			_ => "NoCatalystRequired"
+		};
+		string catalyst = cultivation.HasBurnedQi
+			? Mod.GetLocalization(
+				"BreakthroughConfirmation.BurnedCapacity").Format(
+					MathF.Round(cultivation.BurnedQiCapacityPercent, 2))
+			: Mod.GetLocalization(
+				$"BreakthroughConfirmation.{requirementKey}").Value;
+		DrawCenteredTextFitted(catalyst,
+			center + new Vector2(0f, 111f), panel.Width - 36,
+			cultivation.CanConfirmRealmBreakthrough
+				? new Color(255, 220, 135) : Color.OrangeRed,
+			0.68f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("BreakthroughConfirmation.Failure").Value,
+			center + new Vector2(0f, 140f), panel.Width - 36,
+			new Color(255, 145, 125), 0.64f);
+
+		Rectangle confirmButton = new((int)center.X - 238,
+			(int)center.Y + 185, 215, 52);
+		Rectangle cancelButton = new((int)center.X + 23,
+			(int)center.Y + 185, 215, 52);
+		bool confirmHovered = confirmButton.Contains(mouse);
+		bool cancelHovered = cancelButton.Contains(mouse);
+		DrawButton(pixel, confirmButton,
+			cultivation.CanConfirmRealmBreakthrough
+				? Mod.GetLocalization(
+					"BreakthroughConfirmation.Confirm").Value
+				: Mod.GetLocalization(
+					"BreakthroughConfirmation.NotReady").Value,
+			confirmHovered && cultivation.CanConfirmRealmBreakthrough,
+			cultivation.CanConfirmRealmBreakthrough
+				? new Color(35, 145, 135)
+				: new Color(75, 75, 82));
+		DrawButton(pixel, cancelButton,
+			Mod.GetLocalization("BreakthroughConfirmation.Cancel").Value,
+			cancelHovered, new Color(135, 55, 75));
+
+		if (Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			bool handled = false;
+			for (int i = 0; i < qualityButtons.Count; i++)
+			{
+				if (!qualityButtons[i].Contains(mouse))
+					continue;
+				if (targetRealm == 2)
+					cultivation.SelectPendingFoundationQuality(
+						(FoundationQuality)i);
+				else if (targetRealm == 3)
+					cultivation.SelectPendingGoldenCoreTier(9 - i);
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+				handled = true;
+				break;
+			}
+			if (!handled && treasureSlot.Contains(mouse))
+			{
+				cultivation.CycleSelectedBreakthroughTreasure();
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+			else if (!handled && pillSlot.Contains(mouse))
+			{
+				cultivation.ToggleSelectedBreakthroughPill();
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+			else if (!handled && confirmHovered
+				&& cultivation.CanConfirmRealmBreakthrough)
+			{
+				Main.mouseLeftRelease = false;
+				cultivation.ConfirmRealmBreakthrough();
+			}
+			else if (cancelHovered)
+			{
+				Main.mouseLeftRelease = false;
+				cultivation.CancelRealmBreakthrough();
+			}
+		}
+		if (Main.mouseRight && Main.mouseRightRelease)
+		{
+			if (treasureSlot.Contains(mouse))
+			{
+				cultivation.ClearSelectedBreakthroughTreasure();
+				Main.mouseRightRelease = false;
+			}
+			else if (pillSlot.Contains(mouse))
+			{
+				cultivation.ClearSelectedBreakthroughPill();
+				Main.mouseRightRelease = false;
+			}
+		}
+		return true;
+	}
+
+	private void DrawBreakthroughItemSlot(Texture2D pixel,
+		Rectangle slot, int itemType, string label, Point mouse)
+	{
+		bool hovered = slot.Contains(mouse);
+		Main.spriteBatch.Draw(pixel, slot,
+			hovered ? Color.White : new Color(112, 81, 151));
+		Main.spriteBatch.Draw(pixel,
+			new Rectangle(slot.X + 3, slot.Y + 3,
+				slot.Width - 6, slot.Height - 6),
+			new Color(24, 28, 44, 250));
+		if (itemType > 0)
+			DrawPathItemIcon(itemType, slot.Center.ToVector2(), 46f);
+		else
+			DrawCenteredText(
+				Mod.GetLocalization(
+					"BreakthroughConfirmation.EmptySlot").Value,
+				slot.Center.ToVector2(), Color.Gray, 0.48f);
+		DrawCenteredTextFitted(label,
+			new Vector2(slot.Center.X, slot.Y - 12),
+			130f, Color.LightCyan, 0.55f);
+	}
+
 	private bool DrawTribulationConfirmation(Player player, CultivationPlayer cultivation)
 	{
 		player.mouseInterface = true;
@@ -1321,23 +2418,36 @@ public class CultivationUISystem : ModSystem
 		Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y),
 			new Color(2, 4, 10, 190));
 
-		Rectangle outerPanel = new((int)center.X - 252, (int)center.Y - 142, 504, 284);
+		Rectangle outerPanel = new((int)center.X - 252,
+			(int)center.Y - 160, 504, 320);
 		Rectangle panel = new(outerPanel.X + 3, outerPanel.Y + 3, outerPanel.Width - 6, outerPanel.Height - 6);
 		Main.spriteBatch.Draw(pixel, outerPanel, new Color(125, 78, 175, 245));
 		Main.spriteBatch.Draw(pixel, panel, new Color(13, 17, 30, 250));
 		Main.spriteBatch.Draw(pixel, new Rectangle(panel.X, panel.Y, panel.Width, 6), new Color(95, 225, 240));
 
 		DrawCenteredText(Mod.GetLocalization("TribulationConfirmation.Title").Value,
-			center - new Vector2(0f, 99f), Color.Gold, 1.05f);
+			center - new Vector2(0f, 117f), Color.Gold, 1.05f);
 		DrawCenteredText(Mod.GetLocalization("TribulationConfirmation.Message").Format(
-			cultivation.PendingTribulationRealmName), center - new Vector2(0f, 48f), Color.White, 0.78f);
+			cultivation.PendingTribulationRealmName),
+			center - new Vector2(0f, 68f), Color.White, 0.78f);
 		DrawCenteredText(Mod.GetLocalization("TribulationConfirmation.Strikes").Format(
-			cultivation.PendingTribulationStrikeCount), center - new Vector2(0f, 18f), Color.OrangeRed, 0.75f);
+			cultivation.PendingTribulationStrikeCount),
+			center - new Vector2(0f, 38f), Color.OrangeRed, 0.75f);
+		DrawCenteredTextFitted(
+			Mod.GetLocalization("TribulationConfirmation.Difficulty").Format(
+				MathF.Round(
+					cultivation.PendingTribulationPowerBonusPercent, 1),
+				cultivation.GetFoundationQualityName(),
+				cultivation.PendingTribulationGoldenCoreTier),
+			center - new Vector2(0f, 8f), panel.Width - 28,
+			new Color(255, 195, 95), 0.64f);
 		DrawCenteredText(Mod.GetLocalization("TribulationConfirmation.Warning").Value,
-			center + new Vector2(0f, 16f), Color.LightGray, 0.65f);
+			center + new Vector2(0f, 24f), Color.LightGray, 0.65f);
 
-		Rectangle confirmButton = new((int)center.X - 210, (int)center.Y + 64, 190, 48);
-		Rectangle cancelButton = new((int)center.X + 20, (int)center.Y + 64, 190, 48);
+		Rectangle confirmButton = new((int)center.X - 210,
+			(int)center.Y + 76, 190, 48);
+		Rectangle cancelButton = new((int)center.X + 20,
+			(int)center.Y + 76, 190, 48);
 		bool confirmHovered = confirmButton.Contains(mousePosition.ToPoint());
 		bool cancelHovered = cancelButton.Contains(mousePosition.ToPoint());
 		DrawButton(pixel, confirmButton,
@@ -1379,7 +2489,121 @@ public class CultivationUISystem : ModSystem
 		DrawCenteredText(text, rectangle.Center.ToVector2(), Color.White, 0.8f);
 	}
 
-	private AbilityWheelEntry[] BuildAbilityWheelEntries(Player player, CultivationPlayer cultivation)
+	private AbilityWheelEntry[] BuildAbilityWheelEntries(
+		Player player, CultivationPlayer cultivation)
+	{
+		AbilityWheelEntry[] available =
+			BuildAllAbilityWheelEntries(player, cultivation);
+		AbilityWheelEntry[] equipped = new AbilityWheelEntry[
+			cultivation.TechniqueLoadoutSlotCount + 1];
+		for (int slot = 0;
+			slot < cultivation.TechniqueLoadoutSlotCount; slot++)
+		{
+			CultivationAbility ability =
+				cultivation.GetActiveTechniqueLoadoutAbility(slot);
+			bool found = false;
+			for (int i = 0; i < available.Length; i++)
+			{
+				if (GetWheelAbility(available[i].Id) != ability)
+					continue;
+				bool selected =
+					slot == cultivation.SelectedTechniqueLoadoutSlot;
+				equipped[slot] = available[i] with
+				{
+					BadgeText = selected
+						? FormatKeyBadge(Xianxia.FireballKeybind)
+						: Mod.GetLocalization(
+							"TechniqueLoadout.Select").Value,
+					Information = available[i].Information + " | "
+						+ Mod.GetLocalization(selected
+							? "TechniqueLoadout.SelectedHint"
+							: "TechniqueLoadout.SelectionHint").Value
+				};
+				found = true;
+				break;
+			}
+			if (!found)
+			{
+				equipped[slot] = new AbilityWheelEntry(
+					AbilityWheelId.Empty,
+					Mod.GetLocalization("TechniqueLoadout.Empty").Value,
+					Mod.GetLocalization(
+						"TechniqueLoadout.EmptyHint").Value,
+					$"{slot + 1}",
+					false, false, false, 0, string.Empty);
+			}
+		}
+		equipped[^1] = new AbilityWheelEntry(
+			AbilityWheelId.ToggleMenu,
+			Mod.GetLocalization("TechniqueLoadout.ToggleMenu").Value,
+			Mod.GetLocalization(toggleWheelExpanded
+				? "TechniqueLoadout.ToggleMenuClose"
+				: "TechniqueLoadout.ToggleMenuHint").Value,
+			Mod.GetLocalization("TechniqueLoadout.ToggleBadge").Value,
+			true, true, toggleWheelExpanded,
+			ItemID.Lever, string.Empty);
+		return equipped;
+	}
+
+	private AbilityWheelEntry[] BuildToggleWheelEntries(
+		Player player, CultivationPlayer cultivation)
+	{
+		AbilityWheelEntry[] available =
+			BuildAllAbilityWheelEntries(player, cultivation);
+		List<AbilityWheelEntry> toggles = [];
+		for (int i = 0; i < available.Length; i++)
+		{
+			CultivationAbility ability =
+				GetWheelAbility(available[i].Id);
+			if (!CultivationAbilityInfo.IsToggleTechnique(ability)
+				|| !available[i].IsUnlocked)
+			{
+				continue;
+			}
+			toggles.Add(available[i] with
+			{
+				BadgeText = available[i].IsEnabled
+					? Mod.GetLocalization(
+						"Abilities.StateEnabled").Value
+					: Mod.GetLocalization(
+						"Abilities.StateDisabled").Value,
+				Information = available[i].Information + " | "
+					+ Mod.GetLocalization(
+						"TechniqueLoadout.ToggleClickHint").Value
+			});
+		}
+		return [.. toggles];
+	}
+
+	private static CultivationAbility GetWheelAbility(
+		AbilityWheelId id) => id switch
+	{
+		AbilityWheelId.QiProtection =>
+			CultivationAbility.QiProtection,
+		AbilityWheelId.QiBurning => CultivationAbility.QiBurning,
+		AbilityWheelId.QiSense => CultivationAbility.QiSense,
+		AbilityWheelId.QiFlight => CultivationAbility.QiFlight,
+		AbilityWheelId.NascentTeleport =>
+			CultivationAbility.NascentTeleport,
+		AbilityWheelId.SpiritualPressure =>
+			CultivationAbility.SpiritualPressure,
+		AbilityWheelId.FlameStep => CultivationAbility.FlameStep,
+		AbilityWheelId.NightVision => CultivationAbility.NightVision,
+		AbilityWheelId.Fireball => CultivationAbility.Fireball,
+		AbilityWheelId.QiPalm => CultivationAbility.QiPalm,
+		AbilityWheelId.QiResistance =>
+			CultivationAbility.QiResistance,
+		AbilityWheelId.SpiritualRain =>
+			CultivationAbility.SpiritualRain,
+		AbilityWheelId.SpiritSwordRain =>
+			CultivationAbility.SpiritSwordRain,
+		AbilityWheelId.SectProtectionFormation =>
+			CultivationAbility.SectProtectionFormation,
+		_ => CultivationAbility.Count
+	};
+
+	private AbilityWheelEntry[] BuildAllAbilityWheelEntries(
+		Player player, CultivationPlayer cultivation)
 	{
 		string locked = Mod.GetLocalization("AbilityWheel.Locked").Value;
 		string protectionState = Mod.GetLocalization(cultivation.QiProtectionEnabled
@@ -1395,6 +2619,14 @@ public class CultivationUISystem : ModSystem
 			? Mod.GetLocalization("AbilityWheel.QiSenseToggle").Format(senseState)
 			: Mod.GetLocalization("AbilityWheel.RequiresQiGathering").Value;
 		bool resistanceActive = player.HasBuff(ModContent.BuffType<QiResistanceBuff>());
+		bool formationActive =
+			player.HasBuff<SectProtectionFormationBuff>();
+		bool spiritualRainUnlocked = cultivation.IsAbilityUnlocked(
+			CultivationAbility.SpiritualRain);
+		bool swordRainUnlocked = cultivation.IsAbilityUnlocked(
+			CultivationAbility.SpiritSwordRain);
+		bool formationUnlocked = cultivation.IsAbilityUnlocked(
+			CultivationAbility.SectProtectionFormation);
 
 		return
 		[
@@ -1407,6 +2639,35 @@ public class CultivationUISystem : ModSystem
 				cultivation.HasUnlockedQiProtection,
 				cultivation.QiProtectionEnabled,
 				ItemID.CobaltShield,
+				string.Empty
+			),
+			new(
+				AbilityWheelId.QiBurning,
+				Mod.GetLocalization("AbilityWheel.QiBurning").Value,
+				cultivation.RealmIndex >= 2
+					? Mod.GetLocalization(
+						"AbilityWheel.QiBurningDescription").Format(
+							MathF.Round(cultivation.BurnedQiCapacityPercent, 2),
+							cultivation.MaximumBurnedQiBps / 100f,
+							cultivation.HasQiDeviation
+								? Mod.GetLocalization(
+									"Abilities.QiBurningDeviationState").Format(
+										cultivation.QiDeviationSecondsRemaining)
+								: cultivation.QiBurningEnabled
+									? Mod.GetLocalization(
+										"Abilities.StateEnabled").Value
+									: Mod.GetLocalization(
+										"Abilities.StateDisabled").Value)
+					: Mod.GetLocalization(
+						"AbilityWheel.RequiresFoundation").Value,
+				cultivation.RealmIndex >= 2
+					? FormatKeyBadge(Xianxia.QiBurningKeybind,
+						cultivation.QiBurningEnabled)
+					: locked,
+				true,
+				cultivation.RealmIndex >= 2,
+				cultivation.QiBurningEnabled,
+				ItemID.Hellstone,
 				string.Empty
 			),
 			new(
@@ -1538,6 +2799,59 @@ public class CultivationUISystem : ModSystem
 				resistanceActive,
 				ItemID.IronskinPotion,
 				string.Empty
+			),
+			new(
+				AbilityWheelId.SpiritualRain,
+				Mod.GetLocalization(
+					"AbilityWheel.SpiritualRain").Value,
+				Mod.GetLocalization(
+					"AbilityWheel.SpiritualRainDescription").Value,
+				spiritualRainUnlocked
+					? Mod.GetLocalization(
+						"TechniqueLoadout.Select").Value
+					: locked,
+				false,
+				spiritualRainUnlocked,
+				false,
+				ModContent.ItemType<SpiritualRainTechnique>(),
+				string.Empty
+			),
+			new(
+				AbilityWheelId.SpiritSwordRain,
+				Mod.GetLocalization(
+					"AbilityWheel.SpiritSwordRain").Value,
+				FormatActiveInformation(
+					"AbilityWheel.SpiritSwordRainDescription",
+					Xianxia.SpiritSwordRainKeybind),
+				swordRainUnlocked
+					? FormatKeyBadge(
+						Xianxia.SpiritSwordRainKeybind)
+					: locked,
+				false,
+				swordRainUnlocked,
+				false,
+				ModContent.ItemType<SpiritSwordRainManual>(),
+				string.Empty
+			),
+			new(
+				AbilityWheelId.SectProtectionFormation,
+				Mod.GetLocalization(
+					"AbilityWheel.SectProtectionFormation").Value,
+				FormatActiveInformation(
+					"AbilityWheel.SectProtectionFormationDescription",
+					Xianxia.SectFormationKeybind,
+					formationActive),
+				formationUnlocked
+					? FormatKeyBadge(
+						Xianxia.SectFormationKeybind,
+						formationActive)
+					: locked,
+				false,
+				formationUnlocked,
+				formationActive,
+				ModContent.ItemType<
+					SectProtectionFormationManual>(),
+				string.Empty
 			)
 		];
 	}
@@ -1582,67 +2896,138 @@ public class CultivationUISystem : ModSystem
 		}
 
 		Main.mouseLeftRelease = false;
-		if (!entry.IsPassive)
+		if (entry.Id == AbilityWheelId.ToggleMenu)
 		{
+			toggleWheelExpanded = !toggleWheelExpanded;
+			SoundEngine.PlaySound(SoundID.MenuTick);
 			return;
 		}
-
-		if (!entry.IsUnlocked)
+		if (!entry.IsUnlocked
+			|| !cultivation.TrySelectActiveTechniqueSlot(
+				hoveredSegment))
 		{
 			SoundEngine.PlaySound(SoundID.MenuClose);
-			string messageKey = entry.Id == AbilityWheelId.QiSense
-				? "Abilities.QiSenseRequiresGathering"
-				: "Abilities.QiProtectionRequiresFoundation";
-			Main.NewText(Mod.GetLocalization(messageKey).Value, Color.OrangeRed);
 			return;
 		}
-
-		bool enabled;
-		string enabledKey;
-		string disabledKey;
-		if (entry.Id == AbilityWheelId.QiSense)
-		{
-			enabled = !cultivation.QiSenseEnabled;
-			if (!cultivation.SetQiSenseEnabled(enabled))
-			{
-				SoundEngine.PlaySound(SoundID.MenuClose);
-				Main.NewText(Mod.GetLocalization("Abilities.NotEnoughQi").Format(1), Color.OrangeRed);
-				return;
-			}
-
-			enabledKey = "Abilities.QiSenseEnabled";
-			disabledKey = "Abilities.QiSenseDisabled";
-		}
-		else
-		{
-			enabled = !cultivation.QiProtectionEnabled;
-			cultivation.SetQiProtectionEnabled(enabled);
-			enabledKey = "Abilities.QiProtectionEnabled";
-			disabledKey = "Abilities.QiProtectionDisabled";
-		}
-
 		SoundEngine.PlaySound(SoundID.MenuTick);
-		Main.NewText(Mod.GetLocalization(enabled
-			? enabledKey
-			: disabledKey).Value,
-			enabled ? Color.Cyan : Color.LightGray);
+		Main.NewText(Mod.GetLocalization(
+			"TechniqueLoadout.SelectedMessage").Format(
+				entry.Name), Color.Cyan);
 	}
 
-	private static int GetHoveredSegment(Vector2 mouseOffset, float mouseDistance)
+	private void HandleToggleWheelClick(
+		CultivationPlayer cultivation, AbilityWheelEntry entry)
+	{
+		if (!Main.mouseLeft || !Main.mouseLeftRelease)
+			return;
+		Main.mouseLeftRelease = false;
+		CultivationAbility ability = GetWheelAbility(entry.Id);
+		bool toggled =
+			cultivation.TryToggleTechniqueFromWheel(ability);
+		SoundEngine.PlaySound(toggled
+			? SoundID.MenuTick : SoundID.MenuClose);
+	}
+
+	private static int GetHoveredSegment(
+		Vector2 mouseOffset, float mouseDistance, int segmentCount)
 	{
 		if (mouseDistance < WheelInnerRadius || mouseDistance > WheelOuterRadius)
 		{
 			return -1;
 		}
 
-		float segmentAngle = MathHelper.TwoPi / WheelSegmentCount;
+		if (segmentCount <= 0)
+			return -1;
+		float segmentAngle = MathHelper.TwoPi / segmentCount;
 		float angle = MathF.Atan2(mouseOffset.Y, mouseOffset.X);
 		float normalizedAngle = (angle - WheelStartAngle + segmentAngle * 0.5f + MathHelper.TwoPi)
 			% MathHelper.TwoPi;
-		return (int)(normalizedAngle / segmentAngle) % WheelSegmentCount;
+		return (int)(normalizedAngle / segmentAngle) % segmentCount;
 	}
 
-	private static Color GetSegmentColor(AbilityWheelEntry entry, bool hovered)
+	private static int GetHoveredToggleSegment(
+		Vector2 mouseOffset, float mouseDistance, int segmentCount)
+	{
+		if (segmentCount <= 0
+			|| mouseDistance < ToggleWheelInnerRadius
+			|| mouseDistance > ToggleWheelOuterRadius)
+		{
+			return -1;
+		}
+		float angle = MathF.Atan2(mouseOffset.Y, mouseOffset.X);
+		if (angle < 0f)
+			angle += MathHelper.TwoPi;
+		if (angle < MathHelper.Pi)
+			return -1;
+		float segmentAngle = MathHelper.Pi / segmentCount;
+		return Math.Clamp(
+			(int)((angle - MathHelper.Pi) / segmentAngle),
+			0, segmentCount - 1);
+	}
+
+	private void DrawToggleSubWheel(
+		Texture2D pixel, Vector2 center,
+		AbilityWheelEntry[] entries, int hovered)
+	{
+		if (entries.Length == 0)
+		{
+			DrawCenteredText(
+				Mod.GetLocalization(
+					"TechniqueLoadout.NoToggles").Value,
+				center - new Vector2(0f, WheelOuterRadius + 35f),
+				Color.Gray, 0.58f);
+			return;
+		}
+		float segmentAngle = MathHelper.Pi / entries.Length;
+		for (int i = 0; i < entries.Length; i++)
+		{
+			float centerAngle = MathHelper.Pi
+				+ (i + 0.5f) * segmentAngle;
+			Color color = GetSegmentColor(
+				entries[i], hovered == i, entries[i].IsEnabled);
+			DrawAnnularSector(pixel, center, centerAngle,
+				segmentAngle * 0.5f - 0.012f,
+				ToggleWheelInnerRadius, ToggleWheelOuterRadius,
+				color);
+			Vector2 labelPosition = center
+				+ centerAngle.ToRotationVector2() * 267f;
+			DrawAbilityIcon(labelPosition - new Vector2(0f, 20f),
+				entries[i], 27f);
+			DrawCenteredTextFitted(entries[i].Name,
+				labelPosition + new Vector2(0f, 7f),
+				92f, Color.White, 0.53f);
+			DrawBadge(labelPosition + new Vector2(0f, 27f),
+				entries[i].BadgeText, true, entries[i].IsEnabled);
+		}
+	}
+
+	private static void DrawAnnularSector(
+		Texture2D pixel, Vector2 center, float centerAngle,
+		float halfAngle, float innerRadius, float outerRadius,
+		Color color)
+	{
+		const int rays = 20;
+		float radialLength = outerRadius - innerRadius;
+		float middleRadius = (outerRadius + innerRadius) * 0.5f;
+		float rayThickness =
+			outerRadius * halfAngle * 2f / rays + 2f;
+		for (int i = 0; i <= rays; i++)
+		{
+			float angle = MathHelper.Lerp(
+				centerAngle - halfAngle,
+				centerAngle + halfAngle, i / (float)rays);
+			Vector2 position =
+				center + angle.ToRotationVector2() * middleRadius;
+			Main.spriteBatch.Draw(pixel, position,
+				new Rectangle(0, 0, 1, 1), color, angle,
+				new Vector2(0.5f, 0.5f),
+				new Vector2(radialLength, rayThickness),
+				SpriteEffects.None, 0f);
+		}
+	}
+
+	private static Color GetSegmentColor(
+		AbilityWheelEntry entry, bool hovered, bool selected)
 	{
 		if (!entry.IsUnlocked)
 		{
@@ -1652,13 +3037,17 @@ public class CultivationUISystem : ModSystem
 		Color baseColor = entry.IsPassive
 			? (entry.IsEnabled ? new Color(35, 155, 145) : new Color(105, 55, 135))
 			: (entry.IsEnabled ? new Color(40, 150, 205) : new Color(45, 85, 125));
+		if (selected)
+			baseColor = Color.Lerp(baseColor, Color.Gold, 0.48f);
 		return hovered ? Color.Lerp(baseColor, Color.White, 0.28f) : baseColor;
 	}
 
-	private static void DrawWheelSector(Texture2D pixel, Vector2 center, float centerAngle, Color color)
+	private static void DrawWheelSector(
+		Texture2D pixel, Vector2 center, float centerAngle,
+		Color color, int segmentCount)
 	{
 		const int rays = 24;
-		float halfSegmentAngle = MathHelper.Pi / WheelSegmentCount;
+		float halfSegmentAngle = MathHelper.Pi / Math.Max(1, segmentCount);
 		float startAngle = centerAngle - halfSegmentAngle + 0.018f;
 		float endAngle = centerAngle + halfSegmentAngle - 0.018f;
 		float radialLength = WheelOuterRadius - WheelInnerRadius;
@@ -1686,6 +3075,8 @@ public class CultivationUISystem : ModSystem
 
 	private static void DrawAbilityIcon(Vector2 center, AbilityWheelEntry entry, float maximumSize)
 	{
+		if (entry.Id == AbilityWheelId.Empty)
+			return;
 		Texture2D texture;
 		if (!string.IsNullOrEmpty(entry.IconTexturePath))
 		{

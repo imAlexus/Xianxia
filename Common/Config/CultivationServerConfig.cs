@@ -54,6 +54,25 @@ public class CultivationServerConfig : ModConfig
 	[Slider]
 	public int SpiritBeastSpawnRatePercent;
 
+	[Header("CultivationRisks")]
+	[DefaultValue(true)]
+	public bool EnableQiBurning;
+
+	[DefaultValue(50)]
+	[Range(20, 80)]
+	[Increment(5)]
+	[Slider]
+	public int MaximumBurnedQiPercent;
+
+	[DefaultValue(true)]
+	public bool EnableHeartDemons;
+
+	[DefaultValue(100)]
+	[Range(0, 200)]
+	[Increment(10)]
+	[Slider]
+	public int HeartDemonPenaltyStrengthPercent;
+
 	[Header("Debug")]
 	[DefaultValue(false)]
 	public bool EnableDebugCommandsInMultiplayer;

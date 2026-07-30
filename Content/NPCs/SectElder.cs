@@ -7,9 +7,11 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Xianxia.Common.Players;
+using Xianxia.Common.Elements;
 using Xianxia.Common.Systems;
 using Xianxia.Content.Items.Alchemy;
 using Xianxia.Content.Items.Armor;
+using Xianxia.Content.Items.Materials;
 using Xianxia.Content.Items.Sect;
 using Xianxia.Content.Items.Weapons;
 
@@ -120,7 +122,12 @@ public class SectElder : ModNPC
 			button = Mod.GetLocalization("Sect.Buttons.Claim").Value;
 		else
 			button = Mod.GetLocalization("Sect.Buttons.Status").Value;
-		button2 = sect.JoinedSect ? Mod.GetLocalization("Sect.Buttons.Shop").Value : string.Empty;
+		SpiritualRootPlayer root = Main.LocalPlayer.GetModPlayer<SpiritualRootPlayer>();
+		button2 = sect.JoinedSect
+			? Mod.GetLocalization(root.IsRevealed
+				? "Sect.Buttons.Shop"
+				: "SpiritualRoots.Appraisal.Button").Value
+			: string.Empty;
 	}
 
 	public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -129,7 +136,21 @@ public class SectElder : ModNPC
 		if (!firstButton)
 		{
 			if (sect.JoinedSect)
-				shopName = ShopName;
+			{
+				SpiritualRootPlayer root =
+					Main.LocalPlayer.GetModPlayer<SpiritualRootPlayer>();
+				if (root.RevealRoot())
+				{
+					Main.npcChatText = Mod.GetLocalization(
+						"SpiritualRoots.Appraisal.Result").Format(
+						Mod.GetLocalization(
+							$"SpiritualRoots.Qualities.{root.GetQualityLocalizationKey()}").Value,
+						SpiritualElementInfo.GetDisplayName(Mod, root.Elements),
+						root.Purity);
+				}
+				else
+					shopName = ShopName;
+			}
 			return;
 		}
 
@@ -159,6 +180,8 @@ public class SectElder : ModNPC
 	public override void AddShops()
 	{
 		NPCShop shop = new NPCShop(Type, ShopName)
+			.Add(CurrencyItem<SpiritJadeOre>(1))
+			.Add(CurrencyItem<ProfoundIronOre>(2))
 			.Add(CurrencyItem<SpiritGatheringPill>(12))
 			.Add(CurrencyItem<NoviceDiscipleHeadband>(15))
 			.Add(CurrencyItem<NoviceDiscipleRobe>(20))
@@ -174,7 +197,9 @@ public class SectElder : ModNPC
 	{
 		if (shopName != ShopName)
 			return;
-		int rank = Main.LocalPlayer.GetModPlayer<SectPlayer>().Rank;
+		Player player = Main.LocalPlayer;
+		int rank = player.GetModPlayer<SectPlayer>().Rank;
+		int realm = player.GetModPlayer<CultivationPlayer>().RealmIndex;
 		foreach (Item item in items)
 		{
 			if (item is null || item.IsAir)
@@ -189,7 +214,10 @@ public class SectElder : ModNPC
 				item.shopSpecialCurrency = SectCurrencySystem.ContributionCurrencyId;
 			}
 
-			if ((item.type == ModContent.ItemType<SpiritSwordRainManual>() && rank < 1)
+			if ((item.type == ModContent.ItemType<SpiritJadeOre>() && realm < 1)
+				|| (item.type == ModContent.ItemType<ProfoundIronOre>()
+					&& (realm < 2 || rank < 1))
+				|| (item.type == ModContent.ItemType<SpiritSwordRainManual>() && rank < 1)
 				|| (item.type == ModContent.ItemType<SectProtectionFormationManual>() && rank < 2))
 				item.TurnToAir();
 		}
@@ -231,6 +259,10 @@ public class SectElder : ModNPC
 
 	private static int? GetContributionPrice(int itemType)
 	{
+		if (itemType == ModContent.ItemType<SpiritJadeOre>())
+			return 1;
+		if (itemType == ModContent.ItemType<ProfoundIronOre>())
+			return 2;
 		if (itemType == ModContent.ItemType<SpiritGatheringPill>())
 			return 12;
 		if (itemType == ModContent.ItemType<NoviceDiscipleHeadband>())

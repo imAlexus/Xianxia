@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Xianxia.Common.Abilities;
+using Xianxia.Common.Elements;
 using Xianxia.Common.Config;
 using Xianxia.Common.Players;
 using Xianxia.Content.NPCs.SpiritBeasts;
@@ -79,6 +80,9 @@ public class XianxiaDebugCommand : ModCommand
 			case "sectrank":
 				SetSectDebug(caller, args);
 				break;
+			case "root":
+				HandleRootDebug(caller, args);
+				break;
 			case "reset":
 				cultivation.DebugResetProgression();
 				caller.Reply(Mod.GetLocalization("DebugCommands.Reset").Value);
@@ -93,10 +97,39 @@ public class XianxiaDebugCommand : ModCommand
 	private void ShowHelp(CommandCaller caller)
 	{
 		caller.Reply(Mod.GetLocalization("DebugCommands.HelpTitle").Value);
-		for (int i = 1; i <= 13; i++)
+		for (int i = 1; i <= 14; i++)
 		{
 			caller.Reply(Mod.GetLocalization($"DebugCommands.Help{i}").Value);
 		}
+	}
+
+	private void HandleRootDebug(CommandCaller caller, string[] args)
+	{
+		SpiritualRootPlayer root =
+			caller.Player.GetModPlayer<SpiritualRootPlayer>();
+		string subcommand = args.Length >= 2 ? args[1].ToLowerInvariant() : "show";
+		if (subcommand is "roll" or "reset")
+		{
+			root.DebugRegenerate(reveal: false);
+			caller.Reply(Mod.GetLocalization("DebugCommands.RootRolled").Value);
+			return;
+		}
+		if (subcommand == "reveal")
+		{
+			root.RevealRoot();
+			subcommand = "show";
+		}
+		if (subcommand == "show")
+		{
+			string quality = Mod.GetLocalization(
+				$"SpiritualRoots.Qualities.{root.GetQualityLocalizationKey()}").Value;
+			caller.Reply(Mod.GetLocalization("DebugCommands.RootStatus").Format(
+				quality, SpiritualElementInfo.GetDisplayName(Mod, root.Elements),
+				SpiritualElementInfo.GetDisplayName(Mod, root.PrimaryElement),
+				root.Purity, root.IsRevealed));
+			return;
+		}
+		caller.Reply(Mod.GetLocalization("DebugCommands.RootUsage").Value);
 	}
 
 	private void SetSectDebug(CommandCaller caller, string[] args)
